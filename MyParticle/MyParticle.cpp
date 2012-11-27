@@ -28,6 +28,8 @@ void MyParticle::ReadFromInfo(const MyParticleInfo &pi)
 	fKindParticle = pi.GetKindParticle();
 	fXVelocity = 0.;
 	fYVelocity = 0.;
+	fCoinGroup = pi.GetCoinGroup();
+
 }
 
 //___________________________________________________________________________________________________________________________________________________________

@@ -4,14 +4,14 @@
 #include "MyParticleInfo.h"
 
 //___________________________________________________________________________________________________________________________________________________________
-void MyParticleInfo::SetProperties(const char * name, double charge_au, double mass_amu,  int kindParticle)
+void MyParticleInfo::SetProperties(const char * name, double charge_au, double mass_amu,  int kindParticle, int coinGroup)
 {
 	//set the infos provided by the user//
 	fName		= name;
 	fCharge_au	= charge_au;
 	fMass_amu	= mass_amu;
 	fKindParticle = kindParticle;
-
+	fCoinGroup = coinGroup;
 	//load the other settings from the ini file//
 	Load();
 }

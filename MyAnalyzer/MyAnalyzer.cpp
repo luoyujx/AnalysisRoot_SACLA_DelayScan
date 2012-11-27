@@ -21,17 +21,9 @@
 #include "../AnalyzeFunktions.h"
 
 //#include "../MyCovariance.h"
-#include "../MyWaveform.h"
-
+//#include "../MyWaveform.h"
 
 using namespace std;
-
-
-
-
-
-
-
 
 //##################################################################################
 //_____________________________The class Members______________________________________________________________________________________________________________________________
@@ -78,7 +70,6 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fSAE.ReadFromEventInfo(*SAEInfo);
 	fSE.ReadFromEventInfo(*SEInfo);
 
-
 	DefineParticlesAndRootFile(fParticles,fHi);
 
 	if (UseGUI)
@@ -88,14 +79,10 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 		//and then setup the connection//
 		MyGui *gui = new MyGui(gClient->GetRoot(),fParticles.GetParticleInfos());
 		gui->Connect("ValsChanged()","MyAnalyzer",this,"Init()");
-		//gui->Connect("ValsChanged()","MyAnalyzer",this,"test()");
 	}
-
 		//start run//
 		runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
 		runTimer.Start(100);
-
-
 }
 
 //___________________________________________________________________________________________________________________________________________________________
@@ -159,7 +146,6 @@ void MyAnalyzer::OpenIntensityData()
 	std::map<unsigned int, double>::iterator itend = tagIntensity.end();
 	itend--;
 	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
-
 }
 //Read Intensity region DATA
 void MyAnalyzer::OpenIntRegionData()
@@ -197,7 +183,6 @@ void MyAnalyzer::Run()
 
 	while(fEntryIterator < fNEntries)
 	{
-		//std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator << "   EventID :"<< std::setw(7) << std::setfill(' ') << fOE.GetEventID();
 		std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
 
 		//Clear the events//
@@ -211,7 +196,7 @@ void MyAnalyzer::Run()
 		fSAChain.GetEntry(fEntryIterator);
 		fSChain.GetEntry(fEntryIterator);
 
-		std::cout << "   *** " << "EventID :"<< fOE.GetEventID() <<" : "<< fSAE.GetEventID() <<" : "<<fSE.GetEventID();
+		std::cout << "   *** " << "EventID :"<< static_cast<unsigned int>(fOE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSAE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSE.GetEventID());
 		//check EventID//
 		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
 		{

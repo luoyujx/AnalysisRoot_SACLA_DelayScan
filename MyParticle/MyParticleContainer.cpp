@@ -1,11 +1,11 @@
 #include "MyParticleContainer.h"
 
 //___________________________________________________________________________________________________________________________________________________________
-void MyParticleContainer::Add(const char * name, double charge_au, double mass_amu,int kindParticle)
+void MyParticleContainer::Add(const char * name, double charge_au, double mass_amu,int kindParticle, int coinGroup)
 {
 	//add particle info and set the properties//
 	fPi.push_back(MyParticleInfo());
-	fPi.back().SetProperties(name,charge_au,mass_amu,kindParticle);
+	fPi.back().SetProperties(name,charge_au,mass_amu,kindParticle,coinGroup);
 
 	//add a particle//
 	fP.push_back(MyParticle());

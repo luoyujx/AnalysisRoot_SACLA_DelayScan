@@ -16,7 +16,7 @@ public:
 public:
 	void							 Load();
 	void							 Save();
-	void							 SetProperties(const char * name, double charge_au, double mass_amu, int kindParticle = 0);
+	void							 SetProperties(const char * name, double charge_au, double mass_amu, int kindParticle = 0, int fCoinGroup = 100);
 
 public:
 	const char						*GetName()const						{return fName.Data();}
@@ -56,6 +56,7 @@ public:
 	double							 GetCharge_au()const				{return fCharge_au;}
 	double							 GetMass_amu()const					{return fMass_amu;}
 	int								 GetKindParticle()const				{return fKindParticle;}
+	int								 GetCoinGroup()const				{return fCoinGroup;}
 
 private:
 	//these informations will be in the info class//
@@ -79,7 +80,8 @@ private:
 	double							 fCharge_au;						//the Charge of this Particle in a.u.
 	TString							 fName;								//how is this particle called
 
-	int								 fKindParticle;						//kind of perticle 0:atom 1:molecule 2:electron 3:Ion 4:Ion(simple) ;motomura
+	int								 fKindParticle;						//kind of perticle 0:atom 1:molecule 2:electron 3:Ion 4:Ion(simple)
+	int								 fCoinGroup;						//if this number is Zero or same, do not calc coinsidence
 
 	MySpectrometer					 fSp;								//the Spectrometer Properties this Particle flies through
 

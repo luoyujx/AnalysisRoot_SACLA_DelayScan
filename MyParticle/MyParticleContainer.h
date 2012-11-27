@@ -18,7 +18,7 @@ public:
 	MyParticleContainer()						{}
 
 public:
-	void					 Add(const char * name, double charge_au, double mass_amu, int kindParticle = 0);
+	void					 Add(const char * name, double charge_au, double mass_amu, int kindParticle = 0, int fCoinGroup = 100);
 	void					 Init()						{for (size_t i=0; i<fPi.size();fP[i].ReadFromInfo(fPi[i++]));}
 	void					 SaveParticleInfos()		{for (size_t i=0; i<fPi.size();fPi[i++].Save());}
 	void					 ClearParticles()			{for (size_t i=0; i<fP.size() ;fP[i++].Clear());}

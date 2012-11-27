@@ -99,6 +99,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\AddParticles.cpp" />
     <ClCompile Include="..\AnalyzeFunktions.cpp" />
     <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSectionDict.cpp" />
     <ClCompile Include="..\main.cpp" />
@@ -174,6 +175,7 @@
     <ClCompile Include="..\MyGui\MyPar\MySpec\MySpecReg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AddParticles.h" />
     <ClInclude Include="..\AnalyzeFunktions.h" />
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannel.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>

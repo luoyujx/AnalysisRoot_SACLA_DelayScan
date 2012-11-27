@@ -61,6 +61,7 @@ public:
 	double							 GetCharge_au()const				{return fCharge_au;}
 	double							 GetMass_au()const					{return fMass_au;}
 	int								 GetKindParticle()const				{return fKindParticle;}
+	int								 GetCoinGroup()const				{return fCoinGroup;}
 
 	double							 GetXVelocity()const				{return fXVelocity;}
 	double							 GetYVelocity()const				{return fYVelocity;}
@@ -92,9 +93,9 @@ private:
 	TString							 fName;								//!how is this particle called
 
 	int								 fKindParticle;						//kind of particle;motomura
-
 	double							 fXVelocity;						// Jet velocity (mm/ns);motomura
 	double							 fYVelocity;						// Jet velocity (mm/ns);motomura
+	int								 fCoinGroup;
 
 	MySpectrometer					 fSp;								//!the Spectrometer Properties this Particle flies through
 

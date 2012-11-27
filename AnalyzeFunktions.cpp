@@ -1,5 +1,5 @@
 #include "AnalyzeFunktions.h"
-
+#include "AddParticles.h"
 
 #include "./MyMomentaCalculator/MyMomentaCalculator.h"
 #include "./MyParticle/MyParticleContainer.h"
@@ -27,51 +27,48 @@
 #define YVelocity 0.
 
 
-namespace MyMass
-{
-	//source: http://physics.nist.gov/PhysRefData/Handbook/Tables/argontable1.htm (03.Feb.2009)//
-	inline const double Argon36()		{return 35.967545;}		// 0.337%
-	inline const double Argon38()		{return 37.962732;}		// 0.063%
-	inline const double Argon40()		{return 39.962384;}		//99.600%
-
-	inline const double Krypton78()		{return 77.920400;}		// 0.35%
-	inline const double Krypton80()		{return 79.916380;}		// 2.25%
-	inline const double Krypton82()		{return 81.913482;}		//11.6%
-	inline const double Krypton83()		{return 82.914135;}		//11.5%
-	inline const double Krypton84()		{return 83.911507;}		//57.0%
-	inline const double Krypton86()		{return 85.910616;}		//17.3%
-
-	inline const double Xenon128()		{return 127.903531;}	// 1.91%
-	inline const double Xenon129()		{return 128.904780;}	//26.4%
-	inline const double Xenon130()		{return 129.903509;}	// 4.1%
-	inline const double Xenon131()		{return 130.905072;}	//21.2%
-	inline const double Xenon132()		{return 131.904144;}	//26.9%
-	inline const double Xenon134()		{return 133.905395;}	//10.4%
-	inline const double Xenon136()		{return 135.907214;}	// 8.9%
-	inline const double Xenon()			{return 131.293;}		// 100%
-
-	inline const double Oxygen16()		{return 15.994915;}		//99.76%
-	inline const double Oxygen17()		{return 16.999311;}		// 0.048%
-	inline const double Oxygen18()		{return 17.999160;}		// 0.20%
-
-	inline const double Fluorine19()	{return 18.9984032;}
-	inline const double Carbon12()		{return 12;}
-
-	inline const double Nitrogen14()	{return 14.003074;}		//99.63%
-	inline const double Nitrogen15()	{return 15.000108;}		// 0.37%
-
-	inline const double Neon20()		{return 19.992435;}		//90.48%
-	inline const double Neon21()		{return 20.993843;}		// 0.27%
-	inline const double Neon22()		{return 21.991383;}		// 9.25%
-
-	inline const double Helium4()		{return 4.00260;}		// 9.25
-
-	inline const double Electron()		{return 1.*MyUnitsConv::au2amu();}
-}
-
-
-
-
+//namespace MyMass
+//{
+//	//source: http://physics.nist.gov/PhysRefData/Handbook/Tables/argontable1.htm (03.Feb.2009)//
+//	inline const double Argon36()		{return 35.967545;}		// 0.337%
+//	inline const double Argon38()		{return 37.962732;}		// 0.063%
+//	inline const double Argon40()		{return 39.962384;}		//99.600%
+//
+//	inline const double Krypton78()		{return 77.920400;}		// 0.35%
+//	inline const double Krypton80()		{return 79.916380;}		// 2.25%
+//	inline const double Krypton82()		{return 81.913482;}		//11.6%
+//	inline const double Krypton83()		{return 82.914135;}		//11.5%
+//	inline const double Krypton84()		{return 83.911507;}		//57.0%
+//	inline const double Krypton86()		{return 85.910616;}		//17.3%
+//
+//	inline const double Xenon128()		{return 127.903531;}	// 1.91%
+//	inline const double Xenon129()		{return 128.904780;}	//26.4%
+//	inline const double Xenon130()		{return 129.903509;}	// 4.1%
+//	inline const double Xenon131()		{return 130.905072;}	//21.2%
+//	inline const double Xenon132()		{return 131.904144;}	//26.9%
+//	inline const double Xenon134()		{return 133.905395;}	//10.4%
+//	inline const double Xenon136()		{return 135.907214;}	// 8.9%
+//	inline const double Xenon()			{return 131.293;}		// 100%
+//
+//	inline const double Oxygen16()		{return 15.994915;}		//99.76%
+//	inline const double Oxygen17()		{return 16.999311;}		// 0.048%
+//	inline const double Oxygen18()		{return 17.999160;}		// 0.20%
+//
+//	inline const double Iodine127()		{return 126.904473;}		// 100%
+//	inline const double Fluorine19()	{return 18.9984032;}
+//	inline const double Carbon12()		{return 12;}
+//
+//	inline const double Nitrogen14()	{return 14.003074;}		//99.63%
+//	inline const double Nitrogen15()	{return 15.000108;}		// 0.37%
+//
+//	inline const double Neon20()		{return 19.992435;}		//90.48%
+//	inline const double Neon21()		{return 20.993843;}		// 0.27%
+//	inline const double Neon22()		{return 21.991383;}		// 9.25%
+//
+//	inline const double Helium4()		{return 4.00260;}		// 9.25
+//
+//	inline const double Electron()		{return 1.*MyUnitsConv::au2amu();}
+//}
 
 //_____________________________functions______________________________________________________________________________________________________________________________
 //momentum calculation
@@ -87,15 +84,13 @@ double calcPz(const MyParticle &p, const MyParticleHit &ph)
 {
 	return MyMomentaCalculator::pz(ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
 }
-double calcMass(const MyParticle &p, const MyParticleHit &ph)//motomura
+double calcMass(const MyParticle &p, const MyParticleHit &ph)
 {
 	return MyMomentaCalculator::mass(ph.TofCor(),p.GetSpectrometer());
 }
-double CalcFactorial(int n);
 
-void AddArgon(MyParticleContainer &particles);
-void AddXenon(MyParticleContainer &particles);
-void AddXenon132(MyParticleContainer &particles);
+
+
 //___________________________________________________________________________________________________________________________________________________________
 void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 {
@@ -104,18 +99,23 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 
 	particles.Add("Ion",1,1,0);//------------particle 0 --- Do not comment out!
 
-	//SACLA Ar particles
+	//---SACLA Ar atom
 	//AddArgon(particles);
 
-	//SACLA Xe particles
+	//---SACLA Xe atom
 	//AddXenon(particles);
 	//AddXenon132(particles);
-	particles.Add("N3P",3,MyMass::Nitrogen14());
-	particles.Add("N2P",2,MyMass::Nitrogen14());
-	particles.Add("N1P",1,MyMass::Nitrogen14());
+
+	//---SACLA CH3I molecule
+	AddCH3I(particles);
+
+	//---Test N2 molecule
+	particles.Add("N3P",3,MyMass::Nitrogen14(),1,0);
+	particles.Add("N2P",2,MyMass::Nitrogen14(),1,0);
+	particles.Add("N1P",1,MyMass::Nitrogen14(),1,0);
 
 }
-//_____________________________________________________________________________________
+//_______SACLA 2012A______________________________________________________________________________
 void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const double k4, const double xc, const double t0)
 {
 	const double t = dh.Time()-t0;
@@ -123,7 +123,7 @@ void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const
 	dh.SetTof( t - alpha*t*(k2*x*x+k4*x*x*x*x) );
 }
 
-//___________________________________________________________________________________________________________________________________________________________
+//________Analysis main loop___________________________________________________________________________________________________________________________________________________
 void MyAnalyzer::Analyze()
 {
 	MyDetektor &rd = fSE.GetDetektor(0);
@@ -140,30 +140,39 @@ void MyAnalyzer::Analyze()
 	//Get intensity from loaded data map
 	if (intFileName != "")
 	{
-		std::map<unsigned int, double>::iterator itTagInt;
+		std::map<unsigned int, double>::iterator itTagInt;//BM1
+		std::map<unsigned int, double>::iterator itTagInt2;//PD
 		itTagInt = tagIntensity.find(TagNumber);
-		if (itTagInt == tagIntensity.end())
+		itTagInt2 = tagIntensity2.find(TagNumber);
+
+		if ((itTagInt == tagIntensity.end())||(itTagInt2 == tagIntensity2.end()))
 		{
 			std::cout <<TagNumber<< " is not found!!" << std::endl;
 			return;
 		}
-		//PhotoDiode intensity
-		if ( itTagInt->first < 156088080 )
-			//before changing Al plate
-			//fIntensities.push_back((tagIntensity2.find(TagNumber)->second)*1000*36.15);
-			fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/1.926E-5);//5.5keV PD->microJ(weak setting)
-		else
-			fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/6.963E-4);//5.5keV PD->microJ
-			//fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/1.17E-3);//5.0keV PD->microJ
 
-		//FEL is attenuated, set tag region
-		const unsigned int tagFrom = 167982762;	//att0p4(5.5keV):159612312		Al25micro(5.0keV):167982762
-		const unsigned int tagTo = 170567544;	//att0p4(5.5keV):161807544		Al25micro(5.0keV):170567544
-		const double attFactor = 0.381;//5.5keV:0.381  5.5keV:0.52(test)  5.0keV:0.271
-		if (( tagFrom <= itTagInt->first ) && ( itTagInt->first <= tagTo ))
-			fIntensities.push_back(itTagInt->second * attFactor);
-		else 
-			fIntensities.push_back(itTagInt->second);
+		fIntensities.push_back(itTagInt2->second * 1000);//[0]
+		fIntensities.push_back(itTagInt->second);//[1]
+
+		////------------------------------------------SACLA 2012A
+		////PhotoDiode intensity
+		//if ( itTagInt->first < 156088080 )
+		//	//before changing Al plate
+		//	//fIntensities.push_back((tagIntensity2.find(TagNumber)->second)*1000*36.15);
+		//	fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/1.926E-5);//5.5keV PD->microJ(weak setting)
+		//else
+		//	fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/6.963E-4);//5.5keV PD->microJ
+		//	//fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/1.17E-3);//5.0keV PD->microJ
+
+		////FEL is attenuated, set tag region
+		//const unsigned int tagFrom = 167982762;	//att0p4(5.5keV):159612312		Al25micro(5.0keV):167982762
+		//const unsigned int tagTo = 170567544;	//att0p4(5.5keV):161807544		Al25micro(5.0keV):170567544
+		//const double attFactor = 0.381;//5.5keV:0.381  5.5keV:0.52(test)  5.0keV:0.271
+		//if (( tagFrom <= itTagInt->first ) && ( itTagInt->first <= tagTo ))
+		//	fIntensities.push_back(itTagInt->second * attFactor);
+		//else 
+		//	fIntensities.push_back(itTagInt->second);
+		////----------------------------------------------------
 
 		for (size_t i=0;i<fIntensities.size();++i)
 		{
@@ -179,36 +188,7 @@ void MyAnalyzer::Analyze()
 		startIdx+=2;
 	}
 
-	//------------------------------------------------------------
-	//std::vector<std::vector<unsigned int>> hitCounter;
-	//hitCounter.resize(fParticles.GetNbrOfParticles());
-	//if (intRegion.size()) 
-	//	for (size_t i=0;i<fParticles.GetNbrOfParticles();++i) hitCounter[i].resize(intRegion.size()-1);
 
-	//int whichRegion = -1;
-	//for (size_t k=0; k<hitCounter[0].size(); k++)
-	//{
-	//	if ((intRegion[k]<fIntensities[0])&&(fIntensities[0]<intRegion[k+1]))
-	//	{
-	//		whichRegion = k;
-	//		fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"microJ",1000,0,1000);
-	//	}
-	//}
-	//startIdx += hitCounter[0].size();
-
-	//---------------------get the Intensity for this event//
-	//fIntensities.push_back(Average(fOE.GetChannel(8-1),950,14000,false)-(Average(fOE.GetChannel(8-1),200,700,false)+Average(fOE.GetChannel(8-1),18000,18500,false))/2);
-
-	//for (size_t i=0;i<fIntensities.size();++i)
-	//{
-	//	fHi.fill(startIdx++,Form("Int%d",i),fIntensities[i],Form("Int%d",i),1000,0,1000,"Intensity");
-	//	for (size_t j=i+1; j<fIntensities.size();++j)
-	//	{
-	//		fHi.fill(startIdx++,Form("IntDep(%d)(%d)",i,j),fIntensities[i], fIntensities[j],Form("Int %d",i),Form("Int %d",j),1000,0,1000,1000,0,1000,"Intensity");
-	//	}
-	//}
-
-	//if (fIntensities.size()) fHi.fill(startIdx++,"IntensityvsEntry",(double)fEntryIterator,"Entry",fNEntries,0,(double)fNEntries,"Intensity",fIntensities[0]);
 
 	//-------------------------get the raw mcp events called times//
 	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
@@ -226,25 +206,24 @@ void MyAnalyzer::Analyze()
 	//}
 	//startIdx++;
 
-//-------------------------------------------------------------------------------------------------------------------------------
-
-
+	//-------------------------------------------------------------------------------------------------------------------------------
 	if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"microJ",1000,0,1000);//added by moto 2009/05/21(50,0,2500)
 	startIdx++;
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"microJ",1000,0,1000);//added by moto 2009/05/21(50,0,2500)
+	if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"arb. unit",1000,0,1000);//added by moto 2009/05/21(50,0,2500)
 	startIdx++;
 
-	//if (fIntensities.size())
-	//	if (fIntensities[0]<1) 
-	//	{
-	//		//std::cout << "skip this event" << std::endl;
-	//		return;
-	//	}
+	//---skip when FEL is stopped
+	if (fIntensities.size())
+		if (fIntensities[0]<1) 
+		{
+			//std::cout << "skip this event" << std::endl;
+			return;
+		}
 
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"microJ",1000,0,1000);//added by moto 2009/05/21
+	if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"arb unit",1000,0,1000);//added by moto 2009/05/21
 	startIdx++;
 
-	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);//added by moto 2009/05/21
+	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
 	int secondStartIdx=startIdx+50;
 
@@ -256,7 +235,6 @@ void MyAnalyzer::Analyze()
 	//	p.SetYVelocity(YVelocity);
 	//}
 
-
 	//go through all resorted detektorhits//
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
 	{
@@ -265,10 +243,11 @@ void MyAnalyzer::Analyze()
 		//the tof is just the timing of the mcp signal//
 		dh.SetTof(dh.Time());
 
-		//rotate det image
-		const double angle = -8*TMath::DegToRad();
-		dh.SetXmm(TMath::Cos(angle)*dh.X() + TMath::Sin(angle)*dh.Y());
-		dh.SetYmm(-TMath::Sin(angle)*dh.X() + TMath::Cos(angle)*dh.Y());
+		////rotate det image
+		//-----------Position correction(SACLA 2012A Spectromertor D" 520V)----------//
+		//const double angle = -8*TMath::DegToRad();
+		//dh.SetXmm(TMath::Cos(angle)*dh.X() + TMath::Sin(angle)*dh.Y());
+		//dh.SetYmm(-TMath::Sin(angle)*dh.X() + TMath::Cos(angle)*dh.Y());
 
 		//detektor & tof for all Hits//
 		const double maxPos	= (rd.GetRunTime()+30)*rd.GetSfU();
@@ -285,26 +264,23 @@ void MyAnalyzer::Analyze()
 		fHi.fill(startIdx+7,"YPosVsTofFine",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",static_cast<int>(maxTof/5),0,maxTof,300,-maxPos,maxPos);
 
 		
-
+		//-----Particle(0)---Ion---
 		//get the particle from the vector//
-		//MyParticle &p = fParticles.GetParticle(0);
-		////if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
-		//if (p.CheckTofAndPos(dh))
-		////select hit by reconstruction method//
-		//if (dh.RekMeth() < rekmeth)//added by motomura
-		//{
-		//	const MyParticleHit &ph = p.AddHit(dh);
+		MyParticle &p = fParticles.GetParticle(0);
+		//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
+		if (p.CheckTofAndPos(dh))
+		//select hit by reconstruction method//
+		if (dh.RekMeth() < rekmeth)//added by motomura
+		{
+			const MyParticleHit &ph = p.AddHit(dh);
 
-		//	fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",20000,0,200,"Ion");
-		//	fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,"Ion");
-		//	fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-		//	fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",10000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,"Ion");
-		//	fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,"Ion");
-		//	fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,"Ion");
-		//}
-		//const double alpha = 1.25;
-		//const double  k2 = 2.6852e-5;
-		//const double  k4 = -1.1172e-8;
+			fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",20000,0,200,"Ion");
+			fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,"Ion");
+			fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
+			fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",10000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,"Ion");
+			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,"Ion");
+			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,"Ion");
+		}
 
 		//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//
 		//if (extraCondition) TofCorrection(dh,  1.25, 2.6852e-5, -1.1172e-8, 0., 770);
@@ -313,8 +289,7 @@ void MyAnalyzer::Analyze()
 		//check wether this hit fits the conditions of the particles we created//
 		//if so, the add this hit to the particle and fill the particle histograms//
 		//go through all particles//
-		for (size_t j=0;j<fParticles.GetNbrOfParticles();++j)
-		//for (size_t j=1;j<6;++j)
+		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
 		{
 			//get the particle from the vector//
 			MyParticle &p = fParticles.GetParticle(j);
@@ -325,10 +300,10 @@ void MyAnalyzer::Analyze()
 			//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
 			if (p.CheckTofAndPos(dh))
 			//select hit by reconstruction method//
-			if (dh.RekMeth() < rekmeth)//added by motomura
+			if (dh.RekMeth() < rekmeth)
 			{
 				const MyParticleHit &ph = p.AddHit(dh);
-				fillParticleHistograms(p,ph,fIntensities,0,fHi,secondStartIdx);
+				fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx);
 			}
 			//we reserve 100 histograms for one particle//
 			secondStartIdx +=100;
@@ -338,7 +313,6 @@ void MyAnalyzer::Analyze()
 
 	startIdx += (fParticles.GetNbrOfParticles()*100);
 
-	//startIdx += 10;
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
@@ -347,34 +321,31 @@ void MyAnalyzer::Analyze()
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
 	}
 
-	//startIdx += 1000;
-
-
 	startIdx += (fParticles.GetNbrOfParticles())+1;
 
 	//now you have found the particles//
 	//we can look for coincidences//
 	if (MoleculeAnalysis)
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
+		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
 			{
 				const MyParticle &jp = fParticles.GetParticle(j);
-				//if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
+				if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
+				if (ip.GetCoinGroup() != jp.GetCoinGroup())
 				{
 					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx);
 					startIdx += 300;
 				}
 			}
 		}
-
-	//if (MoleculeAnalysis) fillPIPICO(fParticles.GetParticle(0),fHi);
+	if (MoleculeAnalysis) fillPIPICO(fParticles.GetParticle(0),fHi);
 
 }
 
 //--------------------------------------fill particle Histograms---------------------------------------------------//
-void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, const double delay, MyHistos &hi, int hiOff )
+void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff )
 {	
 	const double MomLim = 400;
 	const double SliceLim = 20;
@@ -448,12 +419,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//if (ph.Pz() < 0) ThetaY = 360 - ThetaY;
 	//hi.fill(hiOff++,"ThetaY360",ThetaY,"#theta [deg]",360,0,360,Form("%s/Angle",p.GetName()));
 	
-
-
 	//Intensity//
 	//for (size_t i=0; i< intensity.size();++i)
-	//	hi.fill(hiOff++,Form("Int%d",i),intensity[i],Form("Int %d",i),1000,0,1000,Form("%s/Intensity",p.GetName()));
-
+	//	hi.fill(hiOff++,Form("Int%d",i),intensity[i],Form("Int %d",i),1000,0,1000,Form("%s/Intensity",p.GetName()))
 }
 
 
@@ -495,30 +463,24 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
 				hi.fill(hiOff+6,"PzSumCond",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 
-
 			//PIPICO//
 			hi.fill(hiOff+7,"PIPICO",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
 			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
 			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
-				hi.fill(hiOff+8,"PIPICOCond",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
+				hi.fill(hiOff+8,"PIPICOCondXY",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
 
-			//Delay selection 25500-28000
-			//if ((delay > 25500)&&(delay < 28000))
 			{
 				//x momentum sum//
-				//hi.fill(hiOff+11,"PxSum_Width",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100,Form("%s/MomSums",Hname.Data()));
 				if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
 				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
 					hi.fill(hiOff+12,"PxSumCond_Width3",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 				
 				//y momentum sum//
-				//hi.fill(hiOff+13,"PySum_DelaySelect",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 				if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
 				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
 					hi.fill(hiOff+14,"PySumCond_Width3",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 
 				//z momentum sum//
-				//hi.fill(hiOff+15,"PzSum_DelaySelect",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 				if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
 				if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
 					hi.fill(hiOff+16,"PzSumCond_Width3",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
@@ -532,7 +494,7 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 			if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth)
 			{
 				//PIPICO//
-				hi.fill(hiOff+9,"PIPICOCond2",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
+				hi.fill(hiOff+9,"PIPICOCondXYZ",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
 
 				//Intensity//
 				//for (size_t iI=0; iI<intensity.size();++iI)
@@ -603,7 +565,7 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 				//}
 
 				//Momentum second Ion//
-				IDX = (p1!=p2)?IDX+100:IDX;//modified by motomura
+				IDX = (p1!=p2)?IDX+100:IDX;
 				hi.fill(IDX+0,Form("%sPxPy",p2.GetName()),p2[j].Px(),p2[j].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 				if (TMath::Abs(p2[j].Pz()) < 30)
 				{
@@ -700,14 +662,14 @@ void fillPIPICO(const MyParticle &p,MyHistos &hi)
 
 				if (TMath::Abs(p[i].Pz() + p[j].Pz()) < pzSumWidth )
 				hi.fill(101,"PIPICOcondXYZ",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,1500,4000,1000,1500,4000);
-
 			}
-
-
 		}
 	}
-
 }
+
+
+
+
 //----------------------------------extraCondition----------------------------------------------------------------//
 bool PosCondition(const MyDetektorHit &dh)
 {
@@ -740,8 +702,6 @@ void fillParticleConditionsPos(const MyOriginalEvent &oe, const MyDetektor &det,
 	//	hi.fill(hiOff++,Form("Int%dCond",i),dh.Tof(),intensity[i],"Tof [ns]",Form("Int %d",i),300,0,maxTof,300,0,10000,Form("%s/Raw",p.GetName()));
 }
 
-
-
 //-----------------------------------fill tof condition histograms-----------------------------------------------------//
 void fillParticleConditionsTof(const MyOriginalEvent &oe, const MyDetektor &det,const MyParticle &p, const MyDetektorHit &dh, std::vector<double>& intensity, MyHistos &hi, int hiOff)
 {
@@ -754,8 +714,6 @@ void fillParticleConditionsTof(const MyOriginalEvent &oe, const MyDetektor &det,
 void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos &hi,size_t nRegion)
 {
 }
-
-
 
 //extract the intensity from the Channel
 double smoothedVal(const short * Data, size_t idx)
@@ -812,104 +770,4 @@ double Average(const MyOriginalChannel &oc, const long TRfrom, const long TRto, 
 {
 	//return the Average//
 	return Integral(oc,TRfrom,TRto,absolute)/(TRto-TRfrom-1.);
-}
-
-
-//----------------Calcutrate Factrial----------------------------------
-double CalcFactorial(int n)
-{
-	if (n <= 0) return 1.;
-	Double_t x = 1;
-	Int_t b = 0;
-	do {
-		b++;
-		x *= b;
-	} while (b != n);
-	return x;
-}
-//---------------------------EventID change to Time-----------------------------------
-void IDtoTime(long id, ETime* idtime)
-{
-	tm *eventTime;
-
-	long overflowCount = 289;
-	long long IDtime = (unsigned long)id;
-	IDtime += (4294967296 * overflowCount );	
-	unsigned long IDsec = (unsigned long)(IDtime/1000);
-	unsigned long IDmsec = IDtime - IDsec*1000;
-	time_t epochSec = (time_t)IDsec;
-	eventTime = localtime(&epochSec);
-
-	idtime->year = eventTime->tm_year + 1900;
-	idtime->month = eventTime->tm_mon + 1;
-	idtime->day = eventTime->tm_mday;
-	idtime->hour = eventTime->tm_hour;
-	idtime->min = eventTime->tm_min;
-	idtime->sec = eventTime->tm_sec;
-	idtime->msec = (int)IDmsec;
-
-}
-
-void AddArgon(MyParticleContainer &particles)
-{
-	//SACLA Argon TOF experiment
-	particles.Add("Ar1P",1,MyMass::Argon40(),0);
-	particles.Add("Ar2P",2,MyMass::Argon40(),0);
-	particles.Add("Ar3P",3,MyMass::Argon40(),0);
-	particles.Add("Ar4P",4,MyMass::Argon40(),0);
-	particles.Add("Ar5P",5,MyMass::Argon40(),0);
-	particles.Add("Ar6P",6,MyMass::Argon40(),0);
-	particles.Add("Ar7P",7,MyMass::Argon40(),0);
-	particles.Add("Ar8P",8,MyMass::Argon40(),0);
-	particles.Add("Ar9P",9,MyMass::Argon40(),0);
-	particles.Add("Ar10P",10,MyMass::Argon40(),0);
-}
-void AddXenon(MyParticleContainer &particles)
-{
-	//SACLA Xenon TOF experiment
-	particles.Add("Xe1P",1,MyMass::Xenon(),0);
-	particles.Add("Xe2P",2,MyMass::Xenon(),0);
-	particles.Add("Xe3P",3,MyMass::Xenon(),0);
-	particles.Add("Xe4P",4,MyMass::Xenon(),0);
-	particles.Add("Xe5P",5,MyMass::Xenon(),0);
-	particles.Add("Xe6P",6,MyMass::Xenon(),0);
-	particles.Add("Xe7P",7,MyMass::Xenon(),0);
-	particles.Add("Xe8P",8,MyMass::Xenon(),0);
-	particles.Add("Xe9P",9,MyMass::Xenon(),0);
-	particles.Add("Xe10P",10,MyMass::Xenon(),0);
-	particles.Add("Xe11P",11,MyMass::Xenon(),0);
-	particles.Add("Xe12P",12,MyMass::Xenon(),0);
-	particles.Add("Xe13P",13,MyMass::Xenon(),0);
-
-}
-void AddXenon132(MyParticleContainer &particles)
-{
-	//SACLA Xenon TOF experiment
-	particles.Add("132Xe1P",1,MyMass::Xenon132(),0);
-	particles.Add("132Xe2P",2,MyMass::Xenon132(),0);
-	particles.Add("132Xe3P",3,MyMass::Xenon132(),0);
-	particles.Add("132Xe4P",4,MyMass::Xenon132(),0);
-	particles.Add("132Xe5P",5,MyMass::Xenon132(),0);
-	particles.Add("132Xe6P",6,MyMass::Xenon132(),0);
-	particles.Add("132Xe7P",7,MyMass::Xenon132(),0);
-	particles.Add("132Xe8P",8,MyMass::Xenon132(),0);
-	particles.Add("132Xe9P",9,MyMass::Xenon132(),0);
-	particles.Add("132Xe10P",10,MyMass::Xenon132(),0);
-	particles.Add("132Xe11P",11,MyMass::Xenon132(),0);
-	particles.Add("132Xe12P",12,MyMass::Xenon132(),0);
-	particles.Add("132Xe13P",13,MyMass::Xenon132(),0);
-	particles.Add("132Xe14P",14,MyMass::Xenon132(),0);
-	particles.Add("132Xe15P",15,MyMass::Xenon132(),0);
-	particles.Add("132Xe16P",16,MyMass::Xenon132(),0);
-	particles.Add("132Xe17P",17,MyMass::Xenon132(),0);
-	particles.Add("132Xe18P",18,MyMass::Xenon132(),0);
-	particles.Add("132Xe19P",19,MyMass::Xenon132(),0);
-	particles.Add("132Xe20P",20,MyMass::Xenon132(),0);
-	particles.Add("132Xe21P",21,MyMass::Xenon132(),0);
-	particles.Add("132Xe22P",22,MyMass::Xenon132(),0);
-	particles.Add("132Xe23P",23,MyMass::Xenon132(),0);
-	particles.Add("132Xe24P",24,MyMass::Xenon132(),0);
-	particles.Add("132Xe25P",25,MyMass::Xenon132(),0);
-	particles.Add("132Xe26P",26,MyMass::Xenon132(),0);
-
 }

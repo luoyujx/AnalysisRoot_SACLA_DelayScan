@@ -251,6 +251,9 @@
     <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyVoltage\MyVoltageDict.cpp">
       <Filter>Dictionaries Lma2root</Filter>
     </ClCompile>
+    <ClCompile Include="..\AddParticles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AnalyzeFunktions.h">
@@ -266,6 +269,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\MyWaveform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AddParticles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

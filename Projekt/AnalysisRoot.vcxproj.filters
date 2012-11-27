@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Dictionaries">
+      <UniqueIdentifier>{46894567-2c30-46c9-9c1e-84986bccea3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dictionaries Class Headers">
+      <UniqueIdentifier>{30c5565c-b835-46b8-a89b-a15d5e27c8a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FilesFromLma2Root">
+      <UniqueIdentifier>{53b43ef5-9669-41bc-bbf9-b210fbe1781a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gui Source">
+      <UniqueIdentifier>{8776cccc-dd37-468a-96f4-bf97cb2061aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gui Headers">
+      <UniqueIdentifier>{271406ae-d027-4155-be47-031b9a0e822d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dictionaries Class Headers Lma2root">
+      <UniqueIdentifier>{d82117bf-499e-4a24-a80c-a78ff40e577c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dictionaries Lma2root">
+      <UniqueIdentifier>{a5064d7a-0d2d-41ab-906c-21dcf3c8da29}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\AnalyzeFunktions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyAnalyzer\MyAnalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyMomentaCalculator\MyMomentaCalculator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticleContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticleHit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticleInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MySpectrometer\MySpectrometer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MySpectrometer\MySpectrometerRegion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyWaveform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyAnalyzer\MyAnalyzerDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MyConditions\MyConditionsDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MyCorrections\MyCorrectionsDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyGuiDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyInput\MyInputDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MyParDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticleDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticleHitDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MyParticleInfoDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MySpec\MySpecDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MySpec\MySpecRegDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MySpectrometer\MySpectrometerDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyParticle\MySpectrometer\MySpectrometerRegionDict.cpp">
+      <Filter>Dictionaries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MyConditions\MyConditions.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MyCorrections\MyCorrections.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyGui.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyInput\MyInput.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MyPar.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MySpec\MySpec.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MyGui\MyPar\MySpec\MySpecReg.cpp">
+      <Filter>Gui Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSection.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektor.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorHit.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorInfo.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyRootManager\MyHistos.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannel.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannelInfo.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEvent.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEventInfo.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannel.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannelInfo.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEvent.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEventInfo.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEvent.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEventInfo.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyLayerProperty.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyPeak\MyPeak.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyPuls\MyPuls.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyPunkt\MyPunkt.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MySettings\MySettings.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyTimeRange.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyVoltage\MyVoltage.cpp">
+      <Filter>FilesFromLma2Root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSectionDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorHitDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorInfoDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyLayerPropertyDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannelDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannelInfoDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEventDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEventInfoDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyPeak\MyPeakDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyPuls\MyPulsDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyPunkt\MyPunktDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannelDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannelInfoDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEventDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEventInfoDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEventDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEventInfoDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyTimeRangeDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+    <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyVoltage\MyVoltageDict.cpp">
+      <Filter>Dictionaries Lma2root</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AnalyzeFunktions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MyCovariance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MyMomentaCalculator\MyMomentaCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MyParticle\MyParticleContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MyWaveform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\MyAnalyzer\MyAnalyzer.h">
+      <Filter>Dictionaries Class Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyParticle\MyParticle.h">
+      <Filter>Dictionaries Class Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyParticle\MyParticleHit.h">
+      <Filter>Dictionaries Class Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyParticle\MyParticleInfo.h">
+      <Filter>Dictionaries Class Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyParticle\MySpectrometer\MySpectrometer.h">
+      <Filter>Dictionaries Class Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyParticle\MySpectrometer\MySpectrometerRegion.h">
+      <Filter>Dictionaries Class Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyPar\MyConditions\MyConditions.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyPar\MyCorrections\MyCorrections.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyGui.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyInput\MyInput.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyPar\MyPar.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyPar\MySpec\MySpec.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\MyGui\MyPar\MySpec\MySpecReg.h">
+      <Filter>Gui Headers</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyTimeRange.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEventInfo.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEvent.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEventInfo.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEvent.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannelInfo.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannel.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyPunkt\MyPunkt.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyPuls\MyPuls.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyPeak\MyPeak.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEventInfo.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEvent.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannelInfo.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannel.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyLayerProperty.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorInfo.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorHit.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektor.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyVoltage\MyVoltage.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSection.h">
+      <Filter>Dictionaries Class Headers Lma2root</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

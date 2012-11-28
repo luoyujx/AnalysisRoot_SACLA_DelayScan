@@ -26,50 +26,6 @@
 #define XVelocity 0. //(mm/ns)
 #define YVelocity 0.
 
-
-//namespace MyMass
-//{
-//	//source: http://physics.nist.gov/PhysRefData/Handbook/Tables/argontable1.htm (03.Feb.2009)//
-//	inline const double Argon36()		{return 35.967545;}		// 0.337%
-//	inline const double Argon38()		{return 37.962732;}		// 0.063%
-//	inline const double Argon40()		{return 39.962384;}		//99.600%
-//
-//	inline const double Krypton78()		{return 77.920400;}		// 0.35%
-//	inline const double Krypton80()		{return 79.916380;}		// 2.25%
-//	inline const double Krypton82()		{return 81.913482;}		//11.6%
-//	inline const double Krypton83()		{return 82.914135;}		//11.5%
-//	inline const double Krypton84()		{return 83.911507;}		//57.0%
-//	inline const double Krypton86()		{return 85.910616;}		//17.3%
-//
-//	inline const double Xenon128()		{return 127.903531;}	// 1.91%
-//	inline const double Xenon129()		{return 128.904780;}	//26.4%
-//	inline const double Xenon130()		{return 129.903509;}	// 4.1%
-//	inline const double Xenon131()		{return 130.905072;}	//21.2%
-//	inline const double Xenon132()		{return 131.904144;}	//26.9%
-//	inline const double Xenon134()		{return 133.905395;}	//10.4%
-//	inline const double Xenon136()		{return 135.907214;}	// 8.9%
-//	inline const double Xenon()			{return 131.293;}		// 100%
-//
-//	inline const double Oxygen16()		{return 15.994915;}		//99.76%
-//	inline const double Oxygen17()		{return 16.999311;}		// 0.048%
-//	inline const double Oxygen18()		{return 17.999160;}		// 0.20%
-//
-//	inline const double Iodine127()		{return 126.904473;}		// 100%
-//	inline const double Fluorine19()	{return 18.9984032;}
-//	inline const double Carbon12()		{return 12;}
-//
-//	inline const double Nitrogen14()	{return 14.003074;}		//99.63%
-//	inline const double Nitrogen15()	{return 15.000108;}		// 0.37%
-//
-//	inline const double Neon20()		{return 19.992435;}		//90.48%
-//	inline const double Neon21()		{return 20.993843;}		// 0.27%
-//	inline const double Neon22()		{return 21.991383;}		// 9.25%
-//
-//	inline const double Helium4()		{return 4.00260;}		// 9.25
-//
-//	inline const double Electron()		{return 1.*MyUnitsConv::au2amu();}
-//}
-
 //_____________________________functions______________________________________________________________________________________________________________________________
 //momentum calculation
 double calcPx(const MyParticle &p, const MyParticleHit &ph)
@@ -110,10 +66,7 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 	//AddCH3I(particles);
 
 	//---Test N2 molecule
-	particles.Add("N3P",3,MyMass::Nitrogen14(),1,0);
-	particles.Add("N2P",2,MyMass::Nitrogen14(),1,0);
-	particles.Add("N1P",1,MyMass::Nitrogen14(),1,0);
-
+	AddNitrogen(particles);
 }
 //_______SACLA 2012A______________________________________________________________________________
 void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const double k4, const double xc, const double t0)
@@ -333,7 +286,10 @@ void MyAnalyzer::Analyze()
 			{
 				const MyParticle &jp = fParticles.GetParticle(j);
 				if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
-				if (ip.GetCoinGroup() != jp.GetCoinGroup())
+				if (
+					((ip.GetCoinGroup() != jp.GetCoinGroup()))
+					||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
+					)
 				{
 					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx);
 					startIdx += 300;
@@ -646,23 +602,27 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 //----------------------------------PIPICO ALL-----------------------------------------------------------------//
 void fillPIPICO(const MyParticle &p,MyHistos &hi)
 {	
-	const double pxSumWidth = 5;//10,9,7,5
-	const double pySumWidth = 4;//10,8,5,4
-	const double pzSumWidth = 2;//5,6,4,2
+	//const double pxSumWidth = 5;//10,9,7,5
+	//const double pySumWidth = 5;//10,8,5,4
+	//const double pzSumWidth = 5;//5,6,4,2
 
 	for (size_t i=0; i<p.GetNbrOfParticleHits();++i)
 	{
 		for (size_t j=i+1;j<p.GetNbrOfParticleHits();++j)
 		{
 			//PIPICO ALL//
-			if (TMath::Abs(p[i].Px() + p[j].Px()) < pxSumWidth )
-			if (TMath::Abs(p[i].Py() + p[j].Py()) < pySumWidth )
-			{
-				hi.fill(100,"PIPICOcondXY",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,1500,4000,1000,1500,4000);
+			hi.fill(100,"PIPICO",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,p.GetCondTofFr(),p.GetCondTofTo(),1000,p.GetCondTofFr(),p.GetCondTofTo());
+			//if (TMath::Abs(p[i].Px() + p[j].Px()) < pxSumWidth )
+			//	if (TMath::Abs(p[i].Py() + p[j].Py()) < pySumWidth )
+			//	{
+			//		hi.fill(101,"PIPICOcondXY",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,1500,4000,1000,1500,4000);
+			//		std::cout<<"sumZ"<<TMath::Abs(p[i].Pz() + p[j].Pz());
 
-				if (TMath::Abs(p[i].Pz() + p[j].Pz()) < pzSumWidth )
-				hi.fill(101,"PIPICOcondXYZ",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,1500,4000,1000,1500,4000);
-			}
+			//		if (TMath::Abs(p[i].Pz() + p[j].Pz()) < pzSumWidth )
+			//		{
+			//			hi.fill(102,"PIPICOcondXYZ",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,1500,4000,1000,1500,4000);
+			//		}
+			//	}
 		}
 	}
 }

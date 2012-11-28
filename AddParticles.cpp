@@ -30,7 +30,12 @@ void AddCH3I(MyParticleContainer &particles)
 	particles.Add("I2p",2,MyMass::Iodine127(),1,1);
 	particles.Add("I1p",1,MyMass::Iodine127(),1,1);
 }
-
+void AddNitrogen(MyParticleContainer &particles)
+{
+	particles.Add("N3P",3,MyMass::Nitrogen14(),1);
+	particles.Add("N2P",2,MyMass::Nitrogen14(),1);
+	particles.Add("N1P",1,MyMass::Nitrogen14(),1);
+}
 void AddArgon(MyParticleContainer &particles)
 {
 	//SACLA Argon TOF experiment

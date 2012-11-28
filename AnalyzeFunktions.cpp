@@ -107,7 +107,7 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 	//AddXenon132(particles);
 
 	//---SACLA CH3I molecule
-	AddCH3I(particles);
+	//AddCH3I(particles);
 
 	//---Test N2 molecule
 	particles.Add("N3P",3,MyMass::Nitrogen14(),1,0);

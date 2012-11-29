@@ -12,8 +12,8 @@ void AddCH3I(MyParticleContainer &particles)
 {
 	particles.Add("H1p",1,MyMass::Hydrogen1(),0);//1
 
-	particles.Add("C6p",6,MyMass::Carbon12(),1,0);
-	particles.Add("C5p",5,MyMass::Carbon12(),1,0);
+	particles.Add("C6p",6,MyMass::Carbon12(),1,0);//2
+	particles.Add("C5p",5,MyMass::Carbon12(),1,0);//3
 	particles.Add("C4p",4,MyMass::Carbon12(),1,0);
 	particles.Add("C3p",3,MyMass::Carbon12(),1,0);
 	particles.Add("C2p",2,MyMass::Carbon12(),1,0);

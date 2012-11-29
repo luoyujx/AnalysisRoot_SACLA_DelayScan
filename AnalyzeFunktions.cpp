@@ -141,8 +141,6 @@ void MyAnalyzer::Analyze()
 		startIdx+=2;
 	}
 
-
-
 	//-------------------------get the raw mcp events called times//
 	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
 	for (size_t i=0; i<sac.GetNbrPeaks();++i)

@@ -112,7 +112,7 @@ void MyAnalyzer::Init()
 	//Init Covariance stuff//
 	fWf.Init(fOE,fHi);
 }
-//Read Intensity DATA
+//_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
 {
 	if (intFileName == "") return;
@@ -147,7 +147,7 @@ void MyAnalyzer::OpenIntensityData()
 	itend--;
 	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
 }
-//Read Intensity region DATA
+//_____Read Intensity region DATA
 void MyAnalyzer::OpenIntRegionData()
 {
 	std::ifstream ifs("IntensityRegion.txt",std::ios::in);
@@ -162,6 +162,7 @@ void MyAnalyzer::OpenIntRegionData()
 		//read the data Intensity Region (double)
 		ifs >> doubleBuf;
 		//go to nextline
+		ifs.getline(tmp,256);
 		if (!ifs.fail())
 		{
 			//add to vector
@@ -169,6 +170,71 @@ void MyAnalyzer::OpenIntRegionData()
 		}
 	}
 	std::cout << intRegion.size()-1 << " region have been loaded." << std::endl;
+}
+//_____Read Molecule momentumsum DATA
+void MyAnalyzer::OpenMoleculeData()
+{
+	std::ifstream ifs("MomentumInfo.txt",std::ios::in);
+	if (ifs.fail()){
+		std::cout<<"Can not open "<<"MomentumInfo.txt"<<std::endl;
+		return;
+	}
+	double doubleBuf[6];
+	string strBuf;
+	char tmp[256];
+	Molecule molBuf;
+	map<string,Molecule> bufMap;
+	while (!ifs.eof())
+	{
+		//read the data (double)
+		ifs >> strBuf;
+		for (int i=0; i<6; ++i)
+			ifs >> doubleBuf[i];
+		//go to nextline
+		ifs.getline(tmp,256);
+		if (!ifs.fail())
+		{
+			molBuf.momSumWindowX = doubleBuf[0];
+			molBuf.momSumWindowY = doubleBuf[1];
+			molBuf.momSumWindowZ = doubleBuf[2];
+			molBuf.momSumFactorX = doubleBuf[3];
+			molBuf.momSumFactorY = doubleBuf[4];
+			molBuf.momSumFactorZ = doubleBuf[5];
+			//add to vector
+			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
+		}
+	}
+
+	//initialize 2D vector
+	molecule.resize(fParticles.GetNbrOfParticles());
+	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
+		molecule[i].resize(fParticles.GetNbrOfParticles());
+
+	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
+		for (int j=0; j<fParticles.GetNbrOfParticles(); ++j)
+		{
+			string molName(fParticles.GetParticle(i).GetName());
+			molName += fParticles.GetParticle(i).GetName();
+			map<string,Molecule>::iterator it = bufMap.find(molName);
+			if (it != bufMap.end())
+			{
+				molecule[i][j].momSumWindowX = it->second.momSumWindowX;
+				molecule[i][j].momSumWindowY = it->second.momSumWindowY;
+				molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
+				molecule[i][j].momSumFactorX = it->second.momSumFactorX;
+				molecule[i][j].momSumFactorY = it->second.momSumFactorY;
+				molecule[i][j].momSumFactorZ = it->second.momSumFactorZ;
+			}
+			else
+			{
+				molecule[i][j].momSumWindowX = 20;
+				molecule[i][j].momSumWindowY = 20;
+				molecule[i][j].momSumWindowZ = 20;
+				molecule[i][j].momSumFactorX = 1;
+				molecule[i][j].momSumFactorY = 1;
+				molecule[i][j].momSumFactorZ = 1;
+			}
+		}
 }
 //________________________This should not be modified___________________________________________________________________________________________________________________________________
 void MyAnalyzer::Run()

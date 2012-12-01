@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <time.h>
+#include "./MyAnalyzer/MyAnalyzer.h"
 
 class MyParticleContainer;
 class MyHistos;
@@ -19,7 +20,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 void fillParticleConditionsPos(const MyOriginalEvent &oe, const MyDetektor &det, const MyParticle &p, const MyDetektorHit &dh, std::vector<double>& intensity, MyHistos &hi, int hiOff);
 void fillParticleConditionsTof(const MyOriginalEvent &oe, const MyDetektor &det,const MyParticle &p, const MyDetektorHit &dh, std::vector<double>& intensity, MyHistos &hi, int hiOff);
 void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos &hi,size_t);
-void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff);
+void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol);
 void fillPIPICO(const MyParticle &p,MyHistos &hi);
 
 double Integral(const MyOriginalChannel &oc, const long TRfrom, const long TRto, bool absolute);

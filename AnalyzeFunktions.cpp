@@ -289,7 +289,7 @@ void MyAnalyzer::Analyze()
 					||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
 					)
 				{
-					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx);
+					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j]);
 					startIdx += 300;
 				}
 			}
@@ -381,14 +381,18 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 
 
 //-------------------Fill molecule histogram-----------------------------------------------------------------------------------------------------//
-void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff)
+void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol)
 {
 	TString Hname(p1.GetName());
 	Hname += p2.GetName();
 	
-	const double pxSumWidth = 20;//10,9,7,5
-	const double pySumWidth = 10;//10,8,5,4
-	const double pzSumWidth = 3;//5,6,4,2
+	//const double pxSumWidth = 20;//10,9,7,5
+	//const double pySumWidth = 10;//10,8,5,4
+	//const double pzSumWidth = 3;//5,6,4,2
+	const double pxSumWidth = mol.momSumWindowX;//10,9,7,5
+	const double pySumWidth = mol.momSumWindowY;//10,8,5,4
+	const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
+
 
 	const double MomLim = 400;
 

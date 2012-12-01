@@ -16,11 +16,25 @@
 
 #include "../MyWaveform.h"
 
+//_____Informatin for calc coincidence_____
+struct Molecule
+{
+public:
+	Molecule()				{};
+public:
+	double					momSumWindowX;
+	double					momSumWindowY;
+	double					momSumWindowZ;
+	double					momSumFactorX;
+	double					momSumFactorY;
+	double					momSumFactorZ;
+};
+
 class MyAnalyzer
 {
 public:
 	//MyAnalyzer();
-	MyAnalyzer(int UseGUI);
+	MyAnalyzer(int UseGUI = 1);
 
 public:
 	void					 Init();
@@ -29,6 +43,8 @@ public:
 	void					 FileOpen();
 	void					OpenIntensityData();
 	void					OpenIntRegionData();
+	void					OpenMoleculeData();
+
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
 
 	//---Setting from comand switch---//
@@ -85,6 +101,8 @@ private:
 	std::map<unsigned int, double>		tagIntensity;
 	std::map<unsigned int, double>		tagIntensity2;
 	std::vector<double>					intRegion;
+
+	std::vector<std::vector<Molecule>>			molecule;
 };
 
 #endif

@@ -289,6 +289,7 @@ void MyAnalyzer::Analyze()
 					||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
 					)
 				{
+					//std::cout<<molecule[i][j].momSumFactorX<<std::endl;
 					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j]);
 					startIdx += 300;
 				}
@@ -392,6 +393,11 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 	const double pxSumWidth = mol.momSumWindowX;//10,9,7,5
 	const double pySumWidth = mol.momSumWindowY;//10,8,5,4
 	const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
+
+	//std::cout<< Hname << ":" <<std::endl;//10,9,7,5
+	//std::cout<<" pxSumWidth" << mol.momSumWindowX <<std::endl;//10,9,7,5
+	//std::cout<<" pySumWidth" << mol.momSumWindowX <<std::endl;//10,9,7,5
+	//std::cout<<" pzSumWidth" << mol.momSumWindowX <<std::endl;//10,9,7,5
 
 
 	const double MomLim = 400;

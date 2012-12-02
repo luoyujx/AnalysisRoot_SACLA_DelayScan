@@ -102,7 +102,7 @@ private:
 	std::map<unsigned int, double>		tagIntensity2;
 	std::vector<double>					intRegion;
 
-	std::vector<std::vector<Molecule>>			molecule;
+	std::vector< std::vector<Molecule> >			molecule;
 };
 
 #endif

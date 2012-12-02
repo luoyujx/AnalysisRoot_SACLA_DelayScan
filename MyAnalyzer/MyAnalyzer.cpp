@@ -33,7 +33,8 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fSChain("SortedEvent"),
 	fHi(false),
 	running(false),
-	processTimer(100)
+	processTimer(100),
+	molecule(0, std::vector<Molecule>(0))
 {
 	//--------------do not modify this part (unless you know what you're doing START-----------------------------//
 	//setup chains//
@@ -174,11 +175,34 @@ void MyAnalyzer::OpenIntRegionData()
 //_____Read Molecule momentumsum DATA
 void MyAnalyzer::OpenMoleculeData()
 {
+	//initialize 2D vector
+	molecule.resize(fParticles.GetNbrOfParticles());
+	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
+		for (int j=0; j<fParticles.GetNbrOfParticles(); ++j)
+		{
+			Molecule mol;
+			molecule[i].push_back(mol);
+		}
+
 	std::ifstream ifs("MomentumInfo.txt",std::ios::in);
-	if (ifs.fail()){
-		std::cout<<"Can not open "<<"MomentumInfo.txt"<<std::endl;
-		return;
+	if (ifs.fail())
+	{
+		std::cout<<"Can not open MomentumInfo.txt. Use default value."<<std::endl;
+		for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
+			for (int j=0; j<fParticles.GetNbrOfParticles(); ++j)
+			{
+				molecule[i][j].momSumWindowX = 20;
+				molecule[i][j].momSumWindowY = 20;
+				molecule[i][j].momSumWindowZ = 20;
+				molecule[i][j].momSumFactorX = 1;
+				molecule[i][j].momSumFactorY = 1;
+				molecule[i][j].momSumFactorZ = 1;
+				std::cout<<molecule[i].size() << ":" << molecule[1][1].momSumFactorX<<std::endl;
+				return;
+			}
+
 	}
+	std::cout<<molecule[1][1].momSumFactorX<<std::endl;
 	double doubleBuf[6];
 	string strBuf;
 	char tmp[256];
@@ -249,7 +273,7 @@ void MyAnalyzer::Run()
 
 	while(fEntryIterator < fNEntries)
 	{
-		std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
+		//std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
 
 		//Clear the events//
 		fOE.Clear();
@@ -262,7 +286,7 @@ void MyAnalyzer::Run()
 		fSAChain.GetEntry(fEntryIterator);
 		fSChain.GetEntry(fEntryIterator);
 
-		std::cout << "   *** " << "EventID :"<< static_cast<unsigned int>(fOE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSAE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSE.GetEventID());
+		//std::cout << "   *** " << "EventID :"<< static_cast<unsigned int>(fOE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSAE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSE.GetEventID());
 		//check EventID//
 		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
 		{

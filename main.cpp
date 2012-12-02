@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
 
 	fAn.OpenIntensityData();
 //	fAn.OpenIntRegionData();
+	fAn.OpenMoleculeData();
 
 	theApp.Run();
 	theApp.Terminate(0);

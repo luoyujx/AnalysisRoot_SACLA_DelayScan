@@ -63,10 +63,10 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 	//AddXenon132(particles);
 
 	//---SACLA CH3I molecule
-	//AddCH3I(particles);
+	AddCH3I(particles);
 
 	//---Test N2 molecule
-	AddNitrogen(particles);
+	//AddNitrogen(particles);
 }
 //_______SACLA 2012A______________________________________________________________________________
 void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const double k4, const double xc, const double t0)
@@ -394,11 +394,10 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 	const double pySumWidth = mol.momSumWindowY;//10,8,5,4
 	const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
 
-	//std::cout<< Hname << ":" <<std::endl;//10,9,7,5
-	//std::cout<<" pxSumWidth" << mol.momSumWindowX <<std::endl;//10,9,7,5
-	//std::cout<<" pySumWidth" << mol.momSumWindowX <<std::endl;//10,9,7,5
-	//std::cout<<" pzSumWidth" << mol.momSumWindowX <<std::endl;//10,9,7,5
-
+	//std::cout<< Hname << ":" <<std::endl;
+	//std::cout<<" pxSumWidth" << mol.momSumWindowX <<std::endl;
+	//std::cout<<" pySumWidth" << mol.momSumWindowX <<std::endl;
+	//std::cout<<" pzSumWidth" << mol.momSumWindowX <<std::endl;
 
 	const double MomLim = 400;
 
@@ -412,20 +411,24 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 			//x momentum sum//
 			hi.fill(hiOff+1,"PxSum",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100,Form("%s/MomSums",Hname.Data()));
 			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
-			if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth )
-				hi.fill(hiOff+2,"PxSumCond",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-			
+			{
+				hi.fill(hiOff+20,"PxSumCondY",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth )
+					hi.fill(hiOff+2,"PxSumCondYZ",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			}
 			//y momentum sum//
 			hi.fill(hiOff+3,"PySum",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
-			if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth )
-				hi.fill(hiOff+4,"PySumCond",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-
+			{
+				hi.fill(hiOff+21,"PySumCondX",(p1[i].Py() + p2[j].Py()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth )
+					hi.fill(hiOff+4,"PySumCondXZ",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			}
 			//z momentum sum//
 			hi.fill(hiOff+5,"PzSum",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
 			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
-				hi.fill(hiOff+6,"PzSumCond",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+				hi.fill(hiOff+6,"PzSumCondXY",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 
 			//PIPICO//
 			hi.fill(hiOff+7,"PIPICO",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
@@ -433,22 +436,22 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
 				hi.fill(hiOff+8,"PIPICOCondXY",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
 
-			{
-				//x momentum sum//
-				if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
-				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
-					hi.fill(hiOff+12,"PxSumCond_Width3",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-				
-				//y momentum sum//
-				if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
-				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
-					hi.fill(hiOff+14,"PySumCond_Width3",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			//{
+			//	//x momentum sum//
+			//	if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
+			//	if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
+			//		hi.fill(hiOff+12,"PxSumCond_Width3",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			//	
+			//	//y momentum sum//
+			//	if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
+			//	if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
+			//		hi.fill(hiOff+14,"PySumCond_Width3",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
 
-				//z momentum sum//
-				if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
-				if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
-					hi.fill(hiOff+16,"PzSumCond_Width3",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-			}
+			//	//z momentum sum//
+			//	if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
+			//	if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
+			//		hi.fill(hiOff+16,"PzSumCond_Width3",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			//}
 
 			///////////////////Momentum sum condition//////////////////////
 
@@ -610,9 +613,6 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 //----------------------------------PIPICO ALL-----------------------------------------------------------------//
 void fillPIPICO(const MyParticle &p,MyHistos &hi)
 {	
-	//const double pxSumWidth = 5;//10,9,7,5
-	//const double pySumWidth = 5;//10,8,5,4
-	//const double pzSumWidth = 5;//5,6,4,2
 
 	for (size_t i=0; i<p.GetNbrOfParticleHits();++i)
 	{

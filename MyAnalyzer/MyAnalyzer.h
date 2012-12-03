@@ -20,7 +20,15 @@
 struct Molecule
 {
 public:
-	Molecule()				{};
+	Molecule()
+	{
+		momSumWindowX = 0;
+		momSumWindowY = 0;
+		momSumWindowZ = 0;
+		momSumFactorX = 0;
+		momSumFactorY = 0;
+		momSumFactorZ = 0;
+	};
 public:
 	double					momSumWindowX;
 	double					momSumWindowY;

@@ -178,31 +178,45 @@ void MyAnalyzer::OpenMoleculeData()
 	//initialize 2D vector
 	molecule.resize(fParticles.GetNbrOfParticles());
 	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
-		for (int j=0; j<fParticles.GetNbrOfParticles(); ++j)
-		{
-			Molecule mol;
-			molecule[i].push_back(mol);
-		}
+		molecule[i].resize(fParticles.GetNbrOfParticles());
 
 	std::ifstream ifs("MomentumInfo.txt",std::ios::in);
 	if (ifs.fail())
 	{
 		std::cout<<"Can not open MomentumInfo.txt. Use default value."<<std::endl;
-		for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
-			for (int j=0; j<fParticles.GetNbrOfParticles(); ++j)
-			{
-				molecule[i][j].momSumWindowX = 20;
-				molecule[i][j].momSumWindowY = 20;
-				molecule[i][j].momSumWindowZ = 20;
-				molecule[i][j].momSumFactorX = 1;
-				molecule[i][j].momSumFactorY = 1;
-				molecule[i][j].momSumFactorZ = 1;
-				std::cout<<molecule[i].size() << ":" << molecule[1][1].momSumFactorX<<std::endl;
-				return;
-			}
+		std::ofstream ofs("MomentumInfo.txt",std::ios::out);
+		for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
+			for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+				if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
+					if (
+						((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
+						||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
+						)
 
+					{
+						molecule[i][j].momSumWindowX = 50;
+						molecule[i][j].momSumWindowY = 50;
+						molecule[i][j].momSumWindowZ = 50;
+						molecule[i][j].momSumFactorX = 1;
+						molecule[i][j].momSumFactorY = 1;
+						molecule[i][j].momSumFactorZ = 1;
+						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
+						string molName(fParticles.GetParticle(i).GetName());
+						molName += fParticles.GetParticle(j).GetName();
+						ofs << molName; 
+						ofs << "\t" << molecule[i][j].momSumWindowX;
+						ofs << "\t" << molecule[i][j].momSumWindowY;
+						ofs << "\t" << molecule[i][j].momSumWindowZ;
+						ofs << "\t" << molecule[i][j].momSumFactorX;
+						ofs << "\t" << molecule[i][j].momSumFactorY;
+						ofs << "\t" << molecule[i][j].momSumFactorZ;
+						ofs << std::endl;
+						std::cout << molName << std::endl;
+					}
+					ofs.close();
+					return;
 	}
-	std::cout<<molecule[1][1].momSumFactorX<<std::endl;
+
 	double doubleBuf[6];
 	string strBuf;
 	char tmp[256];
@@ -224,41 +238,51 @@ void MyAnalyzer::OpenMoleculeData()
 			molBuf.momSumFactorX = doubleBuf[3];
 			molBuf.momSumFactorY = doubleBuf[4];
 			molBuf.momSumFactorZ = doubleBuf[5];
-			//add to vector
+			//add to Map
+			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
+		}
+		else
+		{
+			molBuf.momSumWindowX = 50;
+			molBuf.momSumWindowY = 50;
+			molBuf.momSumWindowZ = 50;
+			molBuf.momSumFactorX = 1;
+			molBuf.momSumFactorY = 1;
+			molBuf.momSumFactorZ = 1;
 			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
 		}
 	}
 
-	//initialize 2D vector
-	molecule.resize(fParticles.GetNbrOfParticles());
-	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
-		molecule[i].resize(fParticles.GetNbrOfParticles());
-
-	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
-		for (int j=0; j<fParticles.GetNbrOfParticles(); ++j)
-		{
-			string molName(fParticles.GetParticle(i).GetName());
-			molName += fParticles.GetParticle(i).GetName();
-			map<string,Molecule>::iterator it = bufMap.find(molName);
-			if (it != bufMap.end())
-			{
-				molecule[i][j].momSumWindowX = it->second.momSumWindowX;
-				molecule[i][j].momSumWindowY = it->second.momSumWindowY;
-				molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
-				molecule[i][j].momSumFactorX = it->second.momSumFactorX;
-				molecule[i][j].momSumFactorY = it->second.momSumFactorY;
-				molecule[i][j].momSumFactorZ = it->second.momSumFactorZ;
-			}
-			else
-			{
-				molecule[i][j].momSumWindowX = 20;
-				molecule[i][j].momSumWindowY = 20;
-				molecule[i][j].momSumWindowZ = 20;
-				molecule[i][j].momSumFactorX = 1;
-				molecule[i][j].momSumFactorY = 1;
-				molecule[i][j].momSumFactorZ = 1;
-			}
-		}
+	for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
+		for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+			if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
+				if (
+					((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
+					||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
+					)
+				{
+					string molName(fParticles.GetParticle(i).GetName());
+					molName += fParticles.GetParticle(j).GetName();
+					map<string,Molecule>::iterator it = bufMap.find(molName);
+					if (it != bufMap.end())
+					{
+						molecule[i][j].momSumWindowX = it->second.momSumWindowX;
+						molecule[i][j].momSumWindowY = it->second.momSumWindowY;
+						molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
+						molecule[i][j].momSumFactorX = it->second.momSumFactorX;
+						molecule[i][j].momSumFactorY = it->second.momSumFactorY;
+						molecule[i][j].momSumFactorZ = it->second.momSumFactorZ;
+					}
+					else
+					{
+						molecule[i][j].momSumWindowX = 50;
+						molecule[i][j].momSumWindowY = 50;
+						molecule[i][j].momSumWindowZ = 50;
+						molecule[i][j].momSumFactorX = 1;
+						molecule[i][j].momSumFactorY = 1;
+						molecule[i][j].momSumFactorZ = 1;
+					}
+				}
 }
 //________________________This should not be modified___________________________________________________________________________________________________________________________________
 void MyAnalyzer::Run()
@@ -273,7 +297,7 @@ void MyAnalyzer::Run()
 
 	while(fEntryIterator < fNEntries)
 	{
-		//std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
+		std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
 
 		//Clear the events//
 		fOE.Clear();

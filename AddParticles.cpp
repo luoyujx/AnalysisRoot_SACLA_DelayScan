@@ -18,7 +18,11 @@ void AddCH3I(MyParticleContainer &particles)
 	particles.Add("C3p",3,MyMass::Carbon12(),1,0);
 	particles.Add("C2p",2,MyMass::Carbon12(),1,0);
 	particles.Add("C1p",1,MyMass::Carbon12(),1,0);
-
+	
+	particles.Add("I14p",14,MyMass::Iodine127(),1,1);
+	particles.Add("I13p",13,MyMass::Iodine127(),1,1);
+	particles.Add("I12p",12,MyMass::Iodine127(),1,1);
+	particles.Add("I11p",11,MyMass::Iodine127(),1,1);
 	particles.Add("I10p",10,MyMass::Iodine127(),1,1);
 	particles.Add("I9p",9,MyMass::Iodine127(),1,1);
 	particles.Add("I8p",8,MyMass::Iodine127(),1,1);

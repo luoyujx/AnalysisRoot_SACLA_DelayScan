@@ -197,9 +197,7 @@ void MyAnalyzer::OpenMoleculeData()
 						molecule[i][j].momSumWindowX = 50;
 						molecule[i][j].momSumWindowY = 50;
 						molecule[i][j].momSumWindowZ = 50;
-						molecule[i][j].momSumFactorX = 1;
-						molecule[i][j].momSumFactorY = 1;
-						molecule[i][j].momSumFactorZ = 1;
+						molecule[i][j].momSumFactor = 1;
 						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
 						string molName(fParticles.GetParticle(i).GetName());
 						molName += fParticles.GetParticle(j).GetName();
@@ -207,9 +205,7 @@ void MyAnalyzer::OpenMoleculeData()
 						ofs << "\t" << molecule[i][j].momSumWindowX;
 						ofs << "\t" << molecule[i][j].momSumWindowY;
 						ofs << "\t" << molecule[i][j].momSumWindowZ;
-						ofs << "\t" << molecule[i][j].momSumFactorX;
-						ofs << "\t" << molecule[i][j].momSumFactorY;
-						ofs << "\t" << molecule[i][j].momSumFactorZ;
+						ofs << "\t" << molecule[i][j].momSumFactor;
 						ofs << std::endl;
 						std::cout << molName << std::endl;
 					}
@@ -226,7 +222,7 @@ void MyAnalyzer::OpenMoleculeData()
 	{
 		//read the data (double)
 		ifs >> strBuf;
-		for (int i=0; i<6; ++i)
+		for (int i=0; i<4; ++i)
 			ifs >> doubleBuf[i];
 		//go to nextline
 		ifs.getline(tmp,256);
@@ -235,9 +231,7 @@ void MyAnalyzer::OpenMoleculeData()
 			molBuf.momSumWindowX = doubleBuf[0];
 			molBuf.momSumWindowY = doubleBuf[1];
 			molBuf.momSumWindowZ = doubleBuf[2];
-			molBuf.momSumFactorX = doubleBuf[3];
-			molBuf.momSumFactorY = doubleBuf[4];
-			molBuf.momSumFactorZ = doubleBuf[5];
+			molBuf.momSumFactor = doubleBuf[3];
 			//add to Map
 			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
 		}
@@ -246,9 +240,7 @@ void MyAnalyzer::OpenMoleculeData()
 			molBuf.momSumWindowX = 50;
 			molBuf.momSumWindowY = 50;
 			molBuf.momSumWindowZ = 50;
-			molBuf.momSumFactorX = 1;
-			molBuf.momSumFactorY = 1;
-			molBuf.momSumFactorZ = 1;
+			molBuf.momSumFactor = 1;
 			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
 		}
 	}
@@ -269,18 +261,14 @@ void MyAnalyzer::OpenMoleculeData()
 						molecule[i][j].momSumWindowX = it->second.momSumWindowX;
 						molecule[i][j].momSumWindowY = it->second.momSumWindowY;
 						molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
-						molecule[i][j].momSumFactorX = it->second.momSumFactorX;
-						molecule[i][j].momSumFactorY = it->second.momSumFactorY;
-						molecule[i][j].momSumFactorZ = it->second.momSumFactorZ;
+						molecule[i][j].momSumFactor = it->second.momSumFactor;
 					}
 					else
 					{
 						molecule[i][j].momSumWindowX = 50;
 						molecule[i][j].momSumWindowY = 50;
 						molecule[i][j].momSumWindowZ = 50;
-						molecule[i][j].momSumFactorX = 1;
-						molecule[i][j].momSumFactorY = 1;
-						molecule[i][j].momSumFactorZ = 1;
+						molecule[i][j].momSumFactor = 1;
 					}
 				}
 }

@@ -1,6 +1,6 @@
 #ifndef __MyParticleHit_H__
 #define __MyParticleHit_H__
-
+#include <TMath.h>
 #include "../FilesFromLma2Root/MyEvent/MySortedEvent/MyDetektor/MyDetektorHit.h"
 
 class MyHistos;
@@ -25,7 +25,11 @@ public:
 
 
 	double		Px()const			{return fPx;}
+	double		PxRot(double theta)const	{return (TMath::Cos(theta)*fPx + TMath::Sin(theta)*fPy);};
+
 	double		Py()const			{return fPy;}
+	double		PyRot(double theta)const {return (-TMath::Sin(theta)*fPx + TMath::Cos(theta)*fPy);};
+
 	double		Pz()const			{return fPz;}
 	double		P()const			{return fP;}
 	double		E()const			{return fE;}

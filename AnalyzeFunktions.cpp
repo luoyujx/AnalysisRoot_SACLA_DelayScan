@@ -394,71 +394,91 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 	const double pySumWidth = mol.momSumWindowY;//10,8,5,4
 	const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
 
-	//std::cout<< Hname << ":" <<std::endl;
+//	std::cout<< Hname << ":" <<std::endl;
 	//std::cout<<" pxSumWidth" << mol.momSumWindowX <<std::endl;
 	//std::cout<<" pySumWidth" << mol.momSumWindowX <<std::endl;
 	//std::cout<<" pzSumWidth" << mol.momSumWindowX <<std::endl;
 
 	const double MomLim = 400;
+	const double MomScale = mol.momSumFactor;
+	//std::cout<<" Factor: " <<MomScale <<std::endl;
+
 
 	for (size_t i=0; i<p1.GetNbrOfParticleHits();++i)
 	{
 		for (size_t j=0;j<p2.GetNbrOfParticleHits();++j)//i=j
 		{
+
 			//skip if we are going to put in the same particlehit, for the case that we want coincidences for the same particle//
 			if ((i>=j) && (p1==p2)) continue;//i==j
 
+
+
+
 			//x momentum sum//
-			hi.fill(hiOff+1,"PxSum",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100,Form("%s/MomSums",Hname.Data()));
-			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
+			hi.fill(hiOff+1,"PxSum",(p1[i].Px() + MomScale * p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400,Form("%s/MomSums",Hname.Data()));
+			if (TMath::Abs(p1[i].Py() + MomScale *p2[j].Py()) < pySumWidth )
 			{
-				hi.fill(hiOff+20,"PxSumCondY",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth )
-					hi.fill(hiOff+2,"PxSumCondYZ",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+				hi.fill(hiOff+20,"PxSumCondY",(p1[i].Px() + MomScale *p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
+				if (TMath::Abs(p1[i].Pz() + MomScale *p2[j].Pz()) < pzSumWidth )
+					hi.fill(hiOff+2,"PxSumCondYZ",(p1[i].Px() + MomScale *p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
 			}
 			//y momentum sum//
-			hi.fill(hiOff+3,"PySum",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
+			hi.fill(hiOff+3,"PySum",(p1[i].Py() + MomScale *p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
+			if (TMath::Abs(p1[i].Px() + MomScale *p2[j].Px()) < pxSumWidth )
 			{
-				hi.fill(hiOff+21,"PySumCondX",(p1[i].Py() + p2[j].Py()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-				if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth )
-					hi.fill(hiOff+4,"PySumCondXZ",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+				hi.fill(hiOff+21,"PySumCondX",(p1[i].Py() + MomScale *p2[j].Py()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
+				if (TMath::Abs(p1[i].Pz() + MomScale *p2[j].Pz()) < pzSumWidth )
+					hi.fill(hiOff+4,"PySumCondXZ",(p1[i].Py() + MomScale *p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
 			}
 			//z momentum sum//
-			hi.fill(hiOff+5,"PzSum",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
-			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
-			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
-				hi.fill(hiOff+6,"PzSumCondXY",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			hi.fill(hiOff+5,"PzSum",(p1[i].Pz() + MomScale *p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
+			if (TMath::Abs(p1[i].Py() + MomScale *p2[j].Py()) < pySumWidth )
+			if (TMath::Abs(p1[i].Px() + MomScale *p2[j].Px()) < pxSumWidth )
+				hi.fill(hiOff+6,"PzSumCondXY",(p1[i].Pz() + MomScale *p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
 
 			//PIPICO//
 			hi.fill(hiOff+7,"PIPICO",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
-			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth )
-			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth )
+			if (TMath::Abs(p1[i].Px() + MomScale *p2[j].Px()) < pxSumWidth )
+			if (TMath::Abs(p1[i].Py() + MomScale *p2[j].Py()) < pySumWidth )
 				hi.fill(hiOff+8,"PIPICOCondXY",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
 
+			
+			double Theta = TMath::ATan(p2[j].Py()/TMath::Abs(p2[j].Px()));
+			double p1x = p1[i].PxRot(Theta);
+			double p1y = p1[i].PyRot(Theta);
+			double p2x = p2[j].PxRot(Theta);
+			double p2y = p2[j].PyRot(Theta);
+
+//			hi.fill(hiOff+30,"PxPySum",p1[i].Px()+MomScale *p2[j].Px(), p1[i].Py()+MomScale *p2[j].Py(),"pxSum [a.u.]","pySum [a.u.]",400,-400,400,400,-400,400, Form("%s/MomSums",Hname.Data()));
+			hi.fill(hiOff+31,"PxPyRot",p1x, p1y,"px [a.u.]","py [a.u.]",400,-400,400,400,-400,400, Form("%s/MomSums",Hname.Data()));
+			hi.fill(hiOff+31,"PxPyRot",p2x, p2y,"px [a.u.]","py [a.u.]",400,-400,400,400,-400,400, Form("%s/MomSums",Hname.Data()));
+			hi.fill(hiOff+32,"PxPySumRot",p1x+MomScale*p2x, p1y+MomScale*p2y,"pxSum [a.u.]","pySum [a.u.]",400,-400,400,400,-400,400, Form("%s/MomSums",Hname.Data()));
+
+			
 			//{
 			//	//x momentum sum//
 			//	if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
 			//	if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
-			//		hi.fill(hiOff+12,"PxSumCond_Width3",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			//		hi.fill(hiOff+12,"PxSumCond_Width3",(p1[i].Px() + p2[j].Px()),Form("Px_{%s} + Px_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
 			//	
 			//	//y momentum sum//
 			//	if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
 			//	if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth*3 )
-			//		hi.fill(hiOff+14,"PySumCond_Width3",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			//		hi.fill(hiOff+14,"PySumCond_Width3",(p1[i].Py() + p2[j].Py()),Form("Py_{%s} + Py_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
 
 			//	//z momentum sum//
 			//	if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth*3 )
 			//	if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth*3 )
-			//		hi.fill(hiOff+16,"PzSumCond_Width3",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-100,100, Form("%s/MomSums",Hname.Data()));
+			//		hi.fill(hiOff+16,"PzSumCond_Width3",(p1[i].Pz() + p2[j].Pz()),Form("Pz_{%s} + Pz_{%s} [a.u]",p1.GetName(),p2.GetName()),400,-400,400, Form("%s/MomSums",Hname.Data()));
 			//}
 
 			///////////////////Momentum sum condition//////////////////////
 
 			//Momenta & Energy & Intensity//
-			if (TMath::Abs(p1[i].Px() + p2[j].Px()) < pxSumWidth)
-			if (TMath::Abs(p1[i].Py() + p2[j].Py()) < pySumWidth)
-			if (TMath::Abs(p1[i].Pz() + p2[j].Pz()) < pzSumWidth)
+			if (TMath::Abs(p1[i].Px() + MomScale *p2[j].Px()) < pxSumWidth)
+			if (TMath::Abs(p1[i].Py() + MomScale *p2[j].Py()) < pySumWidth)
+			if (TMath::Abs(p1[i].Pz() + MomScale *p2[j].Pz()) < pzSumWidth)
 			{
 				//PIPICO//
 				hi.fill(hiOff+9,"PIPICOCondXYZ",p1[i].TofCor(),p2[j].TofCor(),Form("tof_{%s} [ns]",p1.GetName()),Form("tof_{%s} [ns]",p2.GetName()),300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
@@ -634,8 +654,6 @@ void fillPIPICO(const MyParticle &p,MyHistos &hi)
 		}
 	}
 }
-
-
 
 
 //----------------------------------extraCondition----------------------------------------------------------------//

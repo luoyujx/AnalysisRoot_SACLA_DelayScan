@@ -25,17 +25,14 @@ public:
 		momSumWindowX = 0;
 		momSumWindowY = 0;
 		momSumWindowZ = 0;
-		momSumFactorX = 0;
-		momSumFactorY = 0;
-		momSumFactorZ = 0;
+		momSumFactor = 0;
 	};
 public:
 	double					momSumWindowX;
 	double					momSumWindowY;
 	double					momSumWindowZ;
-	double					momSumFactorX;
-	double					momSumFactorY;
-	double					momSumFactorZ;
+	double					momSumFactor;
+
 };
 
 class MyAnalyzer

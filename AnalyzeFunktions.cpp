@@ -56,14 +56,14 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 	particles.Add("Ion",1,1,0);//------------particle 0 --- Do not comment out!
 
 	//---SACLA Ar atom
-	//AddArgon(particles);
+	AddArgon(particles);
 
 	//---SACLA Xe atom
 	//AddXenon(particles);
 	//AddXenon132(particles);
 
 	//---SACLA CH3I molecule
-	AddCH3I(particles);
+	//AddCH3I(particles);
 
 	//---Test N2 molecule
 	//AddNitrogen(particles);

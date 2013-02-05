@@ -2,8 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <TString.h>
+#include <fstream>
 
 #include "./MyAnalyzer/MyAnalyzer.h"
+#include "./FilesFromLma2Root/MySettings/MySettings.h"
+
+bool LoadSettings(TString &filename, MySettings &set);
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +26,7 @@ int main(int argc, char *argv[])
 	}	
 		
 	MyAnalyzer fAn(UseGUI);
+	MySettings set(false);
 
 	//------for Setting-------//
 	fAn.SetRekMeth(20);
@@ -70,10 +75,10 @@ int main(int argc, char *argv[])
 	std::cout<<"Intensity data file name : "<<fAn.GetIntFileName()<<std::endl;
 	std::cout<<"Use GUI : "<<UseGUI<<std::endl;
 	//------------------------//
-
+	TString filename("setting.txt");
+	LoadSettings(filename,set);
 	fAn.FileOpen();
-
-	fAn.Init();
+	fAn.Init(set);
 
 	fAn.OpenIntensityData();
 //	fAn.OpenIntRegionData();
@@ -82,4 +87,53 @@ int main(int argc, char *argv[])
 	theApp.Run();
 	theApp.Terminate(0);
 	return 0;
+}
+
+bool LoadSettings(TString &filename, MySettings &set)
+{
+	TString LeftHand;
+	TString RightHand;
+	std::ifstream ifs(filename,std::ios::in);
+	if (ifs.fail()){
+		std::cout<<"Can not open "<<filename<<std::endl;
+		return false;
+	}
+	while(!ifs.eof())
+	{
+		char tmp[128];
+		ifs >> tmp;
+		TString param = tmp;
+		//std::cout << filename.Data()<<std::endl;
+		//--when q return true--//
+		if (!param.CompareTo("q"))
+			return true;
+		
+		//--if there is a '#--' its a commented line that should be printed--//
+		else if ( param.Contains("#") && param.Contains("--") )
+		{
+			std::cout <<std::endl<<param.Data()<<std::endl;
+		}
+		//--if there is a '#' its a commented line--//
+		else if (param.Contains("#"))
+		{
+			//do nothing//
+		}
+		//--when there is a "=" then check wether a Parameter is changed--//
+		else if (param.Contains("="))
+		{
+			//--separate input into the lefthand and righthand side of the "="--//
+			LeftHand = param(0,param.Index("="));
+			RightHand = param(param.Index("=")+1,(param.Length()-param.Index("=")));
+			if (RightHand.IsFloat())
+				set.Change(LeftHand.Data(),RightHand.Atof());
+			else 
+				set.Change(LeftHand.Data(),RightHand.Data());
+		}
+		//--else it must have been a filename, so return--//
+		else
+		{
+			return false;
+		}
+	}
+	return true;
 }

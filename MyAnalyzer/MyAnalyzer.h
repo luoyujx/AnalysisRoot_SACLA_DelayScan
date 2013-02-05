@@ -13,6 +13,7 @@
 #include "../FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEvent.h"
 #include "../FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEvent.h"
 #include "../FilesFromLma2Root/MyRootManager/MyHistos.h"
+#include "../FilesFromLma2Root/MySettings/MySettings.h"
 
 #include "../MyWaveform.h"
 
@@ -32,7 +33,6 @@ public:
 	double					momSumWindowY;
 	double					momSumWindowZ;
 	double					momSumFactor;
-
 };
 
 class MyAnalyzer
@@ -42,10 +42,11 @@ public:
 	MyAnalyzer(int UseGUI = 1);
 
 public:
-	void					 Init();
+	void					 Init(MySettings &set);
 	void					 Run();
 	void					 Analyze();
 	void					 FileOpen();
+	void					SetParameter(MySettings &set);
 	void					OpenIntensityData();
 	void					OpenIntRegionData();
 	void					OpenMoleculeData();

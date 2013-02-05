@@ -14,7 +14,7 @@ class TGraph;
 class MyHistos  
 {
 public:
-	MyHistos(const bool v, int NbrMaxHistos=100000);
+	MyHistos(const bool v, int NbrMaxHistos=10000);
 	~MyHistos();
 
 	void     fill(int id, const char *name, double fillX, double fillY, double fillZ,

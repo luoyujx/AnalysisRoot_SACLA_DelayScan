@@ -31,7 +31,7 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fOChain("OriginalEvent"),
 	fSAChain("SignalAnalyzedEvent"),
 	fSChain("SortedEvent"),
-	fHi(false),
+	fHi(false,10000),
 	running(false),
 	processTimer(100),
 	molecule(0, std::vector<Molecule>(0))
@@ -96,7 +96,7 @@ void MyAnalyzer::FileOpen()
 }
 	
 //___________________________________________________________________________________________________________________________________________________________
-void MyAnalyzer::Init()
+void MyAnalyzer::Init(MySettings &set)
 {
 	//save the current settings to the ini files//
 	fParticles.SaveParticleInfos();
@@ -112,6 +112,72 @@ void MyAnalyzer::Init()
 
 	//Init Covariance stuff//
 	fWf.Init(fOE,fHi);
+
+	SetParameter(set);
+}
+//________________________This should not be modified___________________________________________________________________________________________________________________________________
+void MyAnalyzer::Run()
+{
+	//std::cout <<"enter Run"<<std::endl;
+	//turn the timer off//
+	runTimer.TurnOff();
+	//create a flag that shows wether we have analyzed things//
+	bool WasRunningBefore=false;
+	bool realyBreak=false;
+	//run while we are still analysing the entries from the tree//
+
+	while(fEntryIterator < fNEntries)
+	{
+		std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
+
+		//Clear the events//
+		fOE.Clear();
+		fSAE.Clear();
+		fSE.Clear();
+		//set the flag//
+		WasRunningBefore=true;
+		//read the entry from the chain//
+		fOChain.GetEntry(fEntryIterator);
+		fSAChain.GetEntry(fEntryIterator);
+		fSChain.GetEntry(fEntryIterator);
+
+		//std::cout << "   *** " << "EventID :"<< static_cast<unsigned int>(fOE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSAE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSE.GetEventID());
+		//check EventID//
+		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
+		{
+			std::cout << std::endl << "******Error!!! EventID Mismatch !!!! ******"<<std::endl;
+			realyBreak=true;
+			break;
+		}
+		
+		//analyze the event//
+		Analyze();
+		//calc covariance map//
+		//fWf.ExtractWaveform(fOE,fHi,7-1);
+		//increase the counter//
+		fEntryIterator++;
+		//if(fEntryIterator > 1000) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
+		//the timer will only process events when it has timed out//
+		if (processTimer.ProcessEvents()) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
+	}
+	if (WasRunningBefore)
+	{
+		fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intRegion.size()-1);
+		fWf.FillHist(fHi);
+		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
+		fHi.FlushRootFile();
+
+	}
+	
+	//restart run at this time//
+	if (!realyBreak) runTimer.Start(1000);
+	//std::cout << "leaving run"<<std::endl;
+}
+
+//_____________
+void MyAnalyzer::SetParameter(MySettings &set)
+{
+	std::cout<<"Test="<<set.GetValue("Test",0.)<<std::endl;
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
@@ -212,7 +278,7 @@ void MyAnalyzer::OpenMoleculeData()
 					ofs.close();
 					return;
 	}
-
+	//-----can open MomentumInfo
 	double doubleBuf[6];
 	string strBuf;
 	char tmp[256];
@@ -271,61 +337,4 @@ void MyAnalyzer::OpenMoleculeData()
 						molecule[i][j].momSumFactor = 1;
 					}
 				}
-}
-//________________________This should not be modified___________________________________________________________________________________________________________________________________
-void MyAnalyzer::Run()
-{
-	//std::cout <<"enter Run"<<std::endl;
-	//turn the timer off//
-	runTimer.TurnOff();
-	//create a flag that shows wether we have analyzed things//
-	bool WasRunningBefore=false;
-	bool realyBreak=false;
-	//run while we are still analysing the entries from the tree//
-
-	while(fEntryIterator < fNEntries)
-	{
-		std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
-
-		//Clear the events//
-		fOE.Clear();
-		fSAE.Clear();
-		fSE.Clear();
-		//set the flag//
-		WasRunningBefore=true;
-		//read the entry from the chain//
-		fOChain.GetEntry(fEntryIterator);
-		fSAChain.GetEntry(fEntryIterator);
-		fSChain.GetEntry(fEntryIterator);
-
-		//std::cout << "   *** " << "EventID :"<< static_cast<unsigned int>(fOE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSAE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSE.GetEventID());
-		//check EventID//
-		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
-		{
-			std::cout << std::endl << "******Error!!! EventID Mismatch !!!! ******"<<std::endl;
-			realyBreak=true;
-			break;
-		}
-		
-		//analyze the event//
-		Analyze();
-		//calc covariance map//
-		fWf.ExtractWaveform(fOE,fHi,7-1);
-		//increase the counter//
-		fEntryIterator++;
-		//if(fEntryIterator > 1000) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
-		//the timer will only process events when it has timed out//
-		if (processTimer.ProcessEvents()) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
-	}
-	if (WasRunningBefore)
-	{
-		fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intRegion.size()-1);
-		fWf.FillHist(fHi);
-		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
-		fHi.FlushRootFile();
-	}
-	
-	//restart run at this time//
-	if (!realyBreak) runTimer.Start(1000);
-	//std::cout << "leaving run"<<std::endl;
 }

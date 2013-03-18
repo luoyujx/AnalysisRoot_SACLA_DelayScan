@@ -24,13 +24,18 @@ public:
 	double		Mass()const			{return fMassCalc;}//added by motomura
 
 
-	double		Px()const			{return fPx;}
-	double		PxRot(double theta)const	{return (TMath::Cos(theta)*fPx + TMath::Sin(theta)*fPy);};
+	double		Px()const					{return fPx;}
+	double		PxRotXY(double theta)const	{return (TMath::Cos(theta)*fPx + TMath::Sin(theta)*fPy);};
+	double		PxRotZX(double theta)const	{return (-TMath::Sin(theta)*fPz + TMath::Cos(theta)*fPx);};//
 
-	double		Py()const			{return fPy;}
-	double		PyRot(double theta)const {return (-TMath::Sin(theta)*fPx + TMath::Cos(theta)*fPy);};
+	double		Py()const					{return fPy;}
+	double		PyRotYZ(double theta)const	{return (TMath::Cos(theta)*fPy + TMath::Sin(theta)*fPz);};
+	double		PyRotXY(double theta)const	{return (-TMath::Sin(theta)*fPx + TMath::Cos(theta)*fPy);};
 
-	double		Pz()const			{return fPz;}
+	double		Pz()const					{return fPz;}
+	double		PzRotZX(double theta)const	{return (TMath::Cos(theta)*fPz + TMath::Sin(theta)*fPx);};
+	double		PzRotYZ(double theta)const	{return (-TMath::Sin(theta)*fPy + TMath::Cos(theta)*fPz);};
+
 	double		P()const			{return fP;}
 	double		E()const			{return fE;}
 	double		ThetaX()const		{return fThetaX;}//added by motomura

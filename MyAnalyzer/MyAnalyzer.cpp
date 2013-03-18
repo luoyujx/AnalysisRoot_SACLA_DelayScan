@@ -31,7 +31,7 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fOChain("OriginalEvent"),
 	fSAChain("SignalAnalyzedEvent"),
 	fSChain("SortedEvent"),
-	fHi(false,10000),
+	fHi(false,20000),
 	running(false),
 	processTimer(100),
 	molecule(0, std::vector<Molecule>(0))
@@ -96,6 +96,23 @@ void MyAnalyzer::FileOpen()
 }
 	
 //___________________________________________________________________________________________________________________________________________________________
+void MyAnalyzer::Init()
+{
+	//save the current settings to the ini files//
+	fParticles.SaveParticleInfos();
+
+	//reset the iterator//
+	fEntryIterator=0;
+
+	//clear all histograms//
+	fHi.ResetAll();
+
+	//read the particle info to the actual particle//
+	fParticles.Init();
+
+	//Init Covariance stuff//
+	fWf.Init(fOE,fHi);
+}
 void MyAnalyzer::Init(MySettings &set)
 {
 	//save the current settings to the ini files//

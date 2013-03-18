@@ -43,6 +43,7 @@ public:
 
 public:
 	void					 Init(MySettings &set);
+	void					 Init();
 	void					 Run();
 	void					 Analyze();
 	void					 FileOpen();

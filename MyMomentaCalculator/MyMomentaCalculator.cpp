@@ -420,6 +420,21 @@ double MyMomentaCalculator::pz(double tof_ns, double mass_au, double charge_au, 
 	}
 }
 
+//_________________________________________________________________________________
+double getPolyHorner(double tof_ns, size_t n, const SpecRegions &sr)
+{
+	n--;
+	double f = sr[n].EField_Vpcm();
+	for (int i = n-1; i >= 0; i--)
+		f = f*tof_ns + sr[i].EField_Vpcm();
+	return f;
+}
+double MyMomentaCalculator::pz_poly(double tof_ns, const MySpectrometer& sp)
+{
+	return getPolyHorner(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+}
+
+
 double MyMomentaCalculator::mass(double tof_ns, const MySpectrometer& sp)//motomura
 {
 	if (sp.GetSpectrometerRegions().size() > 1)		//if there are many regions

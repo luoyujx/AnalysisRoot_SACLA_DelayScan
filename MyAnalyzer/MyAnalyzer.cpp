@@ -289,6 +289,8 @@ void MyAnalyzer::OpenMoleculeData()
 						ofs << "\t" << molecule[i][j].momSumWindowY;
 						ofs << "\t" << molecule[i][j].momSumWindowZ;
 						ofs << "\t" << molecule[i][j].momSumFactor;
+						ofs << "\t" << i;
+						ofs << "\t" << j;
 						ofs << std::endl;
 						std::cout << molName << std::endl;
 					}

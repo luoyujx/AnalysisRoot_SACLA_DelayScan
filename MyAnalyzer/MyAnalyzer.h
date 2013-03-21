@@ -33,6 +33,7 @@ public:
 	double					momSumWindowY;
 	double					momSumWindowZ;
 	double					momSumFactor;
+	size_t					CoincidenceCount;
 };
 
 class MyAnalyzer

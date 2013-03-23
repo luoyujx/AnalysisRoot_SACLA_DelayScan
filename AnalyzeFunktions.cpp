@@ -315,28 +315,28 @@ void MyAnalyzer::Analyze()
 	startIdx++;
 
 	//---Post-analysis---//
-	if (molecule[5][12].CoincidenceCount > 0) 
-	for (size_t i=0; i<rd.GetNbrOfHits();++i)
-	{
-		MyDetektorHit &dh = rd.GetHit(i);
-		//the tof is just the timing of the mcp signal//
-		dh.SetTof(dh.Time());
-		secondStartIdx=startIdx;
-		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
-		{
-			//get the particle from the vector//
-			MyParticle &p = fParticles.GetParticle(j);
-			if (p.GetKindParticle() == -1)
-			if (p.CheckTofAndPos(dh))
-			//select hit by reconstruction method//
-			if (dh.RekMeth() < rekmeth)
-			{
-				const MyParticleHit &ph = p.AddHit(dh);
-				fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx);
-			}
-			secondStartIdx +=100;
-		}
-	}
+	//if (molecule[5][12].CoincidenceCount > 0) 
+	//for (size_t i=0; i<rd.GetNbrOfHits();++i)
+	//{
+	//	MyDetektorHit &dh = rd.GetHit(i);
+	//	//the tof is just the timing of the mcp signal//
+	//	dh.SetTof(dh.Time());
+	//	secondStartIdx=startIdx;
+	//	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+	//	{
+	//		//get the particle from the vector//
+	//		MyParticle &p = fParticles.GetParticle(j);
+	//		if (p.GetKindParticle() == -1)
+	//		if (p.CheckTofAndPos(dh))
+	//		//select hit by reconstruction method//
+	//		if (dh.RekMeth() < rekmeth)
+	//		{
+	//			const MyParticleHit &ph = p.AddHit(dh);
+	//			fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx);
+	//		}
+	//		secondStartIdx +=100;
+	//	}
+	//}
 	//if (MoleculeAnalysis) fillPIPICO(fParticles.GetParticle(0),fHi);
 	//std::cout << "\t  Last ID" << startIdx;
 }
@@ -446,19 +446,19 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 
 			//---p1="C" p2="I"---//
 			//calcutrate momentum sum by Edwin's method
-			const double ThetaXY = TMath::ATan(p2[j].Py()/TMath::Abs(p2[j].Px()));
+			const double ThetaXY = TMath::ATan2(p2[j].Py(),p2[j].Px());
 			const double p1x_XY = p1[i].PxRotXY(ThetaXY);
 			const double p1y_XY = p1[i].PyRotXY(ThetaXY);
 			const double p2x_XY = p2[j].PxRotXY(ThetaXY);
 			const double p2y_XY = p2[j].PyRotXY(ThetaXY);
 
-			const double ThetaYZ = TMath::ATan(p2[j].Pz()/TMath::Abs(p2[j].Py()));
+			const double ThetaYZ = TMath::ATan2(p2[j].Pz(),p2[j].Py());
 			const double p1y_YZ = p1[i].PyRotYZ(ThetaYZ);
 			const double p1z_YZ = p1[i].PzRotYZ(ThetaYZ);
 			const double p2y_YZ = p2[j].PyRotYZ(ThetaYZ);
 			const double p2z_YZ = p2[j].PzRotYZ(ThetaYZ);
 
-			const double ThetaZX = TMath::ATan(p2[j].Px()/TMath::Abs(p2[j].Pz()));
+			const double ThetaZX = TMath::ATan2(p2[j].Px(),p2[j].Pz());
 			const double p1z_ZX = p1[i].PzRotZX(ThetaZX);
 			const double p1x_ZX = p1[i].PxRotZX(ThetaZX);
 			const double p2z_ZX = p2[j].PzRotZX(ThetaZX);
@@ -779,8 +779,6 @@ double Integral(const MyOriginalChannel &oc, const long TRfrom, const long TRto,
 	double IntegralTR		= 0;
 	//const short baseli		= static_cast<short>(baseline / oc.GetVertGain());
 	const double vertGain	= oc.GetVertGain();
-
-
 
 	//go through all pulses in this channel//
 	for (int puls=0; puls<oc.GetNbrPulses();++puls)

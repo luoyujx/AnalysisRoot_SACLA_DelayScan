@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
 	fAn.Init(set);
 
 	fAn.OpenIntensityData();
-	fAn.OpenIntRegionData();
-	fAn.OpenMoleculeData();
+	fAn.OpenIntPartition();
+	fAn.OpenMomInfoData();
 
 	theApp.Run();
 	return 0;

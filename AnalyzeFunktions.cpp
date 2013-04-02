@@ -46,8 +46,6 @@ double calcMass(const MyParticle &p, const MyParticleHit &ph)
 	return MyMomentaCalculator::mass(ph.TofCor(),p.GetSpectrometer());
 }
 
-
-
 //___________________________________________________________________________________________________________________________________________________________
 void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 {
@@ -64,8 +62,9 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
 	//AddXenon132(particles);
 
 	//---SACLA CH3I molecule
-	AddCH3I(particles);
+	//AddCH3I(particles);
 
+	AddIUracil(particles);
 	//---Test N2 molecule
 	//AddNitrogen(particles);
 }
@@ -92,7 +91,7 @@ void MyAnalyzer::Analyze()
 	const unsigned int TagNumber = fOE.GetEventID();
 
 	//Get intensity from loaded data map
-	if (intFileName != "")
+	if ((intFileName != "")&&(existIntensityData))
 	{
 		std::map<unsigned int, double>::iterator itTagInt;//BM1
 		std::map<unsigned int, double>::iterator itTagInt2;//PD
@@ -166,28 +165,31 @@ void MyAnalyzer::Analyze()
 	startIdx++;
 
 	//---skip when FEL is stopped
-	if (fIntensities.size())
+	if (fIntensities.size()){
 		if (fIntensities[0]<1) 
 		{
 			//std::cout << "skip this event" << std::endl;
 			return;
 		}
-
+	}
 	if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
 	startIdx++;
-	//---for get power dep
-	if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");//added by moto 2009/05/21
-	startIdx++;
-	int whichRegion = -1;
-	for (size_t k=0; k<intPartition.size()-1; k++)
+	if (existIntPartition)
 	{
-		if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
+		//---for get power dep
+		if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");//added by moto 2009/05/21
+		startIdx++;
+		int whichRegion = -1;
+		for (size_t k=0; k<intPartition.size()-1; k++)
 		{
-			whichRegion = k;
-			fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
+			if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
+			{
+				whichRegion = k;
+				fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
+			}
 		}
+		startIdx += intPartition.size();
 	}
-	startIdx += intPartition.size()-1;
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
@@ -200,7 +202,6 @@ void MyAnalyzer::Analyze()
 	//	p.SetXVelocity(XVelocity);
 	//	p.SetYVelocity(YVelocity);
 	//}
-
 	//go through all resorted detektorhits//
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
 	{
@@ -260,10 +261,6 @@ void MyAnalyzer::Analyze()
 			//get the particle from the vector//
 			MyParticle &p = fParticles.GetParticle(j);
 			if (p.GetKindParticle() < 0) continue;
-			//if this hit fits the tof conditions of this particle fill histos for the tof condition//
-			//if (p.CheckTof(dh)) fillParticleConditionsTof(fOE,rd,p,dh,fIntensities,fHi,secondStartIdx + 0);
-			//if this hit fits the pos conditions of this particle fill histos for the pos condition//
-			//if (p.CheckPos(dh)) fillParticleConditionsPos(fOE,rd,p,dh,fIntensities,fHi,secondStartIdx + 5);
 			//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
 			if (p.CheckTofAndPos(dh))
 			//select hit by reconstruction method//
@@ -277,7 +274,6 @@ void MyAnalyzer::Analyze()
 			//std::cout <<j<<" "<< secondStartIdx<<std::endl;
 		}
 	}//------------------------------------------------------------------------------------------------------//
-
 	startIdx += (fParticles.GetNbrOfParticles()*100);
 
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
@@ -292,11 +288,12 @@ void MyAnalyzer::Analyze()
 
 	//now you have found the particles//
 	//we can look for coincidences//
-	for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
+	if (MoleculeAnalysis == 1)
+		for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
 			for (size_t j=0;j<fParticles.GetNbrOfParticles();++j)
 				molecule[i][j].CoincidenceCount = 0;
 
-	if (MoleculeAnalysis)
+	if (MoleculeAnalysis == 1)
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
@@ -315,7 +312,7 @@ void MyAnalyzer::Analyze()
 			}
 		}
 
-	if (MoleculeAnalysis)
+	if (MoleculeAnalysis == 1)
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
@@ -327,6 +324,22 @@ void MyAnalyzer::Analyze()
 			}
 		}
 	startIdx++;
+
+	//gates by certain particle hits
+	if (MoleculeAnalysis == 2)
+		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
+		{
+			const MyParticle &ip = fParticles.GetParticle(i);
+			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1)) //Gated particle (I+...)
+				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+				{
+					const MyParticle &jp = fParticles.GetParticle(j);
+					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))//Target particle (C+...)
+					{
+						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ i*20 + j*200);
+					}
+				}
+		}
 
 	//---Post-analysis---//
 	//if (molecule[5][12].CoincidenceCount > 0) 
@@ -711,6 +724,67 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 		}
 	}
 	//std::cout << "\t" << hiOff;
+}
+void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff)
+{
+	TString Hname(p2.GetName());
+	Hname += "GatedBy";
+	Hname += p1.GetName();
+	
+	const double MomLim = 800;
+
+	//for (size_t i=0; i<p1.GetNbrOfParticleHits();++i)
+	{
+		for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)//i=j
+		{
+			//skip if we are going to put in the same particlehit, for the case that we want coincidences for the same particle//
+			//if ((i>=j) && (p1==p2)) continue;//i==j
+
+				//Intensity//
+				//for (size_t iI=0; iI<intensity.size();++iI)
+				//hi.fill(hiOff+10+iI,"Intensity",intensity[iI],Form("intensity_{%s%s} [arb.units]",p1.GetName(),p2.GetName()),300,0,1000,Form("%s/Intensity",Hname.Data()));
+				if (intensity.size())
+					hi.fill(hiOff+0,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",300,0,1000,"Intensity");
+
+				//Momentum first Ion//
+				int IDX = hiOff+10;
+				hi.fill(IDX+0,Form("%sPxPy",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+				if (TMath::Abs(p2[i].Pz()) < 30)
+				{
+					hi.fill(IDX+1,Form("%sPxPySlice",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+					//hi.fill(IDX+2,Form("%sPhiPxPySlice",p2.GetName()),TMath::ATan2(p2[i].Py(),p2[i].Px())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Py()*p2[i].Py() + p2[i].Px()*p2[i].Px()),"#phi [deg]","#sqrt{px^{2} + py^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+				}
+
+				hi.fill(IDX+3,Form("%sPxPz",p2.GetName()),p2[i].Pz(),p2[i].Px(),"pz [a.u.]","px [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+				if (TMath::Abs(p2[i].Py()) < 30)
+				{
+					hi.fill(IDX+4,Form("%sPxPzSlice",p2.GetName()),p2[i].Pz(),p2[i].Px(),"pz [a.u.]","px [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+					//hi.fill(IDX+5,Form("%sPhiPxPzSlice",p2.GetName()),TMath::ATan2(p2[i].Px(),p2[i].Pz())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Pz()*p2[i].Pz() + p2[i].Px()*p2[i].Px()),"#phi [deg]","#sqrt{px^{2} + pz^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+				}
+           
+				hi.fill(IDX+6,Form("%sPyPz",p2.GetName()),p2[i].Pz(),p2[i].Py(),"pz [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+				if (TMath::Abs(p2[i].Px()) < 30)
+				{
+					hi.fill(IDX+7,Form("%sPyPzSlice",p2.GetName()),p2[i].Pz(),p2[i].Py(),"pz [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+					//hi.fill(IDX+8,Form("%sPhiPyPzSlice",p2.GetName()),TMath::ATan2(p2[i].Py(),p2[i].Pz())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Py()*p2[i].Py() + p2[i].Pz()*p2[i].Pz()),"#phi [deg]","#sqrt{pz^{2} + py^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+				}
+
+				hi.fill(IDX+9,Form("%sTotalMomentum",p2.GetName()),p2[i].P(),"p [a.u.]",300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+				//hi.fill(IDX+2,Form("%sPx",p2.GetName()),p2[i].Px(),"px [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+				//hi.fill(IDX+5,Form("%sPy",p2.GetName()),p2[i].Py(),"py [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+				//hi.fill(IDX+8,Form("%sPz",p2.GetName()),p2[i].Pz(),"pz [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+
+				//Energy First Ion//
+				hi.fill(IDX+10,Form("%sEnergy",p2.GetName()),p2[i].E(),"Energy [eV]",300,0,100,Form("%s/Energy",Hname.Data()));
+
+				//Raw
+				hi.fill(IDX+11,Form("%sTOF",p2.GetName()),p2[i].TofCor(),"Tof [ns]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Form("%s/Raw",Hname.Data()));
+				hi.fill(IDX+12,Form("%sDetCor",p2.GetName()),p2[i].XCor(),p2[i].YCor(),"x [mm]","y [mm]",300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+				hi.fill(IDX+13,Form("%sXPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].XCorRotScl(),"tof [ns]","x [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetXcor()-p2.GetCondRad()*1.3,p2.GetXcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+				hi.fill(IDX+14,Form("%sYPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].YCorRotScl(),"tof [ns]","y [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetYcor()-p2.GetCondRad()*1.3,p2.GetYcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+
+		}
+	}
 }
 //----------------------------------PIPICO ALL-----------------------------------------------------------------//
 void fillPIPICO(const MyParticle &p,MyHistos &hi)

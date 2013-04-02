@@ -8,6 +8,7 @@ void AddXenon(MyParticleContainer &particles);
 void AddXenon132(MyParticleContainer &particles);
 void AddCH3I(MyParticleContainer &particles);
 void AddNitrogen(MyParticleContainer &particles);
+void AddIUracil(MyParticleContainer &particles);
 
 namespace MyMass
 {

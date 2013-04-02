@@ -193,12 +193,15 @@ void MyAnalyzer::Run()
 //_____________
 void MyAnalyzer::SetParameter(MySettings &set)
 {
-	//std::cout<<"Test="<<set.GetValue("Test",0.)<<std::endl;
+	//set parameters
+	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
+	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
+	existMomentumInfo=static_cast<int>(set.GetValue("MomentumInfo", false)+0.1);
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
 {
-	if (intFileName == "") return;
+	if ((intFileName == "")||(!existIntensityData)) return;
 	
 	std::ifstream ifs(intFileName,std::ios::in);
 	if (ifs.fail()){
@@ -231,11 +234,13 @@ void MyAnalyzer::OpenIntensityData()
 	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
 }	
 //_____Read Intensity region DATA
-void MyAnalyzer::OpenIntRegionData()
+void MyAnalyzer::OpenIntPartition()
 {
-	std::ifstream ifs("IntensityintPartition.txt",std::ios::in);
+	if (!existIntPartition) return;
+
+	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
 	if (ifs.fail()){
-		std::cout<<"Can not open "<<"IntensityintPartition.txt"<<std::endl;
+		std::cout<<"Can not open "<<"IntensityPartition.txt"<<std::endl;
 		return;
 	}
 	double doubleBuf;
@@ -255,8 +260,9 @@ void MyAnalyzer::OpenIntRegionData()
 	std::cout << intPartition.size()-1 << " partitions have been set." << std::endl;
 }
 //_____Read Molecule momentumsum DATA
-void MyAnalyzer::OpenMoleculeData()
+void MyAnalyzer::OpenMomInfoData()
 {
+	if (!existMomentumInfo) return;
 	//initialize 2D vector
 	molecule.resize(fParticles.GetNbrOfParticles());
 	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)

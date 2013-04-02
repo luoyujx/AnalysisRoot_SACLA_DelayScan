@@ -360,6 +360,57 @@ void MyHistos::fill(int id, const char * name, double fillX, const char * titleX
 	//--now fill it--//
 	hist1->Fill(fillX,weight);
 }
+//_____________Variable bin size____________
+void MyHistos::fill(int id, const char * name, double fillX, const char * titleX,
+			      Int_t nXbins, const Double_t* xbins, const char * dir ,
+			      double weight)
+{
+	hist1 = dynamic_cast<TH1D*>(hiarray[id]);
+
+	//--if the histo does not exist create it first--//
+	if (!hist1)
+	{
+		create1dVariableBin(id, name,
+			     titleX,
+				 nXbins,xbins,
+				 dir,true);
+	}
+
+	//--if the histogram exists, check also if given name is the one of the histogram--//
+	else if (strcmp(hist1->GetName(),name))
+		std::cout <<"name doesn't match("<<id<<") is:"<<hist1->GetName()<<" should be:"<<name<<std::endl;
+
+	//--now fill it--//
+	hist1->Fill(fillX,weight);
+}
+TH1* MyHistos::create1dVariableBin(int id, const char *name,
+				  const char *titleX,
+			      Int_t nXbins, const Double_t* xbins,
+			      const char * dir , bool alreadylocked)
+{
+	//check if hist already exists, if so return it//
+	hist1 = dynamic_cast<TH1D*>(hiarray[id]);
+	if (hist1) return hist1;
+
+	TDirectory * saveDir = gDirectory;		//save a pointer to the current directory
+	getDir(rootfile,dir)->cd();				//change to directory that this histo need to be created in
+
+	//--create a 1D histogram--//
+	hist1 = new TH1D(name, name, nXbins,xbins);
+	hist1->SetXTitle(titleX);
+	hist1->GetXaxis()->CenterTitle(true);
+	saveDir->cd();							//reset the previously selectet directory
+
+	//--check if there is a histogram with same id but different name--//
+	TObject * obj = hiarray[id];
+	if (obj)
+		std::cout <<"name doesn't match("<<id<<") is:"<<obj->GetName()<<" should be:"<<hist1->GetName()<<std::endl;
+
+	//--now add it to the list--//
+	hiarray[id]= hist1;
+	if (fVerbose) std::cout <<"create 1D: "<<dir<<"/"<<hist1->GetName()<<std::endl;
+	return hist1;
+}
 
 
 /////////////////////////////////////////////////////////////////////////////

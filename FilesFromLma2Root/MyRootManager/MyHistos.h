@@ -57,7 +57,14 @@ public:
 	void   fill1d(int id, double fillX, 
 			      double weight=1);				//fill fast 1d histos
 	void	plot1d(int id, int binX, double content);//set bin contents
-
+	//---Variable bin size Histogram
+	void     fill(int id, const char * name, double fillX, const char * titleX,
+			      Int_t nXbins, const Double_t* xbins, const char * dir = "",
+			      double weight=1.);			//fill function for variable bin size 1d histos
+	TH1* create1dVariableBin(int id, const char *name,
+				  const char *titleX,
+			      Int_t nXbins, const Double_t* xbins,
+			      const char * dir = "", bool alreadylocked=false);		//create variable bin size 1d histos
 	//TGraph* createGraph(int id, const char * name, Int_t nbrPoint,
 	//						const char * dir, bool alreadylocked);
 

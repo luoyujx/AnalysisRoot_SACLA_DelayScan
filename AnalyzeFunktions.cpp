@@ -101,12 +101,13 @@ void MyAnalyzer::Analyze()
 
 		if ((itTagInt == tagIntensity.end())||(itTagInt2 == tagIntensity2.end()))
 		{
-			std::cout <<TagNumber<< " is not found!!" << std::endl;
+			std::cout <<"\r"<<TagNumber<< " is not found!!";
+			missedTagCount++;
 			return;
 		}
 
-		fIntensities.push_back(itTagInt2->second * 1000);//[0]
-		fIntensities.push_back(itTagInt->second);//[1]
+		fIntensities.push_back(itTagInt2->second * 10000);//[0]
+		fIntensities.push_back(itTagInt->second * 10e+9);//[1]
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -151,17 +152,17 @@ void MyAnalyzer::Analyze()
 	}
 	startIdx++;
 
-	//if(fSAE.GetChannel(7-1).GetNbrPeaks())
-	//{
-	//	const MyPeak &p_t0 = fSAE.GetChannel(7-1).GetPeak(0);
-	//	fHi.fill(startIdx,"Times_MCP_first",p_t0.GetTime(),"tof [ns]",10000,0,100000);
-	//}
-	//startIdx++;
+	if(fSAE.GetChannel(7-1).GetNbrPeaks())
+	{
+		const MyPeak &p_t0 = fSAE.GetChannel(7-1).GetPeak(0);
+		fHi.fill(startIdx,"Times_MCP_first",p_t0.GetTime(),"tof [ns]",10000,0,2000);
+	}
+	startIdx++;
 
 	//-------------------------------------------------------------------------------------------------------------------------------
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"microJ",1000,0,1000);//added by moto 2009/05/21(50,0,2500)
+	if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
 	startIdx++;
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"arb. unit",1000,0,1000);//added by moto 2009/05/21(50,0,2500)
+	if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,1000);
 	startIdx++;
 
 	//---skip when FEL is stopped
@@ -172,8 +173,21 @@ void MyAnalyzer::Analyze()
 			return;
 		}
 
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"arb unit",1000,0,1000);//added by moto 2009/05/21
+	if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
 	startIdx++;
+	//---for get power dep
+	if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");//added by moto 2009/05/21
+	startIdx++;
+	int whichRegion = -1;
+	for (size_t k=0; k<intPartition.size()-1; k++)
+	{
+		if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
+		{
+			whichRegion = k;
+			fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
+		}
+	}
+	startIdx += intPartition.size()-1;
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
@@ -295,7 +309,7 @@ void MyAnalyzer::Analyze()
 					||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
 					)
 				{
-					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j]);
+					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
 					startIdx += 200;
 				}
 			}
@@ -415,7 +429,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 
 
 //-------------------Fill molecule histogram-----------------------------------------------------------------------------------------------------//
-void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol)
+void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& intPart)
 {
 	TString Hname(p1.GetName());
 	Hname += p2.GetName();
@@ -546,7 +560,8 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 				//Intensity//
 				//for (size_t iI=0; iI<intensity.size();++iI)
 				//hi.fill(hiOff+10+iI,"Intensity",intensity[iI],Form("intensity_{%s%s} [arb.units]",p1.GetName(),p2.GetName()),300,0,1000,Form("%s/Intensity",Hname.Data()));
-				if (intensity.size()) hi.fill(hiOff+10,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0],Form("intensity_{%s%s} [arb.units]",p1.GetName(),p2.GetName()),50,0,2500);
+				if (intensity.size() && (intPart.size()>1)) 
+					hi.fill(hiOff+49,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",intPart.size()-1,&intPart.front(),"PowerDependence");
 
 				//Momentum first Ion//
 				int IDX = hiOff+50;

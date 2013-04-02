@@ -56,11 +56,11 @@ public:
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
 
 	//---Setting from comand switch---//
-	void		SetFileName(TString in)		{fileName = in;}
-	void		SetRekMeth(int in)			{rekmeth = in;}
-	void		SetMolecule(int in)			{MoleculeAnalysis = in;}
-	void		SetCondition(int in)		{extraCondition = in;}
-	void		SetIntFileName(TString in)		{intFileName = in;}
+	void		SetFileName(const TString& in)		{fileName = in;}
+	void		SetRekMeth(int in)					{rekmeth = in;}
+	void		SetMolecule(int in)					{MoleculeAnalysis = in;}
+	void		SetCondition(int in)				{extraCondition = in;}
+	void		SetIntFileName(const TString& in)	{intFileName = in;}
 
 	TString		GetFileName()const			{return fileName;}
 	int			GetRekMeth()const			{return rekmeth;}
@@ -105,11 +105,11 @@ private:
 	int rekmeth;
 	int MoleculeAnalysis;
 	int extraCondition;
+	size_t missedTagCount;
 
 	std::map<unsigned int, double>		tagIntensity;
 	std::map<unsigned int, double>		tagIntensity2;
-	std::vector<double>					intRegion;
-
+	std::vector<double>					intPartition;
 	std::vector< std::vector<Molecule> >			molecule;
 };
 

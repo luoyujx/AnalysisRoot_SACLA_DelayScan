@@ -34,7 +34,8 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fHi(false,10000),
 	running(false),
 	processTimer(100),
-	molecule(0, std::vector<Molecule>(0))
+	molecule(0, std::vector<Molecule>(0)),
+	missedTagCount(0)
 {
 	//--------------do not modify this part (unless you know what you're doing START-----------------------------//
 	//setup chains//
@@ -145,7 +146,7 @@ void MyAnalyzer::Run()
 
 	while(fEntryIterator < fNEntries)
 	{
-		std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
+		if (fEntryIterator % 1000 == 0)  std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
 
 		//Clear the events//
 		fOE.Clear();
@@ -158,7 +159,6 @@ void MyAnalyzer::Run()
 		fSAChain.GetEntry(fEntryIterator);
 		fSChain.GetEntry(fEntryIterator);
 
-		//std::cout << "   *** " << "EventID :"<< static_cast<unsigned int>(fOE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSAE.GetEventID()) <<" : "<< static_cast<unsigned int>(fSE.GetEventID());
 		//check EventID//
 		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
 		{
@@ -166,7 +166,6 @@ void MyAnalyzer::Run()
 			realyBreak=true;
 			break;
 		}
-		
 		//analyze the event//
 		Analyze();
 		//calc covariance map//
@@ -179,11 +178,11 @@ void MyAnalyzer::Run()
 	}
 	if (WasRunningBefore)
 	{
-		fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intRegion.size()-1);
-		fWf.FillHist(fHi);
+		fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1);
+		//fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
+		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
-
 	}
 	
 	//restart run at this time//
@@ -194,7 +193,7 @@ void MyAnalyzer::Run()
 //_____________
 void MyAnalyzer::SetParameter(MySettings &set)
 {
-	std::cout<<"Test="<<set.GetValue("Test",0.)<<std::endl;
+	//std::cout<<"Test="<<set.GetValue("Test",0.)<<std::endl;
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
@@ -207,7 +206,7 @@ void MyAnalyzer::OpenIntensityData()
 		return;
 	}
 
-	unsigned int uintBuf;
+	unsigned int uintBuf = 0;
 	double doubleBuf1;
 	double doubleBuf2;
 	char tmp[256];
@@ -230,13 +229,13 @@ void MyAnalyzer::OpenIntensityData()
 	std::map<unsigned int, double>::iterator itend = tagIntensity.end();
 	itend--;
 	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
-}
+}	
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntRegionData()
 {
-	std::ifstream ifs("IntensityRegion.txt",std::ios::in);
+	std::ifstream ifs("IntensityintPartition.txt",std::ios::in);
 	if (ifs.fail()){
-		std::cout<<"Can not open "<<"IntensityRegion.txt"<<std::endl;
+		std::cout<<"Can not open "<<"IntensityintPartition.txt"<<std::endl;
 		return;
 	}
 	double doubleBuf;
@@ -250,10 +249,10 @@ void MyAnalyzer::OpenIntRegionData()
 		if (!ifs.fail())
 		{
 			//add to vector
-			intRegion.push_back(doubleBuf);
+			intPartition.push_back(doubleBuf);
 		}
 	}
-	std::cout << intRegion.size()-1 << " region have been loaded." << std::endl;
+	std::cout << intPartition.size()-1 << " partitions have been set." << std::endl;
 }
 //_____Read Molecule momentumsum DATA
 void MyAnalyzer::OpenMoleculeData()

@@ -12,80 +12,34 @@ bool LoadSettings(TString &filename, MySettings &set);
 int main(int argc, char *argv[])
 {
 	TRint theApp("App", &argc, argv);
-
-	int UseGUI = 1;
-	if ( argc > 1 )
-	for (size_t i = 1; i <= argc; i++) 
-	{
-		TString progArg(argv[i]);
-		if (progArg(0,3) == "/g:")
-		{
-			TString ComandArg(progArg(3,progArg.Length()));
-			UseGUI = ComandArg.Atoi();
-		}
-	}	
 		
-	MyAnalyzer fAn(UseGUI);
-	MySettings set(false);
+	MySettings set(true);
+	TString filename("setting.txt");
+	LoadSettings(filename,set);
 
 	//------for Setting-------//
-	fAn.SetRekMeth(20);
-	fAn.SetMolecule(false);
-	fAn.SetCondition(false);
-
-	if ( argc > 1 )
-	for (size_t i = 1; i <= argc; i++) 
-	{
-		TString progArg(argv[i]);
-		//std::cout<<progArg(0,3)<<std::endl;
-
-		if (progArg(0,3) == "/r:")
-		{
-			TString ComandArg(progArg(3,progArg.Length()));
-			fAn.SetRekMeth(ComandArg.Atoi());
-		}
-		else if (progArg(0,3) == "/f:")
-		{
-			TString ComandArg(progArg(3,progArg.Length()));
-			fAn.SetFileName(ComandArg);
-		}
-		else if (progArg(0,3) == "/m:")
-		{
-			TString ComandArg(progArg(3,progArg.Length()));
-			fAn.SetMolecule(ComandArg.Atoi());
-		}
-
-		else if (progArg(0,3) == "/e:")
-		{
-			TString ComandArg(progArg(3,progArg.Length()));
-			fAn.SetCondition(ComandArg.Atoi());
-		}
-		else if (progArg(0,3) == "/i:")
-		{
-			TString ComandArg(progArg(3,progArg.Length()));
-			fAn.SetIntFileName(ComandArg);
-		}
-
-	}
+	MyAnalyzer fAn(static_cast<int>(set.GetValue("UseGUI", true)+0.1));
+	fAn.SetRekMeth(static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1));
+	fAn.SetMolecule(static_cast<int>(set.GetValue("Molecule", false)+0.1));
+	fAn.SetCondition(static_cast<int>(set.GetValue("ExtraCondition", false)+0.1));
+	fAn.SetFileName(set.GetString("OutputROOTFile","Analysis.root"));
+	fAn.SetIntFileName(set.GetString("IntensityFile","Intensity.txt"));
 
 	std::cout<<"Root File Name : "<<fAn.GetFileName()<<std::endl;
 	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;
 	std::cout<<"Analyze molecule : "<<fAn.GetMolecule()<<std::endl;
 	std::cout<<"Extra condition : "<<fAn.GetCondition()<<std::endl;
 	std::cout<<"Intensity data file name : "<<fAn.GetIntFileName()<<std::endl;
-	std::cout<<"Use GUI : "<<UseGUI<<std::endl;
 	//------------------------//
-	TString filename("setting.txt");
-	LoadSettings(filename,set);
+
 	fAn.FileOpen();
 	fAn.Init(set);
 
 	fAn.OpenIntensityData();
-//	fAn.OpenIntRegionData();
+	fAn.OpenIntRegionData();
 	fAn.OpenMoleculeData();
 
 	theApp.Run();
-	theApp.Terminate(0);
 	return 0;
 }
 
@@ -96,6 +50,7 @@ bool LoadSettings(TString &filename, MySettings &set)
 	std::ifstream ifs(filename,std::ios::in);
 	if (ifs.fail()){
 		std::cout<<"Can not open "<<filename<<std::endl;
+		std::cout << "Analyze default settings." << std::endl;
 		return false;
 	}
 	while(!ifs.eof())

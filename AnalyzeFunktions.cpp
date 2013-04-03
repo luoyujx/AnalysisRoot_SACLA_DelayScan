@@ -176,8 +176,8 @@ void MyAnalyzer::Analyze()
 	startIdx++;
 	if (existIntPartition)
 	{
-		//---for get power dep
-		if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");//added by moto 2009/05/21
+		//---for getting power dep
+		if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");
 		startIdx++;
 		int whichRegion = -1;
 		for (size_t k=0; k<intPartition.size()-1; k++)
@@ -289,11 +289,11 @@ void MyAnalyzer::Analyze()
 	//now you have found the particles//
 	//we can look for coincidences//
 	if (MoleculeAnalysis == 1)
+	{
 		for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
 			for (size_t j=0;j<fParticles.GetNbrOfParticles();++j)
 				molecule[i][j].CoincidenceCount = 0;
 
-	if (MoleculeAnalysis == 1)
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
@@ -301,46 +301,51 @@ void MyAnalyzer::Analyze()
 			{
 				const MyParticle &jp = fParticles.GetParticle(j);
 				if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
-				if (
-					((ip.GetCoinGroup() != jp.GetCoinGroup()))
-					||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
-					)
-				{
-					fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
-					startIdx += 200;
-				}
+					if (
+						((ip.GetCoinGroup() != jp.GetCoinGroup()))
+						||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
+						)
+					{
+						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
+						startIdx += 200;
+					}
 			}
 		}
 
-	if (MoleculeAnalysis == 1)
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
 			{
 				for (size_t k=0; k<molecule[i][j].CoincidenceCount; ++k)
 					fHi.fill(startIdx,"NumberOfCoincidence",i,j,"Particle number","Particle number",
-						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
-						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
+					fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
+					fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
 			}
 		}
-	startIdx++;
-
+		startIdx++;
+	}
 	//gates by certain particle hits
+	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*20;//reserve ID for fillMoleculeHistogram2
 	if (MoleculeAnalysis == 2)
+	{
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
 			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1)) //Gated particle (I+...)
+			{
+				fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));//Target ion
 				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
 				{
 					const MyParticle &jp = fParticles.GetParticle(j);
-					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))//Target particle (C+...)
+					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))//Target particle (C+...,H+)
 					{
-						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ i*20 + j*200);
+						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*20);
 					}
 				}
+			}
 		}
-
+	}
+	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*20*2;
 	//---Post-analysis---//
 	//if (molecule[5][12].CoincidenceCount > 0) 
 	//for (size_t i=0; i<rd.GetNbrOfHits();++i)
@@ -367,7 +372,21 @@ void MyAnalyzer::Analyze()
 	//if (MoleculeAnalysis) fillPIPICO(fParticles.GetParticle(0),fHi);
 	//std::cout << "\t  Last ID" << startIdx;
 }
-
+void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff)
+{
+	TString Hname(p2.GetName());
+	Hname += "GatedBy";
+	Hname += p1.GetName();
+	for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)
+	{
+		hi.fill(hiOff+0,"Mass",p2[i].Mass(),"Mass/q",20000,0,200,Hname.Data());
+		hi.fill(hiOff+1,"TofCor",p2[i].TofCor(),"tof [ns]",20000,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Hname.Data());
+		hi.fill(hiOff+2,"Det",p2[i].X(),p2[i].Y(),"x [mm]","y [mm]",300,p2.GetCondRadX()-p2.GetCondRad()*1.3,p2.GetCondRadX()+p2.GetCondRad()*1.3,300,p2.GetCondRadY()-p2.GetCondRad()*1.3,p2.GetCondRadY()+p2.GetCondRad()*1.3,Hname.Data());
+		hi.fill(hiOff+3,"Tof",p2[i].Tof(),"tof [ns]",10000,p2.GetCondTofFr()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()+p2.GetCondTofRange()*0.3,Hname.Data());
+		hi.fill(hiOff+4,"XPosVsTof",p2[i].Tof(),p2[i].X(),"tof [ns]","x [mm]",5000,p2.GetCondTofFr()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()+p2.GetCondTofRange()*0.3,300,p2.GetCondRadX()-p2.GetCondRad()*1.3,p2.GetCondRadX()+p2.GetCondRad()*1.3,Hname.Data());
+		hi.fill(hiOff+5,"YPosVsTof",p2[i].Tof(),p2[i].Y(),"tof [ns]","y [mm]",5000,p2.GetCondTofFr()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()+p2.GetCondTofRange()*0.3,300,p2.GetCondRadX()-p2.GetCondRad()*1.3,p2.GetCondRadX()+p2.GetCondRad()*1.3,Hname.Data());
+	}
+}
 //--------------------------------------fill particle Histograms---------------------------------------------------//
 void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff )
 {	
@@ -747,7 +766,7 @@ void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vec
 					hi.fill(hiOff+0,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",300,0,1000,"Intensity");
 
 				//Momentum first Ion//
-				int IDX = hiOff+10;
+				int IDX = hiOff+1;
 				hi.fill(IDX+0,Form("%sPxPy",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 				if (TMath::Abs(p2[i].Pz()) < 30)
 				{

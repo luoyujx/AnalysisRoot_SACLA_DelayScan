@@ -233,9 +233,9 @@ void MyAnalyzer::OpenIntensityData()
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntRegionData()
 {
-	std::ifstream ifs("IntensityintPartition.txt",std::ios::in);
+	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
 	if (ifs.fail()){
-		std::cout<<"Can not open "<<"IntensityintPartition.txt"<<std::endl;
+		std::cout<<"Can not open "<<"IntensityPartition.txt"<<std::endl;
 		return;
 	}
 	double doubleBuf;

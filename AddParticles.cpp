@@ -10,7 +10,7 @@
 //_____SACLA 2012B iodomethane_____
 void AddCH3I(MyParticleContainer &particles)
 {
-	particles.Add("H1p",1,MyMass::Hydrogen1(),0);//1
+	particles.Add("H1p",1,MyMass::Hydrogen1(),0,0);//1
 	//particles.Add("H1p_C2pI5p",1,MyMass::Hydrogen1(),-1);//2
 
 	//particles.Add("C6p",6,MyMass::Carbon12(),1,0);

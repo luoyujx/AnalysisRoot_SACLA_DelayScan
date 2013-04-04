@@ -110,8 +110,6 @@ private:
 	int extraCondition;
 	bool existIntensityData;
 	bool existIntPartition;
-	bool existMomentumInfo;
-
 
 	std::map<unsigned int, double>		tagIntensity;
 	std::map<unsigned int, double>		tagIntensity2;

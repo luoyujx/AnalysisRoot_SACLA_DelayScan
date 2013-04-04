@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
 	fAn.OpenIntensityData();
 	fAn.OpenIntPartition();
-	fAn.OpenMomInfoData();
+	//fAn.OpenMomInfoData();
 
 	theApp.Run();
 	return 0;

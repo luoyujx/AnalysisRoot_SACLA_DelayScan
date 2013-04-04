@@ -406,7 +406,9 @@ void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int h
 //--------------------------------------fill particle Histograms---------------------------------------------------//
 void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff )
 {	
-	const double MomLim = 800;
+	double MomLim = 800;
+	TString pname(p.GetName());
+	if (pname == "H1p") MomLim = 100;
 	const double SliceLim = 20;
 
 	//Reconstruction Method for this particle Hit//
@@ -479,7 +481,18 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 //-------------------Fill molecule histogram-----------------------------------------------------------------------------------------------------//
 void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& intPart)
 {
+
+	double MomLim = 800;
+	double MomSumRotLim = 800;
+	double MomScale = mol.momSumFactor;
+
 	TString Hname(p1.GetName());
+	if (Hname=="H1p") 
+	{
+		MomLim = 100;
+		MomSumRotLim = 300;
+		MomScale = mol.momSumFactor;
+	}
 	Hname += p2.GetName();
 	
 	const double pxSumWidth = mol.momSumWindowX;//10,9,7,5
@@ -489,14 +502,10 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 	const double pyzSumWidth = mol.momSumWindowY;//10,8,5,4
 	const double pzxSumWidth = mol.momSumWindowZ;//5,6,4,2
 
-//	std::cout<< Hname << ":" <<std::endl;
+	//std::cout<< Hname << ":" <<std::endl;
 	//std::cout<<" pxSumWidth" << mol.momSumWindowX <<std::endl;
 	//std::cout<<" pySumWidth" << mol.momSumWindowX <<std::endl;
 	//std::cout<<" pzSumWidth" << mol.momSumWindowX <<std::endl;
-
-	const double MomLim = 800;
-	const double MomSumRotLim = 800;
-	const double MomScale = mol.momSumFactor;
 	//std::cout<<" Factor: " <<MomScale <<std::endl;
 
 	for (size_t i=0; i<p1.GetNbrOfParticleHits();++i)

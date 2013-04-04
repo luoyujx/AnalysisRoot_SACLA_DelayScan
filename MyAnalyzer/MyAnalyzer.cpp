@@ -112,26 +112,17 @@ void MyAnalyzer::Init()
 	fParticles.Init();
 
 	//Init Covariance stuff//
-	fWf.Init(fOE,fHi);
+	//fWf.Init(fOE,fHi);
+
+	if (MoleculeAnalysis == 1)OpenMomInfoData();
 }
 void MyAnalyzer::Init(MySettings &set)
 {
-	//save the current settings to the ini files//
-	fParticles.SaveParticleInfos();
-
-	//reset the iterator//
-	fEntryIterator=0;
-
-	//clear all histograms//
-	fHi.ResetAll();
-
-	//read the particle info to the actual particle//
-	fParticles.Init();
-
-	//Init Covariance stuff//
-	fWf.Init(fOE,fHi);
-
+	//set parameters from setting.ext
 	SetParameter(set);
+
+	//call Initialize
+	Init();
 }
 //________________________This should not be modified___________________________________________________________________________________________________________________________________
 void MyAnalyzer::Run()
@@ -196,7 +187,6 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	//set parameters
 	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
-	existMomentumInfo=static_cast<int>(set.GetValue("MomentumInfo", false)+0.1);
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
@@ -219,7 +209,8 @@ void MyAnalyzer::OpenIntensityData()
 		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
 		//go to nextline
 		ifs.getline(tmp,256);
-		if (uintBuf % 6 != 0) std::cout<< "wrong Tag number!! "<< uintBuf;
+		if (uintBuf % 6 != 0)
+			std::cout<< "wrong Tag number!! "<< uintBuf;
 		if (!ifs.fail())
 		{
 			//add to map (tagIntensity)
@@ -239,7 +230,8 @@ void MyAnalyzer::OpenIntPartition()
 	if (!existIntPartition) return;
 
 	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
-	if (ifs.fail()){
+	if (ifs.fail())
+	{
 		std::cout<<"Can not open "<<"IntensityPartition.txt"<<std::endl;
 		return;
 	}
@@ -262,7 +254,7 @@ void MyAnalyzer::OpenIntPartition()
 //_____Read Molecule momentumsum DATA
 void MyAnalyzer::OpenMomInfoData()
 {
-	if (!existMomentumInfo) return;
+	if (MoleculeAnalysis!=1) return;
 	//initialize 2D vector
 	molecule.resize(fParticles.GetNbrOfParticles());
 	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
@@ -271,20 +263,23 @@ void MyAnalyzer::OpenMomInfoData()
 	std::ifstream ifs("MomentumInfo.txt",std::ios::in);
 	if (ifs.fail())
 	{
-		std::cout<<"Can not open MomentumInfo.txt. Use default value."<<std::endl;
+		std::cout<<"Can not open MomentumInfo.txt. Use (Make) default value."<<std::endl;
 		std::ofstream ofs("MomentumInfo.txt",std::ios::out);
 		for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
+		{
 			for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+			{
 				if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
+				{
 					if (
 						((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
 						||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
 						)
 
 					{
-						molecule[i][j].momSumWindowX = 50;
-						molecule[i][j].momSumWindowY = 50;
-						molecule[i][j].momSumWindowZ = 50;
+						molecule[i][j].momSumWindowX = 100;
+						molecule[i][j].momSumWindowY = 100;
+						molecule[i][j].momSumWindowZ = 100;
 						molecule[i][j].momSumFactor = 1;
 						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
 						string molName(fParticles.GetParticle(i).GetName());
@@ -299,8 +294,11 @@ void MyAnalyzer::OpenMomInfoData()
 						ofs << std::endl;
 						std::cout << molName << std::endl;
 					}
-					ofs.close();
-					return;
+				}
+			}
+		}
+		ofs.close();
+		return;
 	}
 	//-----can open MomentumInfo
 	double doubleBuf[6];
@@ -336,8 +334,11 @@ void MyAnalyzer::OpenMomInfoData()
 	}
 
 	for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
+	{
 		for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+		{
 			if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
+			{
 				if (
 					((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
 					||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
@@ -361,4 +362,7 @@ void MyAnalyzer::OpenMomInfoData()
 						molecule[i][j].momSumFactor = 1;
 					}
 				}
+			}
+		}
+	}
 }

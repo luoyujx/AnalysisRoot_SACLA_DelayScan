@@ -140,9 +140,47 @@ void MyAnalyzer::Analyze()
 			if ( fIntensities[0]*fIntensities[1]>0)
 				fHi.fill(startIdx+1,"IntensityDivide0by1",fIntensities[0]/fIntensities[1],"IntensityDivide0by1",1000,0,5,"Intensity");
 		startIdx+=2;
+
+		//-----------------------------------
+		if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
+		startIdx++;
+		if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,1000);
+		startIdx++;
+
+		//---skip when FEL is stopped
+		if (fIntensities.size()){
+			if (fIntensities[0]<1) 
+			{
+				//std::cout << "skip this event" << std::endl;
+				return;
+			}
+		}
+		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
+		startIdx++;
+		if (existIntPartition)
+		{
+			//---for getting power dep
+			if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");
+			startIdx++;
+			int whichRegion = -1;
+			for (size_t k=0; k<intPartition.size()-1; k++)
+			{
+				if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
+				{
+					whichRegion = k;
+					fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
+				}
+			}
+			startIdx += intPartition.size();
+		}
 	}
 
-	//-------------------------get the raw mcp events called times//
+	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
+	startIdx++;
+	int secondStartIdx=startIdx+50;
+
+
+	//---get the raw mcp events called times//
 	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
 	for (size_t i=0; i<sac.GetNbrPeaks();++i)
 	{
@@ -157,43 +195,6 @@ void MyAnalyzer::Analyze()
 		fHi.fill(startIdx,"Times_MCP_first",p_t0.GetTime(),"tof [ns]",10000,0,2000);
 	}
 	startIdx++;
-
-	//-------------------------------------------------------------------------------------------------------------------------------
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
-	startIdx++;
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,1000);
-	startIdx++;
-
-	//---skip when FEL is stopped
-	if (fIntensities.size()){
-		if (fIntensities[0]<1) 
-		{
-			//std::cout << "skip this event" << std::endl;
-			return;
-		}
-	}
-	if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
-	startIdx++;
-	if (existIntPartition)
-	{
-		//---for getting power dep
-		if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");
-		startIdx++;
-		int whichRegion = -1;
-		for (size_t k=0; k<intPartition.size()-1; k++)
-		{
-			if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
-			{
-				whichRegion = k;
-				fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
-			}
-		}
-		startIdx += intPartition.size();
-	}
-
-	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
-	startIdx++;
-	int secondStartIdx=startIdx+50;
 
 	//-----------------------Set jet speed
 	//for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
@@ -276,6 +277,7 @@ void MyAnalyzer::Analyze()
 	}//------------------------------------------------------------------------------------------------------//
 	startIdx += (fParticles.GetNbrOfParticles()*100);
 
+	//fill histograms of hit count
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
@@ -288,19 +290,24 @@ void MyAnalyzer::Analyze()
 
 	//now you have found the particles//
 	//we can look for coincidences//
+	//get coincidence by calcurating aligned momentum-sum
 	if (MoleculeAnalysis == 1)
 	{
+		//clear Coincidence counter
 		for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
 			for (size_t j=0;j<fParticles.GetNbrOfParticles();++j)
 				molecule[i][j].CoincidenceCount = 0;
-
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
+		//loop from particle No.1 (except Ion)
+		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
 			{
 				const MyParticle &jp = fParticles.GetParticle(j);
+				//check if ip and jp is molecule -> particles.Add()
 				if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
+				{
+					//
 					if (
 						((ip.GetCoinGroup() != jp.GetCoinGroup()))
 						||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
@@ -309,9 +316,10 @@ void MyAnalyzer::Analyze()
 						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
 						startIdx += 200;
 					}
+				}
 			}
 		}
-
+		//
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
@@ -324,20 +332,28 @@ void MyAnalyzer::Analyze()
 		}
 		startIdx++;
 	}
-	//gates by certain particle hits
-	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*20;//reserve ID for fillMoleculeHistogram2
+
+
+	//---gate by certain particle hits
+	//reserve ID for fillMoleculeHistogram2
+	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*20;
 	if (MoleculeAnalysis == 2)
 	{
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
+		//loop from particle 1 because excepting Ion
+		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
-			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1)) //Gated particle (I+...)
+			//check whether ip have counts and gatting paticle (I+, I++, ...)
+			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1))
 			{
-				fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));//Target ion
+				//fill Ion spectra 
+				fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));
+				//loop to fill the target particles
 				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
 				{
 					const MyParticle &jp = fParticles.GetParticle(j);
-					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))//Target particle (C+...,H+)
+					//Target particle (C+...,H+)
+					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))
 					{
 						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*20);
 					}
@@ -749,60 +765,50 @@ void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vec
 	TString Hname(p2.GetName());
 	Hname += "GatedBy";
 	Hname += p1.GetName();
-	
+
 	const double MomLim = 800;
 
-	//for (size_t i=0; i<p1.GetNbrOfParticleHits();++i)
+	for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)//i=j
 	{
-		for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)//i=j
+		if (intensity.size())
+			hi.fill(hiOff+0,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",300,0,1000,"Intensity");
+
+		int IDX = hiOff+1;
+		hi.fill(IDX+0,Form("%sPxPy",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+		if (TMath::Abs(p2[i].Pz()) < 30)
 		{
-			//skip if we are going to put in the same particlehit, for the case that we want coincidences for the same particle//
-			//if ((i>=j) && (p1==p2)) continue;//i==j
-
-				//Intensity//
-				//for (size_t iI=0; iI<intensity.size();++iI)
-				//hi.fill(hiOff+10+iI,"Intensity",intensity[iI],Form("intensity_{%s%s} [arb.units]",p1.GetName(),p2.GetName()),300,0,1000,Form("%s/Intensity",Hname.Data()));
-				if (intensity.size())
-					hi.fill(hiOff+0,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",300,0,1000,"Intensity");
-
-				//Momentum first Ion//
-				int IDX = hiOff+1;
-				hi.fill(IDX+0,Form("%sPxPy",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-				if (TMath::Abs(p2[i].Pz()) < 30)
-				{
-					hi.fill(IDX+1,Form("%sPxPySlice",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-					//hi.fill(IDX+2,Form("%sPhiPxPySlice",p2.GetName()),TMath::ATan2(p2[i].Py(),p2[i].Px())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Py()*p2[i].Py() + p2[i].Px()*p2[i].Px()),"#phi [deg]","#sqrt{px^{2} + py^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
-				}
-
-				hi.fill(IDX+3,Form("%sPxPz",p2.GetName()),p2[i].Pz(),p2[i].Px(),"pz [a.u.]","px [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-				if (TMath::Abs(p2[i].Py()) < 30)
-				{
-					hi.fill(IDX+4,Form("%sPxPzSlice",p2.GetName()),p2[i].Pz(),p2[i].Px(),"pz [a.u.]","px [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-					//hi.fill(IDX+5,Form("%sPhiPxPzSlice",p2.GetName()),TMath::ATan2(p2[i].Px(),p2[i].Pz())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Pz()*p2[i].Pz() + p2[i].Px()*p2[i].Px()),"#phi [deg]","#sqrt{px^{2} + pz^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
-				}
-           
-				hi.fill(IDX+6,Form("%sPyPz",p2.GetName()),p2[i].Pz(),p2[i].Py(),"pz [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-				if (TMath::Abs(p2[i].Px()) < 30)
-				{
-					hi.fill(IDX+7,Form("%sPyPzSlice",p2.GetName()),p2[i].Pz(),p2[i].Py(),"pz [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-					//hi.fill(IDX+8,Form("%sPhiPyPzSlice",p2.GetName()),TMath::ATan2(p2[i].Py(),p2[i].Pz())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Py()*p2[i].Py() + p2[i].Pz()*p2[i].Pz()),"#phi [deg]","#sqrt{pz^{2} + py^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
-				}
-
-				hi.fill(IDX+9,Form("%sTotalMomentum",p2.GetName()),p2[i].P(),"p [a.u.]",300,0,MomLim,Form("%s/Momenta",Hname.Data()));
-				//hi.fill(IDX+2,Form("%sPx",p2.GetName()),p2[i].Px(),"px [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-				//hi.fill(IDX+5,Form("%sPy",p2.GetName()),p2[i].Py(),"py [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-				//hi.fill(IDX+8,Form("%sPz",p2.GetName()),p2[i].Pz(),"pz [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-
-				//Energy First Ion//
-				hi.fill(IDX+10,Form("%sEnergy",p2.GetName()),p2[i].E(),"Energy [eV]",300,0,100,Form("%s/Energy",Hname.Data()));
-
-				//Raw
-				hi.fill(IDX+11,Form("%sTOF",p2.GetName()),p2[i].TofCor(),"Tof [ns]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Form("%s/Raw",Hname.Data()));
-				hi.fill(IDX+12,Form("%sDetCor",p2.GetName()),p2[i].XCor(),p2[i].YCor(),"x [mm]","y [mm]",300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
-				hi.fill(IDX+13,Form("%sXPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].XCorRotScl(),"tof [ns]","x [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetXcor()-p2.GetCondRad()*1.3,p2.GetXcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
-				hi.fill(IDX+14,Form("%sYPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].YCorRotScl(),"tof [ns]","y [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetYcor()-p2.GetCondRad()*1.3,p2.GetYcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
-
+			hi.fill(IDX+1,Form("%sPxPySlice",p2.GetName()),p2[i].Px(),p2[i].Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(IDX+2,Form("%sPhiPxPySlice",p2.GetName()),TMath::ATan2(p2[i].Py(),p2[i].Px())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Py()*p2[i].Py() + p2[i].Px()*p2[i].Px()),"#phi [deg]","#sqrt{px^{2} + py^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
 		}
+
+		hi.fill(IDX+3,Form("%sPxPz",p2.GetName()),p2[i].Pz(),p2[i].Px(),"pz [a.u.]","px [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+		if (TMath::Abs(p2[i].Py()) < 30)
+		{
+			hi.fill(IDX+4,Form("%sPxPzSlice",p2.GetName()),p2[i].Pz(),p2[i].Px(),"pz [a.u.]","px [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(IDX+5,Form("%sPhiPxPzSlice",p2.GetName()),TMath::ATan2(p2[i].Px(),p2[i].Pz())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Pz()*p2[i].Pz() + p2[i].Px()*p2[i].Px()),"#phi [deg]","#sqrt{px^{2} + pz^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+		}
+
+		hi.fill(IDX+6,Form("%sPyPz",p2.GetName()),p2[i].Pz(),p2[i].Py(),"pz [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+		if (TMath::Abs(p2[i].Px()) < 30)
+		{
+			hi.fill(IDX+7,Form("%sPyPzSlice",p2.GetName()),p2[i].Pz(),p2[i].Py(),"pz [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(IDX+8,Form("%sPhiPyPzSlice",p2.GetName()),TMath::ATan2(p2[i].Py(),p2[i].Pz())*TMath::RadToDeg(),TMath::Sqrt(p2[i].Py()*p2[i].Py() + p2[i].Pz()*p2[i].Pz()),"#phi [deg]","#sqrt{pz^{2} + py^{2}} [a.u.]",360,-180,180,300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+		}
+
+		hi.fill(IDX+9,Form("%sTotalMomentum",p2.GetName()),p2[i].P(),"p [a.u.]",300,0,MomLim,Form("%s/Momenta",Hname.Data()));
+		//hi.fill(IDX+2,Form("%sPx",p2.GetName()),p2[i].Px(),"px [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+		//hi.fill(IDX+5,Form("%sPy",p2.GetName()),p2[i].Py(),"py [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+		//hi.fill(IDX+8,Form("%sPz",p2.GetName()),p2[i].Pz(),"pz [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+
+		//Energy First Ion//
+		hi.fill(IDX+10,Form("%sEnergy",p2.GetName()),p2[i].E(),"Energy [eV]",300,0,100,Form("%s/Energy",Hname.Data()));
+
+		//Raw
+		hi.fill(IDX+11,Form("%sTOF",p2.GetName()),p2[i].TofCor(),"Tof [ns]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,Form("%s/Raw",Hname.Data()));
+		hi.fill(IDX+12,Form("%sDetCor",p2.GetName()),p2[i].XCor(),p2[i].YCor(),"x [mm]","y [mm]",300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+		hi.fill(IDX+13,Form("%sXPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].XCorRotScl(),"tof [ns]","x [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetXcor()-p2.GetCondRad()*1.3,p2.GetXcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+		hi.fill(IDX+14,Form("%sYPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].YCorRotScl(),"tof [ns]","y [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetYcor()-p2.GetCondRad()*1.3,p2.GetYcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+
 	}
 }
 //----------------------------------PIPICO ALL-----------------------------------------------------------------//

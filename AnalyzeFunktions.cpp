@@ -47,24 +47,31 @@ double calcMass(const MyParticle &p, const MyParticleHit &ph)
 }
 
 //___________________________________________________________________________________________________________________________________________________________
-void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi)
+void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, const TString &whichParticles)
 {
 	//setup the particle Infos, this will also load the other settings from the ini files//
 	// kind of particle 0:atom 1:molecule 2:electron 3:Ion 4:Ion(simple) 
 
 	particles.Add("Ion",1,1,0);//------------particle 0 --- Do not comment out!
 
+
+	if (whichParticles=="") return;
+	else if(whichParticles=="CH3I") AddCH3I(particles);
+	else if(whichParticles=="IUracil") AddIUracil(particles);
+	else
+	{
+		std::cout << "can not find particles!!" << std::endl;
+		return;
+	}
+
 	//---SACLA Ar atom
 	//AddArgon(particles);
-
 	//---SACLA Xe atom
 	//AddXenon(particles);
 	//AddXenon132(particles);
-
 	//---SACLA CH3I molecule
 	//AddCH3I(particles);
-
-	AddIUracil(particles);
+	//AddIUracil(particles);
 	//---Test N2 molecule
 	//AddNitrogen(particles);
 }
@@ -177,7 +184,6 @@ void MyAnalyzer::Analyze()
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
-	int secondStartIdx=startIdx+50;
 
 
 	//---get the raw mcp events called times//
@@ -203,6 +209,8 @@ void MyAnalyzer::Analyze()
 	//	p.SetXVelocity(XVelocity);
 	//	p.SetYVelocity(YVelocity);
 	//}
+
+	int secondStartIdx=startIdx+20;
 	//go through all resorted detektorhits//
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
 	{
@@ -336,7 +344,8 @@ void MyAnalyzer::Analyze()
 
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
-	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*20;
+	const int nbrOfHistosInfillMol2 = 15;
+	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 	if (MoleculeAnalysis == 2)
 	{
 		//loop from particle 1 because excepting Ion
@@ -352,16 +361,17 @@ void MyAnalyzer::Analyze()
 				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
 				{
 					const MyParticle &jp = fParticles.GetParticle(j);
-					//Target particle (C+...,H+)
+					//Target particle (C+.N+..O+..CO+..,H+)
 					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))
 					{
-						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*20);
+						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2);
 					}
 				}
 			}
 		}
 	}
-	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*20*2;
+	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
+	startIdx += fParticles.GetNbrOfParticles()*10;
 	//---Post-analysis---//
 	//if (molecule[5][12].CoincidenceCount > 0) 
 	//for (size_t i=0; i<rd.GetNbrOfHits();++i)
@@ -386,7 +396,8 @@ void MyAnalyzer::Analyze()
 	//	}
 	//}
 	//if (MoleculeAnalysis) fillPIPICO(fParticles.GetParticle(0),fHi);
-	//std::cout << "\t  Last ID" << startIdx;
+
+	//std::cout << startIdx << std::endl;
 }
 void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff)
 {
@@ -426,8 +437,8 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"TofCor",ph.TofCor(),"tof [ns]",1000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,Form("%s/Raw",p.GetName()));
 
 	//pos vs tof//
-	hi.fill(hiOff++,"XPosVsTof",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",500,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,1000,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
-	hi.fill(hiOff++,"YPosVsTof",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",500,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,1000,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
+	hi.fill(hiOff++,"XPosVsTof",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
+	hi.fill(hiOff++,"YPosVsTof",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 
 	//hi.fill(hiOff++,"XPosVsTofFine",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 	//hi.fill(hiOff++,"YPosVsTofFine",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));

@@ -69,6 +69,7 @@ void MyHistos::ResetAll()
 //_______________________________________________________________________________________________________
 void MyHistos::FlushRootFile()
 {
+	int nbrOfHisto = 0;
 	if (fVerbose) std::cout << "flushing root file"<<std::endl;
 	//std::cout << "flushing root file"<<std::endl;
 	//--write histos to directory--//
@@ -86,11 +87,13 @@ void MyHistos::FlushRootFile()
 			//--write object to current directory--//
 			obj->Write(0,TObject::kOverwrite);
 			rootfile->cd("/");
+			nbrOfHisto++;
 		}
 	}
 
 	//--save directory to root file--//
 	rootfile->SaveSelf();
+	std::cout << nbrOfHisto << " histograms are saved." << std::endl;
 }
 
 //########################ROOT Histograms Stuff################################################################
@@ -153,6 +156,12 @@ TH1* MyHistos::create3d(int id, const char *name,
 					    int nZbins, double zLow, double zUp, 
 					    const char * dir, bool alreadylocked)
 {
+	//check if Histogram ID exceed the array limit//
+	if (id >= arsize)
+	{
+		std::cout << "Histogram ID error :" << id << std::endl;
+		return 0;
+	}
 	//check if hist already exists, if so return it//
 	hist3 = dynamic_cast<TH3D*>(hiarray[id]);
 	if (hist3) return hist3;
@@ -236,6 +245,12 @@ TH1* MyHistos::create2d(int id, const char *name,
 				        int nYbins, double yLow, double yUp, 
 					    const char * dir, bool alreadylocked)
 {
+	//check if Histogram ID exceed the array limit//
+	if (id >= arsize)
+	{
+		std::cout << "Histogram ID error :" << id << std::endl;
+		return 0;
+	}
 	//check if hist already exists, if so return it//
 	hist2 = dynamic_cast<TH2D*>(hiarray[id]);
 	if (hist2 ) return hist2;
@@ -311,6 +326,12 @@ TH1* MyHistos::create1d(int id, const char * name,
 				        int nXbins, double xLow, double xUp, 
 				        const char * dir, bool alreadylocked)
 {
+	//check if Histogram ID exceed the array limit//
+	if (id >= arsize)
+	{
+		std::cout << "Histogram ID error :" << id << std::endl;
+		return 0;
+	}
 	//check if hist already exists, if so return it//
 	hist1 = dynamic_cast<TH1D*>(hiarray[id]);
 	if (hist1) return hist1;
@@ -388,6 +409,12 @@ TH1* MyHistos::create1dVariableBin(int id, const char *name,
 			      Int_t nXbins, const Double_t* xbins,
 			      const char * dir , bool alreadylocked)
 {
+	//check if Histogram ID exceed the array limit//
+	if (id >= arsize)
+	{
+		std::cout << "Histogram ID error :" << id << std::endl;
+		return 0;
+	}
 	//check if hist already exists, if so return it//
 	hist1 = dynamic_cast<TH1D*>(hiarray[id]);
 	if (hist1) return hist1;

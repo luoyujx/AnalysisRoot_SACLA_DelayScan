@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	LoadSettings(filename,set);
 
 	//------for Setting-------//
-	MyAnalyzer fAn(static_cast<int>(set.GetValue("UseGUI", true)+0.1));
+	MyAnalyzer fAn(set);
 	fAn.SetRekMeth(static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1));
 	fAn.SetMolecule(static_cast<int>(set.GetValue("Molecule", false)+0.1));
 	fAn.SetCondition(static_cast<int>(set.GetValue("ExtraCondition", false)+0.1));

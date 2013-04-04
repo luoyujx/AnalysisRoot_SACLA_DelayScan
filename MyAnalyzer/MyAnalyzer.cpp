@@ -27,11 +27,11 @@ using namespace std;
 
 //##################################################################################
 //_____________________________The class Members______________________________________________________________________________________________________________________________
-MyAnalyzer::MyAnalyzer(int UseGUI):
+MyAnalyzer::MyAnalyzer(MySettings &set):
 	fOChain("OriginalEvent"),
 	fSAChain("SignalAnalyzedEvent"),
 	fSChain("SortedEvent"),
-	fHi(false,20000),
+	fHi(false,10000),//Max 10000?
 	running(false),
 	processTimer(100),
 	molecule(0, std::vector<Molecule>(0)),
@@ -72,8 +72,9 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fSAE.ReadFromEventInfo(*SAEInfo);
 	fSE.ReadFromEventInfo(*SEInfo);
 
-	DefineParticlesAndRootFile(fParticles,fHi);
-
+	const TString whichPar = set.GetString("WhichParticles","");
+	DefineParticlesAndRootFile(fParticles,fHi,whichPar);
+	const bool UseGUI=static_cast<int>(set.GetValue("UseGUI", true)+0.1);
 	if (UseGUI)
 	{
 		//create gui//

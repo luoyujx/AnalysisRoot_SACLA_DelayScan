@@ -14,7 +14,7 @@ class MyDetektorHit;
 class MyOriginalEvent;
 class MyOriginalChannel;
 
-void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi);
+void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, const TString &whichParticles);
 
 void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff);
 void fillParticleConditionsPos(const MyOriginalEvent &oe, const MyDetektor &det, const MyParticle &p, const MyDetektorHit &dh, std::vector<double>& intensity, MyHistos &hi, int hiOff);

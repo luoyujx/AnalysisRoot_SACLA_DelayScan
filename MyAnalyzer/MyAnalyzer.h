@@ -21,13 +21,13 @@
 struct Molecule
 {
 public:
-	Molecule()
-	{
-		momSumWindowX = 0;
-		momSumWindowY = 0;
-		momSumWindowZ = 0;
-		momSumFactor = 0;
-	};
+	Molecule():
+		momSumWindowX(0),
+		momSumWindowY(0),
+		momSumWindowZ(0),
+		momSumFactor(0),
+		CoincidenceCount(0)
+	{};
 public:
 	double					momSumWindowX;
 	double					momSumWindowY;
@@ -36,17 +36,18 @@ public:
 	size_t					CoincidenceCount;
 };
 
+
 class MyAnalyzer
 {
 public:
 	//MyAnalyzer();
-	MyAnalyzer(int UseGUI = 1);
+	MyAnalyzer(MySettings &set);
 
 public:
-	void					 Init(MySettings &set);
 	void					 Init();
+	void					 Init(MySettings &set);
 	void					 Run();
-	void					 Analyze();
+	void						 Analyze();
 	void					 FileOpen();
 	void					SetParameter(MySettings &set);
 	void					OpenIntensityData();
@@ -116,5 +117,6 @@ private:
 	std::vector<double>					intPartition;
 	std::vector< std::vector<Molecule> >			molecule;
 };
+
 
 #endif

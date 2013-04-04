@@ -31,7 +31,7 @@ MyAnalyzer::MyAnalyzer(int UseGUI):
 	fOChain("OriginalEvent"),
 	fSAChain("SignalAnalyzedEvent"),
 	fSChain("SortedEvent"),
-	fHi(false,10000),
+	fHi(false,20000),
 	running(false),
 	processTimer(100),
 	molecule(0, std::vector<Molecule>(0)),
@@ -112,26 +112,17 @@ void MyAnalyzer::Init()
 	fParticles.Init();
 
 	//Init Covariance stuff//
-	fWf.Init(fOE,fHi);
+	//fWf.Init(fOE,fHi);
+
+	if (MoleculeAnalysis == 1)OpenMomInfoData();
 }
 void MyAnalyzer::Init(MySettings &set)
 {
-	//save the current settings to the ini files//
-	fParticles.SaveParticleInfos();
-
-	//reset the iterator//
-	fEntryIterator=0;
-
-	//clear all histograms//
-	fHi.ResetAll();
-
-	//read the particle info to the actual particle//
-	fParticles.Init();
-
-	//Init Covariance stuff//
-	fWf.Init(fOE,fHi);
-
+	//set parameters from setting.ext
 	SetParameter(set);
+
+	//call Initialize
+	Init();
 }
 //________________________This should not be modified___________________________________________________________________________________________________________________________________
 void MyAnalyzer::Run()
@@ -193,12 +184,14 @@ void MyAnalyzer::Run()
 //_____________
 void MyAnalyzer::SetParameter(MySettings &set)
 {
-	//std::cout<<"Test="<<set.GetValue("Test",0.)<<std::endl;
+	//set parameters
+	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
+	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
 {
-	if (intFileName == "") return;
+	if ((intFileName == "")||(!existIntensityData)) return;
 	
 	std::ifstream ifs(intFileName,std::ios::in);
 	if (ifs.fail()){
@@ -216,7 +209,8 @@ void MyAnalyzer::OpenIntensityData()
 		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
 		//go to nextline
 		ifs.getline(tmp,256);
-		if (uintBuf % 6 != 0) std::cout<< "wrong Tag number!! "<< uintBuf;
+		if (uintBuf % 6 != 0)
+			std::cout<< "wrong Tag number!! "<< uintBuf;
 		if (!ifs.fail())
 		{
 			//add to map (tagIntensity)
@@ -231,10 +225,18 @@ void MyAnalyzer::OpenIntensityData()
 	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
 }	
 //_____Read Intensity region DATA
-void MyAnalyzer::OpenIntRegionData()
+void MyAnalyzer::OpenIntPartition()
 {
+<<<<<<< HEAD
 	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
 	if (ifs.fail()){
+=======
+	if (!existIntPartition) return;
+
+	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
+	if (ifs.fail())
+	{
+>>>>>>> Uracil
 		std::cout<<"Can not open "<<"IntensityPartition.txt"<<std::endl;
 		return;
 	}
@@ -255,8 +257,9 @@ void MyAnalyzer::OpenIntRegionData()
 	std::cout << intPartition.size()-1 << " partitions have been set." << std::endl;
 }
 //_____Read Molecule momentumsum DATA
-void MyAnalyzer::OpenMoleculeData()
+void MyAnalyzer::OpenMomInfoData()
 {
+	if (MoleculeAnalysis!=1) return;
 	//initialize 2D vector
 	molecule.resize(fParticles.GetNbrOfParticles());
 	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
@@ -265,20 +268,23 @@ void MyAnalyzer::OpenMoleculeData()
 	std::ifstream ifs("MomentumInfo.txt",std::ios::in);
 	if (ifs.fail())
 	{
-		std::cout<<"Can not open MomentumInfo.txt. Use default value."<<std::endl;
+		std::cout<<"Can not open MomentumInfo.txt. Use (Make) default value."<<std::endl;
 		std::ofstream ofs("MomentumInfo.txt",std::ios::out);
 		for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
+		{
 			for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+			{
 				if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
+				{
 					if (
 						((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
 						||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
 						)
 
 					{
-						molecule[i][j].momSumWindowX = 50;
-						molecule[i][j].momSumWindowY = 50;
-						molecule[i][j].momSumWindowZ = 50;
+						molecule[i][j].momSumWindowX = 100;
+						molecule[i][j].momSumWindowY = 100;
+						molecule[i][j].momSumWindowZ = 100;
 						molecule[i][j].momSumFactor = 1;
 						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
 						string molName(fParticles.GetParticle(i).GetName());
@@ -293,8 +299,11 @@ void MyAnalyzer::OpenMoleculeData()
 						ofs << std::endl;
 						std::cout << molName << std::endl;
 					}
-					ofs.close();
-					return;
+				}
+			}
+		}
+		ofs.close();
+		return;
 	}
 	//-----can open MomentumInfo
 	double doubleBuf[6];
@@ -330,8 +339,11 @@ void MyAnalyzer::OpenMoleculeData()
 	}
 
 	for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
+	{
 		for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+		{
 			if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
+			{
 				if (
 					((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
 					||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
@@ -355,4 +367,7 @@ void MyAnalyzer::OpenMoleculeData()
 						molecule[i][j].momSumFactor = 1;
 					}
 				}
+			}
+		}
+	}
 }

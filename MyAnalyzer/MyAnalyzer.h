@@ -50,8 +50,8 @@ public:
 	void					 FileOpen();
 	void					SetParameter(MySettings &set);
 	void					OpenIntensityData();
-	void					OpenIntRegionData();
-	void					OpenMoleculeData();
+	void					OpenIntPartition();
+	void					OpenMomInfoData();
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
 
@@ -100,12 +100,16 @@ private:
 	//covariance calcuration stuff//
 	MyWaveform				fWf;
 
+	//some parametrs for analysis
 	TString fileName;
 	TString intFileName;
 	int rekmeth;
+	size_t missedTagCount;
+	//Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;
-	size_t missedTagCount;
+	bool existIntensityData;
+	bool existIntPartition;
 
 	std::map<unsigned int, double>		tagIntensity;
 	std::map<unsigned int, double>		tagIntensity2;

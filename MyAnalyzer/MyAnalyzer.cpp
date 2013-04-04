@@ -228,16 +228,11 @@ void MyAnalyzer::OpenIntensityData()
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntPartition()
 {
-<<<<<<< HEAD
-	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
-	if (ifs.fail()){
-=======
 	if (!existIntPartition) return;
 
 	std::ifstream ifs("IntensityPartition.txt",std::ios::in);
 	if (ifs.fail())
 	{
->>>>>>> Uracil
 		std::cout<<"Can not open "<<"IntensityPartition.txt"<<std::endl;
 		return;
 	}

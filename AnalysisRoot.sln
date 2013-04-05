@@ -1,7 +1,6 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
+﻿Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnalysisRoot", "AnalysisRoot.vcxproj", "{C98792D8-1552-4200-8245-29C30322AA4C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnalysisRoot", "project\AnalysisRoot.vcxproj", "{C98792D8-1552-4200-8245-29C30322AA4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

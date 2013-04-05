@@ -56,8 +56,14 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 
 
 	if (whichParticles=="") return;
-	else if(whichParticles=="CH3I") AddCH3I(particles);
-	else if(whichParticles=="IUracil") AddIUracil(particles);
+	else if(whichParticles=="CH3I") 
+	{//---SACLA CH3I molecule
+		AddCH3I(particles);
+	}
+	else if(whichParticles=="IUracil") 
+	{//---SACLA I-Uracil
+		AddIUracil(particles);
+	}
 	else
 	{
 		std::cout << "can not find particles!!" << std::endl;
@@ -164,6 +170,7 @@ void MyAnalyzer::Analyze()
 		}
 		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
 		startIdx++;
+
 		if (existIntPartition)
 		{
 			//---for getting power dep
@@ -399,6 +406,7 @@ void MyAnalyzer::Analyze()
 
 	//std::cout << startIdx << std::endl;
 }
+//-------------------------------------Fill Ion spectra---------------------------------------------------------------//
 void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff)
 {
 	TString Hname(p2.GetName());
@@ -626,8 +634,6 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 				hi.fill(hiOff+44,"PyPzSumRotCondXYZ",p12ySumRot_YZ, p12zSumRot_YZ,"pyzSum [a.u.]","pyzSum [a.u.]",200,-MomSumRotLim,MomSumRotLim,200,-MomSumRotLim,MomSumRotLim, Form("%s/MomSums",Hname.Data()));
 				hi.fill(hiOff+45,"PzPxSumRotCondXYZ",p12zSumRot_ZX, p12xSumRot_ZX,"pzxSum [a.u.]","pzxSum [a.u.]",200,-MomSumRotLim,MomSumRotLim,200,-MomSumRotLim,MomSumRotLim, Form("%s/MomSums",Hname.Data()));
 				//Intensity//
-				//for (size_t iI=0; iI<intensity.size();++iI)
-				//hi.fill(hiOff+10+iI,"Intensity",intensity[iI],Form("intensity_{%s%s} [arb.units]",p1.GetName(),p2.GetName()),300,0,1000,Form("%s/Intensity",Hname.Data()));
 				if (intensity.size() && (intPart.size()>1)) 
 					hi.fill(hiOff+49,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",intPart.size()-1,&intPart.front(),"PowerDependence");
 
@@ -860,18 +866,13 @@ bool PosCondition(const MyDetektorHit &dh)
 {
 	//Except residual gas
 	//if ((dh.X() < -22) || (dh.X() > 21) || (dh.Y() < -6) || (dh.Y() > 9.5)) return true;
-	if ((dh.X() < -23) || (dh.X() > 22) || (dh.Y() < -7) || (dh.Y() > 10.5)) return true;
+	//if ((dh.X() < -23) || (dh.X() > 22) || (dh.Y() < -7) || (dh.Y() > 10.5)) return true;
 	return false;
 }
 bool TofPosCondition(const MyDetektorHit &dh)
 {
-	////Except Mass 15
-	//if (((dh.Tof() > 3922)&&(dh.Tof() < 3957)) && ((dh.Y() > -7.) && (dh.Y() < 10.)) && ((dh.X() > -23) && (dh.X() < 22))) return false;
-	////Except Mass 17
-	//if (((dh.Tof() > 4121)&&(dh.Tof() < 4161)) && ((dh.Y() > -7.) && (dh.Y() < 10.)) && ((dh.X() > -23) && (dh.X() < 22))) return false;
-
 	//Mass15 N2_2009_Jan
-	if (((dh.Tof() > 5600)&&(dh.Tof() < 5660)) && ((dh.Y() > -7.) && (dh.Y() < 8.)) && ((dh.X() > -20) && (dh.X() < 20))) return false;
+	//if (((dh.Tof() > 5600)&&(dh.Tof() < 5660)) && ((dh.Y() > -7.) && (dh.Y() < 8.)) && ((dh.X() > -20) && (dh.X() < 20))) return false;
 	//if (((dh.Tof() > 5460)&&(dh.Tof() < 5473)) && ((dh.Y() > -4.) && (dh.Y() < 2.)) && ((dh.X() > -5) && (dh.X() < 4))) return false;
 
 	return true;

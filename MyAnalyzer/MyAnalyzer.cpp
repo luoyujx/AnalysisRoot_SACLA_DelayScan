@@ -304,36 +304,33 @@ void MyAnalyzer::OpenMomInfoData()
 	//-----can open MomentumInfo
 	double doubleBuf[6];
 	string strBuf;
-	char tmp[256];
+	string tmp;
 	Molecule molBuf;
 	map<string,Molecule> bufMap;
+	//---Load Momentum sum data from "MomentumInfo.txt"
 	while (!ifs.eof())
 	{
-		//read the data (double)
+		//read the data (string, double)
 		ifs >> strBuf;
+		if (ifs.eof()) break;
 		for (int i=0; i<4; ++i)
 			ifs >> doubleBuf[i];
+		if (ifs.fail())
+		{
+			std::cout << "MomentumSumInfo: Data read error!" <<std::endl;
+			break;
+		}
+		//--set to buffer structure
+		molBuf.momSumWindowX = doubleBuf[0];
+		molBuf.momSumWindowY = doubleBuf[1];
+		molBuf.momSumWindowZ = doubleBuf[2];
+		molBuf.momSumFactor = doubleBuf[3];
+		//add to Map
+		bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
 		//go to nextline
-		ifs.getline(tmp,256);
-		if (!ifs.fail())
-		{
-			molBuf.momSumWindowX = doubleBuf[0];
-			molBuf.momSumWindowY = doubleBuf[1];
-			molBuf.momSumWindowZ = doubleBuf[2];
-			molBuf.momSumFactor = doubleBuf[3];
-			//add to Map
-			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
-		}
-		else
-		{
-			molBuf.momSumWindowX = 50;
-			molBuf.momSumWindowY = 50;
-			molBuf.momSumWindowZ = 50;
-			molBuf.momSumFactor = 1;
-			bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
-		}
+		std::getline(ifs, tmp);
 	}
-
+	std::cout << "MomentumSumInfo: "<< bufMap.size() << " records" <<std::endl;
 	for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
 	{
 		for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
@@ -357,9 +354,13 @@ void MyAnalyzer::OpenMomInfoData()
 					}
 					else
 					{
-						molecule[i][j].momSumWindowX = 50;
-						molecule[i][j].momSumWindowY = 50;
-						molecule[i][j].momSumWindowZ = 50;
+						std::cout << std::endl;
+						std::cout << "MomentumSumInfo: Can not find " << molName << " data!!"<< std::endl;
+						std::cout << "MomentumSumInfo: Use default value."<<std::endl;
+
+						molecule[i][j].momSumWindowX = 100;
+						molecule[i][j].momSumWindowY = 100;
+						molecule[i][j].momSumWindowZ = 100;
 						molecule[i][j].momSumFactor = 1;
 					}
 				}

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <utility>
 #include <TTree.h>
 #include <TFile.h>
 #include <TAxis.h>
@@ -8,7 +9,8 @@
 #include <TMath.h>
 #include <TH1.h>
 #include <TGClient.h>
-#include <utility>
+
+
 
 #include "MyAnalyzer.h"
 #include "../MyGui/MyGui.h"
@@ -125,6 +127,7 @@ void MyAnalyzer::Init(MySettings &set)
 	//call Initialize
 	Init();
 }
+
 //________________________This should not be modified___________________________________________________________________________________________________________________________________
 void MyAnalyzer::Run()
 {
@@ -175,11 +178,17 @@ void MyAnalyzer::Run()
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
+		ShowResult();
 	}
 	
 	//restart run at this time//
 	if (!realyBreak) runTimer.Start(1000);
 	//std::cout << "leaving run"<<std::endl;
+}
+MyAnalyzer::~MyAnalyzer()
+{
+	std::for_each(txt.begin(), txt.end(), [](TText* p) { delete p; });
+	delete canv;
 }
 
 //_____________

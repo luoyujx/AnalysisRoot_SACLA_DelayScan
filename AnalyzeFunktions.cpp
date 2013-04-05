@@ -20,6 +20,7 @@
 #include <TMath.h>
 #include <TH1.h>
 #include <TGClient.h>
+#include <TStyle.h> 
 
 //#define XVelocity 0.0003704 //(mm/ns)
 //#define YVelocity -0.00037775
@@ -88,7 +89,31 @@ void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const
 	const double x = dh.X()-xc;
 	dh.SetTof( t - alpha*t*(k2*x*x+k4*x*x*x*x) );
 }
+void MyAnalyzer::ShowResult()
+{
+	TCanvas* canv = new TCanvas("Result","Result",100,100,1000+4,600+28);
+	gStyle->SetOptStat(0);
+	gStyle->SetOptFit(0);
+	canv->Divide(1,2,0.002,0.002);
+	canv->cd(1);
+	//canv[n]->ToggleEventStatus();
+	TH1D* mass = dynamic_cast<TH1D*>(gFile->GetDirectory("/Ion")->FindObject("Mass"));
+	TH1D* tof = dynamic_cast<TH1D*>(gFile->GetDirectory("/Ion")->FindObject("Tof"));
+	mass->Draw();
+	txt.resize(fParticles.GetNbrOfParticles());
+	for (int i = 1; i < fParticles.GetNbrOfParticles(); i++)
+	{
+		txt[i] = new TText(0.5,0.5,"");
+		txt[i]->SetTextSize(0.04);
+		txt[i]->SetTextColor(kBlack);
+		txt[i]->DrawText(fParticles.GetParticle(i).GetMass_au()*MyUnitsConv::au2amu()/fParticles.GetParticle(i).GetCharge_au(),
+			3000,
+			fParticles.GetParticle(i).GetName());
+	}
 
+	canv->cd(2);
+	tof->Draw();
+}
 //________Analysis main loop___________________________________________________________________________________________________________________________________________________
 void MyAnalyzer::Analyze()
 {
@@ -258,11 +283,11 @@ void MyAnalyzer::Analyze()
 			const MyParticleHit &ph = p.AddHit(dh);
 
 			fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",20000,0,200,"Ion");
-			fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,"Ion");
+			fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.1,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.1,"Ion");
 			fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-			fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",10000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,"Ion");
-			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,"Ion");
-			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.3,p.GetCondTofTo()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,"Ion");
+			fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",20000,0,maxTof,"Ion");
+			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
+			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
 		}
 
 		//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//

@@ -3,12 +3,13 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <TChain.h>
 #include <TSystem.h>
-#include <map>
+#include <TCanvas.h>
+#include "TText.h"
 
 #include "../MyParticle/MyParticleContainer.h"
-
 #include "../FilesFromLma2Root/MyEvent/MyOriginalEvent/MyOriginalEvent.h"
 #include "../FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEvent.h"
 #include "../FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEvent.h"
@@ -42,17 +43,19 @@ class MyAnalyzer
 public:
 	//MyAnalyzer();
 	MyAnalyzer(MySettings &set);
+	~MyAnalyzer();
 
 public:
 	void					 Init();
 	void					 Init(MySettings &set);
 	void					 Run();
-	void						 Analyze();
+	void					 Analyze();
 	void					 FileOpen();
 	void					SetParameter(MySettings &set);
 	void					OpenIntensityData();
 	void					OpenIntPartition();
 	void					OpenMomInfoData();
+	void					ShowResult();
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
 
@@ -101,6 +104,7 @@ private:
 	//covariance calcuration stuff//
 	MyWaveform				fWf;
 
+	TCanvas					*canv;
 	//some parametrs for analysis
 	TString fileName;
 	TString intFileName;
@@ -116,6 +120,7 @@ private:
 	std::map<unsigned int, double>		tagIntensity2;
 	std::vector<double>					intPartition;
 	std::vector< std::vector<Molecule> >			molecule;
+	std::vector<TText*>					txt;
 };
 
 

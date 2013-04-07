@@ -380,7 +380,7 @@ void MyAnalyzer::Analyze()
 				}
 			}
 		}
-		//
+		//--Fill Number of coincidence
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 		{
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
@@ -423,8 +423,11 @@ void MyAnalyzer::Analyze()
 			}
 		}
 	}
+
+	//Skip already used ID
 	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 	startIdx += fParticles.GetNbrOfParticles()*10;
+
 	//---Post-analysis---//
 	//if (molecule[5][12].CoincidenceCount > 0) 
 	//for (size_t i=0; i<rd.GetNbrOfHits();++i)

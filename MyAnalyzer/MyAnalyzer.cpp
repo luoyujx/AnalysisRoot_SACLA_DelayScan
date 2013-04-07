@@ -92,8 +92,7 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 }
 MyAnalyzer::~MyAnalyzer()
 {
-	//std::for_each(txt.begin(), txt.end(), [](TText* p) { delete p; });
-	delete canv;
+	if (canv) delete canv;
 }
 
 //___________________________________________________________________________________________________________________________________________________________

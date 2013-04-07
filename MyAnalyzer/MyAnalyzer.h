@@ -20,7 +20,7 @@
 
 #include "../MyWaveform.h"
 
-//_____Informatin for calc coincidence_____
+//_____Information for calc coincidence_____
 struct Molecule
 {
 public:
@@ -39,7 +39,7 @@ public:
 	size_t					CoincidenceCount;
 };
 
-
+//___Anlyze class___
 class MyAnalyzer
 {
 public:
@@ -61,12 +61,8 @@ public:
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
 
-	//---Setting from Setting.txt---//
+	//Set from Setting.txt
 	void		SetFileName(const TString& in)		{fileName = in;}
-	//void		SetRekMeth(int in)					{rekmeth = in;}
-	//void		SetMolecule(int in)					{MoleculeAnalysis = in;}
-	//void		SetCondition(int in)				{extraCondition = in;}
-	//void		SetIntFileName(const TString& in)	{intFileName = in;}
 
 	TString		GetFileName()const			{return fileName;}
 	int			GetRekMeth()const			{return rekmeth;}
@@ -102,28 +98,37 @@ private:
 
 	//the histograms//
 	MyHistos				 fHi;
-
 	//covariance calcuration stuff//
 	MyWaveform				fWf;
-
+	//Canvas for showResult()
 	TCanvas					*canv;
-	//some parametrs for analysis
+
+	//---Parametrs for analysis (defined by setting.txt)
+	//ROOT file name
 	TString fileName;
+	//File name of intensity data
 	TString intFileName;
+	//reconstruction method (resort parameter)
 	int rekmeth;
+	//Counter for missed intensity data
 	size_t missedTagCount;
-	//Analysis frags
+	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;
 	bool existIntensityData;
 	bool existIntPartition;
 	bool checkingResult;
 
+	//BM1 data
 	std::map<unsigned int, double>		tagIntensity;
+	//PD data
 	std::map<unsigned int, double>		tagIntensity2;
+	//Intensity partition for making variable bin histogram
 	std::vector<double>					intPartition;
+	//various molecule data for coincidence (Momentum information, coincidence count, ...)
 	std::vector< std::vector<Molecule> > molecule;
 
+	//---Indicate some information on mass and tof spectrum
 	std::vector<TText>					txtMass;
 	std::vector<TText>					txtTof;
 	std::vector<TBox>					boxTof;

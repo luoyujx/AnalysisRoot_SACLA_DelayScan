@@ -449,3 +449,13 @@ double MyMomentaCalculator::mass(double tof_ns, const MySpectrometer& sp)//motom
 	}
 }
 
+double MyMomentaCalculator::tof(double massQ, const MySpectrometer& sp)
+{
+	if (sp.GetSpectrometerRegions().size() == 1)	//if there is only one region
+		return TMath::Sqrt(massQ/sp.GetSpectrometerRegions()[0].EField_Vpcm());
+	else
+	{
+		std::cout<< "No Spectrometer Region has been set. Please set it, otherwise one cannot calculate the momentum"<<std::endl;
+		return 0;
+	}
+}

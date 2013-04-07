@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -23,7 +31,18 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v100</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
@@ -34,7 +53,13 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -43,9 +68,11 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\Binaries\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -69,6 +96,28 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(ROOTSYS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level2</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>w32pragma.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(TargetPath)</OutputFile>
+      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -100,8 +149,37 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>$(ROOTSYS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level2</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>w32pragma.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(ProjectDir)\..\Binaries\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\AddParticles.cpp" />
+    <ClCompile Include="..\AnalyzeFuncFill.cpp" />
     <ClCompile Include="..\AnalyzeFunktions.cpp" />
     <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSectionDict.cpp" />
     <ClCompile Include="..\main.cpp" />
@@ -178,106 +256,167 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AddParticles.h" />
+    <ClInclude Include="..\AnalyzeFuncFill.h" />
     <ClInclude Include="..\AnalyzeFunktions.h" />
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannel.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannelInfo.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEvent.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalEventInfo.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyPuls\MyPuls.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyPeak\MyPeak.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSection.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannel.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MySignalAnalyzedChannelInfo.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEvent.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedEventInfo.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MyVoltage\MyVoltage.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektor.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorHit.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyDetektorInfo.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyLayerProperty.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyDetektor\MyTimeRange.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MyPunkt\MyPunkt.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEvent.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MySortedEvent\MySortedEventInfo.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <ClInclude Include="..\MyCovariance.h" />
     <ClInclude Include="..\MyMomentaCalculator\MyMomentaCalculator.h" />
@@ -285,133 +424,237 @@
     <ClInclude Include="..\MyWaveform.h" />
     <CustomBuild Include="..\MyAnalyzer\MyAnalyzer.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyParticle\MyParticle.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyParticle\MyParticleHit.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyParticle\MyParticleInfo.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyParticle\MySpectrometer\MySpectrometer.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyParticle\MySpectrometer\MySpectrometerRegion.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyPar\MyConditions\MyConditions.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyPar\MyCorrections\MyCorrections.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyGui.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyInput\MyInput.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyPar\MyPar.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyPar\MySpec\MySpec.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
     <CustomBuild Include="..\MyGui\MyPar\MySpec\MySpecReg.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Dictionary for %(Filename)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Dictionary for %(Filename)</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
 </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"
+</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -36,6 +36,7 @@ namespace MyMomentaCalculator
 	double pz_poly(double tof_ns, const MySpectrometer& sp);
 
 	double mass(double tof_ns, const MySpectrometer& sp);
+	double tof(double mass, const MySpectrometer& sp);
 }
 
 #endif

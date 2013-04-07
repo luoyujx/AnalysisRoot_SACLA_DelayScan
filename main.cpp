@@ -17,27 +17,19 @@ int main(int argc, char *argv[])
 	TString filename("setting.txt");
 	LoadSettings(filename,set);
 
-	//------for Setting-------//
 	MyAnalyzer fAn(set);
-	fAn.SetRekMeth(static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1));
-	fAn.SetMolecule(static_cast<int>(set.GetValue("Molecule", false)+0.1));
-	fAn.SetCondition(static_cast<int>(set.GetValue("ExtraCondition", false)+0.1));
 	fAn.SetFileName(set.GetString("OutputROOTFile","Analysis.root"));
-	fAn.SetIntFileName(set.GetString("IntensityFile","Intensity.txt"));
-
-	std::cout<<"Root File Name : "<<fAn.GetFileName()<<std::endl;
-	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;
-	std::cout<<"Analyze molecule : "<<fAn.GetMolecule()<<std::endl;
-	std::cout<<"Extra condition : "<<fAn.GetCondition()<<std::endl;
-	std::cout<<"Intensity data file name : "<<fAn.GetIntFileName()<<std::endl;
-	//------------------------//
 
 	fAn.FileOpen();
 	fAn.Init(set);
 
 	fAn.OpenIntensityData();
 	fAn.OpenIntPartition();
-	//fAn.OpenMomInfoData();
+
+	std::cout<<"Root File Name : "<<fAn.GetFileName()<<std::endl;
+	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;
+	std::cout<<"Analyze molecule : "<<fAn.GetMolecule()<<std::endl;
+	std::cout<<"Intensity data file name : "<<fAn.GetIntFileName()<<std::endl;
 
 	theApp.Run();
 	return 0;

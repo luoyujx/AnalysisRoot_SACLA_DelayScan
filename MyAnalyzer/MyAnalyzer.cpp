@@ -21,6 +21,7 @@
 #include "../FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEventInfo.h"
 
 #include "../AnalyzeFunktions.h"
+#include "../AnalyzeFuncFill.h"
 
 //#include "../MyCovariance.h"
 //#include "../MyWaveform.h"
@@ -88,6 +89,11 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 		//start run//
 		runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
 		runTimer.Start(100);
+}
+MyAnalyzer::~MyAnalyzer()
+{
+	//std::for_each(txt.begin(), txt.end(), [](TText* p) { delete p; });
+	delete canv;
 }
 
 //___________________________________________________________________________________________________________________________________________________________
@@ -178,25 +184,25 @@ void MyAnalyzer::Run()
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
-		ShowResult();
+		if (checkingResult) ShowResult();
 	}
 	
 	//restart run at this time//
 	if (!realyBreak) runTimer.Start(1000);
 	//std::cout << "leaving run"<<std::endl;
 }
-MyAnalyzer::~MyAnalyzer()
-{
-	std::for_each(txt.begin(), txt.end(), [](TText* p) { delete p; });
-	delete canv;
-}
 
 //_____________
 void MyAnalyzer::SetParameter(MySettings &set)
 {
 	//set parameters
+	intFileName = set.GetString("IntensityFile","Intensity.txt");
+	rekmeth = static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1);
+	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", false)+0.1);
+	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
 	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
+	checkingResult=static_cast<int>(set.GetValue("CheckResult", false)+0.1);
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()

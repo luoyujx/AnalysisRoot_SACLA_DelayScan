@@ -4,10 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <memory>
 #include <TChain.h>
 #include <TSystem.h>
 #include <TCanvas.h>
 #include "TText.h"
+#include "TBox.h"
 
 #include "../MyParticle/MyParticleContainer.h"
 #include "../FilesFromLma2Root/MyEvent/MyOriginalEvent/MyOriginalEvent.h"
@@ -59,18 +61,18 @@ public:
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
 
-	//---Setting from comand switch---//
+	//---Setting from Setting.txt---//
 	void		SetFileName(const TString& in)		{fileName = in;}
-	void		SetRekMeth(int in)					{rekmeth = in;}
-	void		SetMolecule(int in)					{MoleculeAnalysis = in;}
-	void		SetCondition(int in)				{extraCondition = in;}
-	void		SetIntFileName(const TString& in)	{intFileName = in;}
+	//void		SetRekMeth(int in)					{rekmeth = in;}
+	//void		SetMolecule(int in)					{MoleculeAnalysis = in;}
+	//void		SetCondition(int in)				{extraCondition = in;}
+	//void		SetIntFileName(const TString& in)	{intFileName = in;}
 
 	TString		GetFileName()const			{return fileName;}
 	int			GetRekMeth()const			{return rekmeth;}
 	int			GetMolecule()const			{return MoleculeAnalysis;}
 	int			GetCondition()const			{return extraCondition;}
-	TString		GetIntFileName()const			{return intFileName;}
+	TString		GetIntFileName()const		{return intFileName;}
 
 private:
 	//the particles//
@@ -115,12 +117,16 @@ private:
 	int extraCondition;
 	bool existIntensityData;
 	bool existIntPartition;
+	bool checkingResult;
 
 	std::map<unsigned int, double>		tagIntensity;
 	std::map<unsigned int, double>		tagIntensity2;
 	std::vector<double>					intPartition;
-	std::vector< std::vector<Molecule> >			molecule;
-	std::vector<TText*>					txt;
+	std::vector< std::vector<Molecule> > molecule;
+
+	std::vector<TText>					txtMass;
+	std::vector<TText>					txtTof;
+	std::vector<TBox>					boxTof;
 };
 
 

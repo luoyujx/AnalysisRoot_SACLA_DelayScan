@@ -329,7 +329,7 @@ void MyAnalyzer::Analyze()
 			if (dh.RekMeth() < rekmeth)
 			{
 				const MyParticleHit &ph = p.AddHit(dh);
-				fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx);
+				fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition);
 			}
 			//we reserve 100 histograms for one particle//
 			secondStartIdx +=100;
@@ -386,12 +386,22 @@ void MyAnalyzer::Analyze()
 			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
 			{
 				for (size_t k=0; k<molecule[i][j].CoincidenceCount; ++k)
+				{
+					//Coincidence charge distribution
 					fHi.fill(startIdx,"NumberOfCoincidence",i,j,"Particle number","Particle number",
-					fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
-					fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
+						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
+						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
+					fHi.fill(startIdx+1,"CoincidentChargeState",fParticles.GetParticle(i).GetCharge_au(),fParticles.GetParticle(j).GetCharge_au(),
+						"Carbon Chage","Iodine Chage",
+						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
+						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
+					//sumed chage state
+					fHi.fill(startIdx+2, "SumOfChageState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
+						"Charge State",	fParticles.GetNbrOfParticles()*2, 0, fParticles.GetNbrOfParticles()*2);
+				}
 			}
 		}
-		startIdx++;
+		startIdx += 3;
 	}
 
 

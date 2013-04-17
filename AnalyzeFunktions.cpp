@@ -70,14 +70,19 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	{//---SACLA I-Uracil
 		AddIUracil(particles);
 	}
+	else if(whichParticles=="Argon") 
+	{
+		//---SACLA Ar atom
+		AddArgon(particles);
+	}
 	else
 	{
 		std::cout << "can not find particles!!" << std::endl;
 		return;
 	}
 
-	//---SACLA Ar atom
-	//AddArgon(particles);
+	
+	
 	//---SACLA Xe atom
 	//AddXenon(particles);
 	//AddXenon132(particles);
@@ -165,7 +170,7 @@ void MyAnalyzer::Analyze()
 		}
 
 		fIntensities.push_back(itTagInt2->second * 10000);//[0]
-		fIntensities.push_back(itTagInt->second * 10e+9);//[1]
+		fIntensities.push_back(itTagInt->second *10e+9);//[1]24477
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -375,7 +380,7 @@ void MyAnalyzer::Analyze()
 						)
 					{
 						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
-						startIdx += 200;
+						startIdx += 120;
 					}
 				}
 			}
@@ -432,11 +437,11 @@ void MyAnalyzer::Analyze()
 				}
 			}
 		}
-	}
 
 	//Skip already used ID
 	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 	startIdx += fParticles.GetNbrOfParticles()*10;
+	}
 
 	//---Post-analysis---//
 	//if (molecule[5][12].CoincidenceCount > 0) 

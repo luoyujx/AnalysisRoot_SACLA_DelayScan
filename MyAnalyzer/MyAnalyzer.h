@@ -118,6 +118,7 @@ private:
 	bool existIntensityData;
 	bool existIntPartition;
 	bool checkingResult;
+	bool afterAnalysis;
 
 	//BM1 data
 	std::map<unsigned int, double>		tagIntensity;

@@ -178,7 +178,7 @@ void MyAnalyzer::Run()
 	}
 	if (WasRunningBefore)
 	{
-		fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1);
+		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1);
 		//fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
@@ -202,6 +202,7 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
 	checkingResult=static_cast<int>(set.GetValue("CheckResult", false)+0.1);
+	afterAnalysis=static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
@@ -368,13 +369,12 @@ void MyAnalyzer::OpenMomInfoData()
 					}
 					else
 					{
-						std::cout << std::endl;
 						std::cout << "MomentumSumInfo: Can not find " << molName << " data!!"<< std::endl;
-						std::cout << "MomentumSumInfo: Use default value."<<std::endl;
+						std::cout << "MomentumSumInfo: Set window size at 0."<<std::endl;
 
-						molecule[i][j].momSumWindowX = 100;
-						molecule[i][j].momSumWindowY = 100;
-						molecule[i][j].momSumWindowZ = 100;
+						molecule[i][j].momSumWindowX = 0;
+						molecule[i][j].momSumWindowY = 0;
+						molecule[i][j].momSumWindowZ = 0;
 						molecule[i][j].momSumFactor = 1;
 					}
 				}

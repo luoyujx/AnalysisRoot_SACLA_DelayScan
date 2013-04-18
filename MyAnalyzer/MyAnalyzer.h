@@ -110,6 +110,11 @@ private:
 	TString intFileName;
 	//reconstruction method (resort parameter)
 	int rekmeth;
+	//conversion factor for intensity
+	double factorBM1;
+	double factorPD; //(to uJ/um^2)
+	//step size for trend histogram
+	int trendStep;
 	//Counter for missed intensity data
 	size_t missedTagCount;
 	//---Analysis frags

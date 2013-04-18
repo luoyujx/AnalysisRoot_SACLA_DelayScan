@@ -88,7 +88,7 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	}
 		//start run//
 		runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
-		runTimer.Start(100);
+		runTimer.Start(1000);
 }
 MyAnalyzer::~MyAnalyzer()
 {
@@ -143,7 +143,7 @@ void MyAnalyzer::Run()
 	bool WasRunningBefore=false;
 	bool realyBreak=false;
 	//run while we are still analysing the entries from the tree//
-
+	size_t firstTAG = 0;
 	while(fEntryIterator < fNEntries)
 	{
 		if (fEntryIterator % 1000 == 0)  std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
@@ -160,6 +160,7 @@ void MyAnalyzer::Run()
 		fSChain.GetEntry(fEntryIterator);
 
 		//check EventID//
+		if (fEntryIterator == 0) firstTAG = fOE.GetEventID();
 		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
 		{
 			std::cout << std::endl << "******Error!!! EventID Mismatch !!!! ******"<<std::endl;
@@ -181,6 +182,8 @@ void MyAnalyzer::Run()
 		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1);
 		//fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
+		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
+
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
 		if (checkingResult) ShowResult();
@@ -197,12 +200,15 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	//set parameters
 	intFileName = set.GetString("IntensityFile","Intensity.txt");
 	rekmeth = static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1);
-	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", false)+0.1);
+	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
 	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
+	factorBM1=set.GetValue("ConversionFactorBM1", 10e+9);
+	factorPD=set.GetValue("ConversionFactorPD", 10000);
 	checkingResult=static_cast<int>(set.GetValue("CheckResult", false)+0.1);
 	afterAnalysis=static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
+	trendStep=static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
 }
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()

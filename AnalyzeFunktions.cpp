@@ -146,7 +146,10 @@ void MyAnalyzer::Analyze()
 	MyDetektor &rd = fSE.GetDetektor(0);
 	
 	int startIdx=0;
-	
+
+	//for Trend Histogram
+	int skipCounter = static_cast<int>(fEntryIterator/trendStep);
+
 	//clear the containers//
 	fIntensities.clear();
 	fParticles.ClearParticles();
@@ -169,8 +172,8 @@ void MyAnalyzer::Analyze()
 			return;
 		}
 
-		fIntensities.push_back(itTagInt2->second * 10000);//[0]
-		fIntensities.push_back(itTagInt->second *10e+9);//[1]24477
+		fIntensities.push_back(itTagInt2->second * factorPD);//[0]	PD:
+		fIntensities.push_back(itTagInt->second *factorBM1);//[1]	BM1:
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -209,6 +212,15 @@ void MyAnalyzer::Analyze()
 		if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
 		startIdx++;
 		if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,1000);
+		startIdx++;
+
+
+		//-----confirm PD intensity
+		if (fIntensities.size()) fHi.fill(startIdx,"TrendIntensityBM1",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]);
+		startIdx++;
+		if (fIntensities.size()) fHi.fill(startIdx,"TrendIntensityPD",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[0]);
+		startIdx++;
+		if (fIntensities.size()) fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits());
 		startIdx++;
 
 		//---skip when FEL is stopped
@@ -347,12 +359,17 @@ void MyAnalyzer::Analyze()
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
-
+		fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j+1,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
+		
 		for (size_t k=0;k<fParticles.GetParticle(j).GetNbrOfParticleHits();++k)
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
 	}
 
-	startIdx += (fParticles.GetNbrOfParticles())+1;
+	startIdx += (2*fParticles.GetNbrOfParticles())+1;
+	//if (fIntensities.size()) fHi.fill(startIdx,"TrendNumberOfHits1",skipCounter,"[shots/1000]",1000,0,1000,"",fParticles.GetParticle(1).GetNbrOfParticleHits());
+	//startIdx++;
+	//if (fIntensities.size()) fHi.fill(startIdx,"TrendNumberOfHits2",skipCounter,"[shots/1000]",1000,0,1000,"",fParticles.GetParticle(2).GetNbrOfParticleHits());
+	//startIdx++;
 
 	//now you have found the particles//
 	//we can look for coincidences//

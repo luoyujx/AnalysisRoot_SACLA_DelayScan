@@ -39,7 +39,7 @@ public:
 	size_t					CoincidenceCount;
 };
 
-//___Anlyze class___
+//___Analyze class___
 class MyAnalyzer
 {
 public:
@@ -111,10 +111,13 @@ private:
 	//reconstruction method (resort parameter)
 	int rekmeth;
 	//conversion factor for intensity
-	double factorBM1;
+	double factorBM1;//(to uJ)
 	double factorPD; //(to uJ/um^2)
 	//step size for trend histogram
 	int trendStep;
+	//Condition to secelt FEL intensity
+	double intensityLowerLimit;
+	double intensityUpperLimit;
 	//Counter for missed intensity data
 	size_t missedTagCount;
 	//---Analysis frags
@@ -124,6 +127,7 @@ private:
 	bool existIntPartition;
 	bool checkingResult;
 	bool afterAnalysis;
+	bool selectIntensity;
 
 	//BM1 data
 	std::map<unsigned int, double>		tagIntensity;

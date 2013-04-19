@@ -148,7 +148,7 @@ void MyAnalyzer::Analyze()
 	int startIdx=0;
 
 	//for Trend Histogram
-	int skipCounter = static_cast<int>(fEntryIterator/trendStep);
+	const int skipCounter = static_cast<int>(fEntryIterator/trendStep);
 
 	//clear the containers//
 	fIntensities.clear();
@@ -172,8 +172,8 @@ void MyAnalyzer::Analyze()
 			return;
 		}
 
-		fIntensities.push_back(itTagInt2->second * factorPD);//[0]	PD:
-		fIntensities.push_back(itTagInt->second *factorBM1);//[1]	BM1:
+		fIntensities.push_back(itTagInt2->second*factorPD);//[0]	PD:
+		fIntensities.push_back(itTagInt->second*factorBM1);//[1]	BM1:
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -209,27 +209,28 @@ void MyAnalyzer::Analyze()
 		startIdx+=2;
 
 		//-----------------------------------
-		if (fIntensities.size()) fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
+		fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
 		startIdx++;
-		if (fIntensities.size()) fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,1000);
-		startIdx++;
-
-
-		//-----confirm PD intensity
-		if (fIntensities.size()) fHi.fill(startIdx,"TrendIntensityBM1",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]);
-		startIdx++;
-		if (fIntensities.size()) fHi.fill(startIdx,"TrendIntensityPD",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[0]);
-		startIdx++;
-		if (fIntensities.size()) fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits());
+		fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,500);
 		startIdx++;
 
-		//---skip when FEL is stopped
-		if (fIntensities.size()){
-			if (fIntensities[0]<1) 
-			{
-				//std::cout << "skip this event" << std::endl;
-				return;
-			}
+		//-----Trend plot BM1 & PD intensity
+		fHi.fill(startIdx,"TrendIntensityBM1",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]);
+		startIdx++;
+		fHi.fill(startIdx,"TrendIntensityPD",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[0]);
+		startIdx++;
+		fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits());
+		startIdx++;
+
+		//---skip this shot event if FEL is below 0.1 (FEL is stopped)
+		if (fIntensities[0]<0.1) return;
+
+		if (selectIntensity)
+		{
+			//---skip this shot event if FEL is below the lower limit
+			if (fIntensities[0]<intensityLowerLimit) return;
+			//---skip this shot event if FEL is over the upper limit
+			if (fIntensities[0]>intensityUpperLimit) return;
 		}
 		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
 		startIdx++;
@@ -255,7 +256,6 @@ void MyAnalyzer::Analyze()
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
 
-
 	//---get the raw mcp events called times//
 	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
 	for (size_t i=0; i<sac.GetNbrPeaks();++i)
@@ -279,7 +279,7 @@ void MyAnalyzer::Analyze()
 	//	p.SetXVelocity(XVelocity);
 	//	p.SetYVelocity(YVelocity);
 	//}
-
+	
 	int secondStartIdx=startIdx+20;
 	//go through all resorted detektorhits//
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
@@ -364,12 +364,7 @@ void MyAnalyzer::Analyze()
 		for (size_t k=0;k<fParticles.GetParticle(j).GetNbrOfParticleHits();++k)
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
 	}
-
 	startIdx += (2*fParticles.GetNbrOfParticles())+1;
-	//if (fIntensities.size()) fHi.fill(startIdx,"TrendNumberOfHits1",skipCounter,"[shots/1000]",1000,0,1000,"",fParticles.GetParticle(1).GetNbrOfParticleHits());
-	//startIdx++;
-	//if (fIntensities.size()) fHi.fill(startIdx,"TrendNumberOfHits2",skipCounter,"[shots/1000]",1000,0,1000,"",fParticles.GetParticle(2).GetNbrOfParticleHits());
-	//startIdx++;
 
 	//now you have found the particles//
 	//we can look for coincidences//
@@ -425,11 +420,9 @@ void MyAnalyzer::Analyze()
 		}
 		startIdx += 3;
 	}
-
-
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
-	const int nbrOfHistosInfillMol2 = 15;
+	const int nbrOfHistosInfillMol2 = 15;//
 	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 	if (MoleculeAnalysis == 2)
 	{
@@ -454,10 +447,9 @@ void MyAnalyzer::Analyze()
 				}
 			}
 		}
-
-	//Skip already used ID
-	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
-	startIdx += fParticles.GetNbrOfParticles()*10;
+		//Skip already used ID
+		startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
+		startIdx += fParticles.GetNbrOfParticles()*10;
 	}
 
 	//---Post-analysis---//
@@ -548,7 +540,6 @@ double Integral(const MyOriginalChannel &oc, const long TRfrom, const long TRto,
 			}
 		}
 	}
-
 	//return the integral//
 	return IntegralTR*vertGain;
 }

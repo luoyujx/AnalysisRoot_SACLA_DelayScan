@@ -69,7 +69,6 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	MyOriginalEventInfo			*OEInfo		= dynamic_cast<MyOriginalEventInfo*>(fOChain.GetTree()->GetUserInfo()->At(0));
 	MySignalAnalyzedEventInfo	*SAEInfo	= dynamic_cast<MySignalAnalyzedEventInfo*>(fSAChain.GetTree()->GetUserInfo()->At(0));
 	MySortedEventInfo			*SEInfo		= dynamic_cast<MySortedEventInfo*>(fSChain.GetTree()->GetUserInfo()->At(0));
-
 	//fill the events with infos//
 	fOE.ReadFromEventInfo(*OEInfo);
 	fSAE.ReadFromEventInfo(*SAEInfo);
@@ -206,6 +205,9 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
 	factorBM1=set.GetValue("ConversionFactorBM1", 10e+9);
 	factorPD=set.GetValue("ConversionFactorPD", 10000);
+	selectIntensity=static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
+	intensityLowerLimit=set.GetValue("IntensityLowerLimit", 0.0);
+	intensityUpperLimit=set.GetValue("IntensityUpperLimit", 100000);
 	checkingResult=static_cast<int>(set.GetValue("CheckResult", false)+0.1);
 	afterAnalysis=static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
 	trendStep=static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
@@ -240,6 +242,7 @@ void MyAnalyzer::OpenIntensityData()
 			tagIntensity2.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
 		}
 	}
+
 	std::cout << tagIntensity.size() << " records have been loaded." << std::endl;
 	std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
 	std::map<unsigned int, double>::iterator itend = tagIntensity.end();

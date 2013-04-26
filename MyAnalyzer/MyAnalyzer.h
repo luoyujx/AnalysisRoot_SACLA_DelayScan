@@ -108,6 +108,9 @@ private:
 	TString fileName;
 	//File name of intensity data
 	TString intFileName;
+	//File name of Momentum sum imformation
+	TString MomSumInfoName;
+
 	//reconstruction method (resort parameter)
 	int rekmeth;
 	//conversion factor for intensity

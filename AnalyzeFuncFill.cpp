@@ -447,13 +447,12 @@ void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vec
 //----------------------------------PIPICO ALL-----------------------------------------------------------------//
 void fillPIPICO(const MyParticle &p,MyHistos &hi)
 {	
-
 	for (size_t i=0; i<p.GetNbrOfParticleHits();++i)
 	{
 		for (size_t j=i+1;j<p.GetNbrOfParticleHits();++j)
 		{
 			//PIPICO ALL//
-			hi.fill(100,"PIPICO",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",1000,p.GetCondTofFr(),p.GetCondTofTo(),1000,p.GetCondTofFr(),p.GetCondTofTo());
+			hi.fill(100,"PIPICO",p[i].TofCor(),p[j].TofCor(),"tof_{firstIon}","tof_{secondIon}",2000,p.GetCondTofFr(),p.GetCondTofTo(),2000,p.GetCondTofFr(),p.GetCondTofTo());
 			//if (TMath::Abs(p[i].Px() + p[j].Px()) < pxSumWidth )
 			//	if (TMath::Abs(p[i].Py() + p[j].Py()) < pySumWidth )
 			//	{

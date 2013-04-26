@@ -40,15 +40,16 @@ bool LoadSettings(TString &filename, MySettings &set)
 	TString LeftHand;
 	TString RightHand;
 	std::ifstream ifs(filename,std::ios::in);
-	if (ifs.fail()){
+	if (ifs.fail())
+	{
 		std::cout<<"Can not open "<<filename<<std::endl;
 		std::cout << "Analyze default settings." << std::endl;
 		return false;
 	}
 	while(!ifs.eof())
 	{
-		char tmp[128];
-		ifs >> tmp;
+		char tmp[256];
+		ifs.getline(tmp,256);
 		TString param = tmp;
 		//std::cout << filename.Data()<<std::endl;
 		//--when q return true--//

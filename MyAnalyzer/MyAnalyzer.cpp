@@ -189,7 +189,7 @@ void MyAnalyzer::Run()
 	}
 	
 	//restart run at this time//
-	if (!realyBreak) runTimer.Start(1000);
+	if (!realyBreak) runTimer.Start(3000);
 	//std::cout << "leaving run"<<std::endl;
 }
 
@@ -198,11 +198,12 @@ void MyAnalyzer::SetParameter(MySettings &set)
 {
 	//set parameters
 	intFileName = set.GetString("IntensityFile","Intensity.txt");
+	MomSumInfoName = set.GetString("MomSumInfoFile","MomentumInfo.txt");
 	rekmeth = static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1);
 	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
 	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
-	existIntPartition=static_cast<int>(set.GetValue("IntPartition", false)+0.1);
+	existIntPartition=static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
 	factorBM1=set.GetValue("ConversionFactorBM1", 10e+9);
 	factorPD=set.GetValue("ConversionFactorPD", 10000);
 	selectIntensity=static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
@@ -285,7 +286,7 @@ void MyAnalyzer::OpenMomInfoData()
 	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
 		molecule[i].resize(fParticles.GetNbrOfParticles());
 
-	std::ifstream ifs("MomentumInfo.txt",std::ios::in);
+	std::ifstream ifs(MomSumInfoName,std::ios::in);
 	if (ifs.fail())
 	{
 		std::cout<<"Can not open MomentumInfo.txt. Use (Make) default value."<<std::endl;

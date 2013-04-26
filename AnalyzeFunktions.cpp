@@ -173,7 +173,8 @@ void MyAnalyzer::Analyze()
 		}
 
 		fIntensities.push_back(itTagInt2->second*factorPD);//[0]	PD:
-		fIntensities.push_back(itTagInt->second*factorBM1);//[1]	BM1:
+		fIntensities.push_back(itTagInt->second*factorBM1);//[1]	BM1:24486*1000000
+
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -410,8 +411,8 @@ void MyAnalyzer::Analyze()
 						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
 					fHi.fill(startIdx+1,"CoincidentChargeState",fParticles.GetParticle(i).GetCharge_au(),fParticles.GetParticle(j).GetCharge_au(),
 						"Carbon Chage","Iodine Chage",
-						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
-						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
+						6,1,7,
+						14,1,15);
 					//sumed chage state
 					fHi.fill(startIdx+2, "SumOfChageState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
 						"Charge State",	fParticles.GetNbrOfParticles()*2, 0, fParticles.GetNbrOfParticles()*2);
@@ -426,7 +427,7 @@ void MyAnalyzer::Analyze()
 	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 	if (MoleculeAnalysis == 2)
 	{
-		//loop from particle 1 because excepting Ion
+		//loop from particle 1 for excepting Ion
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
@@ -475,7 +476,7 @@ void MyAnalyzer::Analyze()
 	//		secondStartIdx +=100;
 	//	}
 	//}
-	//if (MoleculeAnalysis) fillPIPICO(fParticles.GetParticle(0),fHi);
+	if (MoleculeAnalysis == 1) fillPIPICO(fParticles.GetParticle(0),fHi);
 
 	//std::cout << startIdx << std::endl;
 }

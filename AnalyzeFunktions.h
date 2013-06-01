@@ -33,6 +33,9 @@ double calcPx(const MyParticle &p, const MyParticleHit &ph);
 double calcPy(const MyParticle &p, const MyParticleHit &ph);
 double calcPy(const MyParticle &p, const MyParticleHit &ph);
 
+double calcInnerProduct(const MyParticleHit &ph1,const MyParticleHit &ph2);
+double calcFormedAngle(const MyParticleHit &ph1,const MyParticleHit &ph2);
+
 double calcMass(const MyParticle &p, const MyParticleHit &ph);
 double calcTof(const MyParticle &p, const MyParticle &pIon);
 

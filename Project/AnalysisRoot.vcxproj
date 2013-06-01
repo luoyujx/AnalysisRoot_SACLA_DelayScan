@@ -139,7 +139,7 @@
       <ForcedIncludeFiles>w32pragma.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;libPhysics.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)\..\Binaries\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>$(ROOTSYS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>

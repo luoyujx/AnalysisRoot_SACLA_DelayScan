@@ -37,6 +37,8 @@ public:
 	double					momSumWindowZ;
 	double					momSumFactor;
 	size_t					CoincidenceCount;
+	std::vector<size_t>		CoinHitNbrC;
+	std::vector<size_t>		CoinHitNbrI;
 };
 
 //___Analyze class___

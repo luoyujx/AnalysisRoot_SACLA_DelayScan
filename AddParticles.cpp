@@ -10,8 +10,8 @@
 //_____SACLA 2012B iodomethane_____
 void AddCH3I(MyParticleContainer &particles)
 {
-	particles.Add("H1p",1,MyMass::Hydrogen1(),0,0);//1
-	//particles.Add("H1p_C2pI5p",1,MyMass::Hydrogen1(),-1);
+	particles.Add("H1p",1,MyMass::Hydrogen1(),0,2);//1
+	//particles.Add("H1p_C1pI1p",1,MyMass::Hydrogen1(),-1);
 
 	//particles.Add("C6p",6,MyMass::Carbon12(),1,0);
 	//particles.Add("C5p",5,MyMass::Carbon12(),1,0);
@@ -20,10 +20,11 @@ void AddCH3I(MyParticleContainer &particles)
 	particles.Add("C2p",2,MyMass::Carbon12(),1,0);//4
 	particles.Add("C1p",1,MyMass::Carbon12(),1,0);//5
 	
-	particles.Add("I14p",14,MyMass::Iodine127(),1,1);
-	particles.Add("I13p",13,MyMass::Iodine127(),1,1);
-	particles.Add("I12p",12,MyMass::Iodine127(),1,1);
-	particles.Add("I11p",11,MyMass::Iodine127(),1,1);
+	//particles.Add("I15p",15,MyMass::Iodine127(),1,1);
+	//particles.Add("I14p",14,MyMass::Iodine127(),1,1);
+	//particles.Add("I13p",13,MyMass::Iodine127(),1,1);
+	//particles.Add("I12p",12,MyMass::Iodine127(),1,1);
+	//particles.Add("I11p",11,MyMass::Iodine127(),1,1);
 	particles.Add("I10p",10,MyMass::Iodine127(),1,1);//7
 	particles.Add("I9p",9,MyMass::Iodine127(),1,1);//8
 	particles.Add("I8p",8,MyMass::Iodine127(),1,1);//9

@@ -1,6 +1,7 @@
 #ifndef __MyParticleHit_H__
 #define __MyParticleHit_H__
 #include <TMath.h>
+#include "TVector3.h"
 #include "../FilesFromLma2Root/MyEvent/MySortedEvent/MyDetektor/MyDetektorHit.h"
 
 class MyHistos;
@@ -36,6 +37,8 @@ public:
 	double		PzRotZX(double theta)const	{return (TMath::Cos(theta)*fPz + TMath::Sin(theta)*fPx);};
 	double		PzRotYZ(double theta)const	{return (-TMath::Sin(theta)*fPy + TMath::Cos(theta)*fPz);};
 
+	const TVector3	&Pvec()const			{return fPvec;}
+
 	double		P()const			{return fP;}
 	double		E()const			{return fE;}
 	double		ThetaX()const		{return fThetaX;}//added by motomura
@@ -65,7 +68,7 @@ private:
 	double		fPhiXY;				//added by motomura				
 	double		fPhiYZ;				//added by motomura				
 	double		fPhiZX;				//added by motomura				
-
+	TVector3	fPvec;
 
 	ClassDef(MyParticleHit,1)		//a hit of a particle on the detektor
 };

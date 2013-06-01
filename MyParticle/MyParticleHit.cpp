@@ -27,15 +27,17 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 	fPy = calcPy(p,*this);
 	fPz = calcPz(p,*this);
 
+	fPvec.SetXYZ(fPx, fPy, fPz);
+
 	fP  = TMath::Sqrt(fPx*fPx + fPy*fPy + fPz*fPz);
 	fE  = (13.6* fP*fP / p.GetMass_au());
 
-	fThetaX = acos(fPx / fP )/TMath::Pi()*180.;//added by motomura
-	fThetaY = acos(fPy / fP )/TMath::Pi()*180.;//added by motomura
-	fThetaZ = acos(fPz / fP )/TMath::Pi()*180.;//added by motomura
+	fThetaX = acos(fPx / fP )/TMath::Pi()*180.;
+	fThetaY = acos(fPy / fP )/TMath::Pi()*180.;
+	fThetaZ = acos(fPz / fP )/TMath::Pi()*180.;
 
-	fPhiXY = atan2(fPy, fPx)/TMath::Pi()*180.;//added by motomura				
-	fPhiYZ = atan2(fPz, fPy)/TMath::Pi()*180.;//added by motomura				
-	fPhiZX = atan2(fPx, fPz)/TMath::Pi()*180.;//added by motomura				
+	fPhiXY = atan2(fPy, fPx)/TMath::Pi()*180.;				
+	fPhiYZ = atan2(fPz, fPy)/TMath::Pi()*180.;				
+	fPhiZX = atan2(fPx, fPz)/TMath::Pi()*180.;				
 
 } 

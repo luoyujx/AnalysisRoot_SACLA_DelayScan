@@ -24,7 +24,7 @@ void MySpecReg::AddSpecRegTab(const char *title, MySpectrometerRegion &sr)
 	fCompositeFrame936->SetLayoutManager(new TGHorizontalLayout(fCompositeFrame936));
 
 	//add e-field input//
-	MyInput *fField = new MyInput(fCompositeFrame936,"E-Field [V/cm]",sr.EField_Vpcm(),0.1);
+	MyInput *fField = new MyInput(fCompositeFrame936,"E-Field [V/cm]",sr.EField_Vpcm(),50);//0.1
 	fCompositeFrame936->AddFrame(fField/*, new TGLayoutHints(kLHintsCenterX | kLHintsTop,0,0,0,0)*/);
 
 	//add Length input//

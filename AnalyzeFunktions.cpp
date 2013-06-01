@@ -103,8 +103,8 @@ void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const
 void MyAnalyzer::ShowResult()
 {
 	canv = new TCanvas("Result","Result",100,100,1000+4,600+28);
-	gStyle->SetOptStat(0);
-	gStyle->SetOptFit(0);
+	//gStyle->SetOptStat(0);
+	//gStyle->SetOptFit(0);
 	canv->Divide(1,2,0.002,0.002);
 
 	TH1D* massHisto = dynamic_cast<TH1D*>(gFile->GetDirectory("/Ion")->FindObject("Mass"));
@@ -223,7 +223,7 @@ void MyAnalyzer::Analyze()
 		fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits());
 		startIdx++;
 
-		//---skip this shot event if FEL is below 0.1 (FEL is stopped)
+		//--skip this shot event if FEL is below 0.1 (FEL is stopped)
 		if (fIntensities[0]<0.1) return;
 
 		if (selectIntensity)
@@ -375,7 +375,11 @@ void MyAnalyzer::Analyze()
 		//clear Coincidence counter
 		for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
 			for (size_t j=0;j<fParticles.GetNbrOfParticles();++j)
+			{
 				molecule[i][j].CoincidenceCount = 0;
+				molecule[i][j].CoinHitNbrC.clear();
+				molecule[i][j].CoinHitNbrI.clear();
+			}
 		//loop from particle No.1 (except Ion)
 		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
 		{
@@ -394,6 +398,13 @@ void MyAnalyzer::Analyze()
 					{
 						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
 						startIdx += 120;
+						if(molecule[i][j].CoincidenceCount > 0) 
+						{
+							//fillHydrogenHistogram(fParticles.GetParticle(1),fParticles.GetParticle(i),fParticles.GetParticle(j),fHi,startIdx);
+							const MyParticle &hp = fParticles.GetParticle(1);
+							fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
+						}
+						startIdx += 80;
 					}
 				}
 			}
@@ -412,14 +423,20 @@ void MyAnalyzer::Analyze()
 					fHi.fill(startIdx+1,"CoincidentChargeState",fParticles.GetParticle(i).GetCharge_au(),fParticles.GetParticle(j).GetCharge_au(),
 						"Carbon Chage","Iodine Chage",
 						6,1,7,
-						14,1,15);
+						16,1,17);
+					if (fParticles.GetParticle(i).GetCoinGroup()==0 && fParticles.GetParticle(j).GetCoinGroup()==1)
+					{
+						fHi.fill(startIdx+5+i, Form("CoincidentCarbon%dp",static_cast<int>(fParticles.GetParticle(i).GetCharge_au()+0.1)),
+							fParticles.GetParticle(j).GetCharge_au(),
+							"Iodine charge state", 20, 0, 20);
+					}
 					//sumed chage state
-					fHi.fill(startIdx+2, "SumOfChageState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
+					fHi.fill(startIdx+2, "SumOfChargeState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
 						"Charge State",	fParticles.GetNbrOfParticles()*2, 0, fParticles.GetNbrOfParticles()*2);
 				}
 			}
 		}
-		startIdx += 3;
+		startIdx += 5 + fParticles.GetNbrOfParticles();
 	}
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
@@ -454,7 +471,8 @@ void MyAnalyzer::Analyze()
 	}
 
 	//---Post-analysis---//
-	//if (molecule[5][12].CoincidenceCount > 0) 
+	////std::cout << molecule[1][1].CoincidenceCount <<":";
+	//if (molecule[4][14].CoincidenceCount > 0)  fillHydrogenHistogram(fParticles.GetParticle(1),fParticles.GetParticle(4),fParticles.GetParticle(14),fHi,startIdx);
 	//for (size_t i=0; i<rd.GetNbrOfHits();++i)
 	//{
 	//	MyDetektorHit &dh = rd.GetHit(i);
@@ -471,12 +489,13 @@ void MyAnalyzer::Analyze()
 	//		if (dh.RekMeth() < rekmeth)
 	//		{
 	//			const MyParticleHit &ph = p.AddHit(dh);
-	//			fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx);
+	//			//fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition);
+	//			fillMoleculeHistogram(fParticles.GetParticle(2),fParticles.GetParticle(5),fIntensities,fHi,secondStartIdx, molecule[2][5], intPartition);
 	//		}
 	//		secondStartIdx +=100;
 	//	}
 	//}
-	if (MoleculeAnalysis == 1) fillPIPICO(fParticles.GetParticle(0),fHi);
+	//if (MoleculeAnalysis == 1) fillPIPICO(fParticles.GetParticle(0),fHi);
 
 	//std::cout << startIdx << std::endl;
 }
@@ -549,4 +568,15 @@ double Average(const MyOriginalChannel &oc, const long TRfrom, const long TRto, 
 {
 	//return the Average//
 	return Integral(oc,TRfrom,TRto,absolute)/(TRto-TRfrom-1.);
+}
+
+double calcInnerProduct(const MyParticleHit &ph1,const MyParticleHit &ph2)
+{
+	return ph1.Px()*ph2.Px()+ph1.Py()*ph2.Py()+ph1.Pz()*ph2.Pz();
+}
+double calcFormedAngle(const MyParticleHit &ph1,const MyParticleHit &ph2)
+{
+	const double angle = TMath::ACos(calcInnerProduct(ph1,ph2)/(ph1.P()*ph2.P()));
+
+	return angle * TMath::RadToDeg();
 }

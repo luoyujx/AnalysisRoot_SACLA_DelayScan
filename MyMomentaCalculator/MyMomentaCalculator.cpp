@@ -421,7 +421,7 @@ double MyMomentaCalculator::pz(double tof_ns, double mass_au, double charge_au, 
 }
 
 //_________________________________________________________________________________
-double getPolyHorner(double tof_ns, size_t n, const SpecRegions &sr)
+double getPolyHornerT(double tof_ns, size_t n, const SpecRegions &sr)
 {
 	n--;
 	double f = sr[n].EField_Vpcm();
@@ -429,9 +429,23 @@ double getPolyHorner(double tof_ns, size_t n, const SpecRegions &sr)
 		f = f*tof_ns + sr[i].EField_Vpcm();
 	return f;
 }
+double getPolyHornerR(double r, size_t n, const SpecRegions &sr)
+{
+	n--;
+	double f = sr[n].Length_mm();
+	for (int i = n-1; i >= 0; i--)
+		f = f*r + sr[i].Length_mm();
+	return (f*r);
+}
 double MyMomentaCalculator::pz_poly(double tof_ns, const MySpectrometer& sp)
 {
-	return getPolyHorner(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+	return getPolyHornerT(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+}
+double MyMomentaCalculator::pz_polyR(double tof_ns, double r, const MySpectrometer& sp)
+{
+	double ft = getPolyHornerT(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+	double fr = getPolyHornerR(r, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+	return (ft + fr);
 }
 
 

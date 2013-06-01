@@ -11,5 +11,6 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& intPart);
 void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff);
 void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff);
+void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2,const MyParticle &p3, MyHistos &hi, int hiOff, Molecule &mol);
 
 #endif

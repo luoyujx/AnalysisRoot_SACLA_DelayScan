@@ -398,13 +398,24 @@ void MyAnalyzer::Analyze()
 					{
 						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
 						startIdx += 120;
-						if(molecule[i][j].CoincidenceCount > 0) 
+						//for proton
+						if (extraCondition == 1)
 						{
-							//fillHydrogenHistogram(fParticles.GetParticle(1),fParticles.GetParticle(i),fParticles.GetParticle(j),fHi,startIdx);
-							const MyParticle &hp = fParticles.GetParticle(1);
-							fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
+							if (molecule[i][j].CoincidenceCount == 1) 
+							{
+								//int otherHits = 0;
+								//for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+								//{
+								//	if ( (k!=i)&&(k!=j) ) otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
+								//}
+								//if (otherHits == 0)
+								{
+									const MyParticle &hp = fParticles.GetParticle(1);
+									fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
+								}
+							}
+							startIdx += 80;
 						}
-						startIdx += 80;
 					}
 				}
 			}
@@ -570,6 +581,7 @@ double Average(const MyOriginalChannel &oc, const long TRfrom, const long TRto, 
 	return Integral(oc,TRfrom,TRto,absolute)/(TRto-TRfrom-1.);
 }
 
+///XYZ vector calculation
 double calcInnerProduct(const MyParticleHit &ph1,const MyParticleHit &ph2)
 {
 	return ph1.Px()*ph2.Px()+ph1.Py()*ph2.Py()+ph1.Pz()*ph2.Pz();
@@ -577,6 +589,22 @@ double calcInnerProduct(const MyParticleHit &ph1,const MyParticleHit &ph2)
 double calcFormedAngle(const MyParticleHit &ph1,const MyParticleHit &ph2)
 {
 	const double angle = TMath::ACos(calcInnerProduct(ph1,ph2)/(ph1.P()*ph2.P()));
+
+	return angle * TMath::RadToDeg();
+}
+
+//XY stuff
+double calcInnerProductXY(const MyParticleHit &ph1,const MyParticleHit &ph2)
+{
+	return ph1.Px()*ph2.Px()+ph1.Py()*ph2.Py();
+}
+double calcMagXY(const MyParticleHit &ph)
+{
+	return TMath::Sqrt(ph.Px()*ph.Px()+ph.Py()*ph.Py());
+}
+double calcFormedAngleXY(const MyParticleHit &ph1,const MyParticleHit &ph2)
+{
+	const double angle = TMath::ACos(calcInnerProductXY(ph1,ph2)/(calcMagXY(ph1)*calcMagXY(ph2)));
 
 	return angle * TMath::RadToDeg();
 }

@@ -429,23 +429,51 @@ double getPolyHornerT(double tof_ns, size_t n, const SpecRegions &sr)
 		f = f*tof_ns + sr[i].EField_Vpcm();
 	return f;
 }
-double getPolyHornerR(double r, size_t n, const SpecRegions &sr)
-{
-	n--;
-	double f = sr[n].Length_mm();
-	for (int i = n-1; i >= 0; i--)
-		f = f*r + sr[i].Length_mm();
-	return (f*r);
-}
 double MyMomentaCalculator::pz_poly(double tof_ns, const MySpectrometer& sp)
 {
 	return getPolyHornerT(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
 }
-double MyMomentaCalculator::pz_polyR(double tof_ns, double r, const MySpectrometer& sp)
+//double getPolyHornerR(double r, size_t n, const SpecRegions &sr)
+//{
+//	n--;
+//	double f = sr[n].Length_mm();
+//	for (int i = n-1; i >= 0; i--)
+//		f = f*r + sr[i].Length_mm();
+//	return (f*r);
+//}
+//double MyMomentaCalculator::pz_polyR(double tof_ns, double r, const MySpectrometer& sp)
+//{
+//	double ft = getPolyHornerT(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+//	double fr = getPolyHornerR(r, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
+//	return (ft + fr);
+//}
+
+//______________________Calculate the momentum by polynomial aproximation___________________________________
+double MyMomentaCalculator::pz_polyRT(double tof_ns, double r, const MySpectrometer& sp)
 {
-	double ft = getPolyHornerT(tof_ns, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
-	double fr = getPolyHornerR(r, sp.GetSpectrometerRegions().size(), sp.GetSpectrometerRegions());
-	return (ft + fr);
+	if (sp.GetSpectrometerRegions().size() !=7 ) return 0.0;
+	const SpecRegions &sr = sp.GetSpectrometerRegions(); 
+	const double pz = sr[0].EField_Vpcm()
+		+ sr[1].EField_Vpcm()*tof_ns
+		+ sr[2].EField_Vpcm()*tof_ns*tof_ns
+		+ sr[3].EField_Vpcm()*tof_ns*tof_ns*tof_ns
+		+ sr[4].EField_Vpcm()*tof_ns*tof_ns*tof_ns*tof_ns
+		+ sr[5].EField_Vpcm()*r*r
+		+ sr[6].EField_Vpcm()*r*r*r*r;
+	return pz;
+}
+
+double MyMomentaCalculator::pr_polyRT(double tof_ns, double r, const MySpectrometer& sp)
+{
+	if (sp.GetSpectrometerRegions().size() !=7 ) return 0.0;
+	const SpecRegions &sr = sp.GetSpectrometerRegions();
+	const double pr = sr[0].Length_mm()*r
+		+ sr[1].Length_mm()*r*tof_ns
+		+ sr[2].Length_mm()*r*r*r*tof_ns
+		+ sr[3].Length_mm()*r*r*r*r*r*tof_ns
+		+ sr[4].Length_mm()*tof_ns*tof_ns*tof_ns
+		+ sr[5].Length_mm()*tof_ns*tof_ns*tof_ns*tof_ns*tof_ns;
+	return pr;
 }
 
 

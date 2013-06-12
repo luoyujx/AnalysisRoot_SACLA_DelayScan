@@ -34,7 +34,9 @@ namespace MyMomentaCalculator
 	double py(double x_mm, double y_mm, double tof_ns, double mass_au, double charge_au, const MySpectrometer&);
 	double pz(double tof_ns, double mass_au, double charge_au, const MySpectrometer&);
 	double pz_poly(double tof_ns, const MySpectrometer& sp);
-	double pz_polyR(double tof_ns,double r, const MySpectrometer& sp);
+	//double pz_polyR(double tof_ns,double r, const MySpectrometer& sp);
+	double pz_polyRT(double tof_ns, double r, const MySpectrometer& sp);
+	double pr_polyRT(double tof_ns, double r, const MySpectrometer& sp);
 
 	double mass(double tof_ns, const MySpectrometer& sp);
 	double tof(double mass, const MySpectrometer& sp);

@@ -40,8 +40,16 @@ double calcPy(const MyParticle &p, const MyParticleHit &ph)
 }
 double calcPz(const MyParticle &p, const MyParticleHit &ph)
 {
+	//coltrims
 	//return MyMomentaCalculator::pz(ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
-	return MyMomentaCalculator::pz_poly(ph.TofCor(),p.GetSpectrometer());
+	//simple poly
+	//return MyMomentaCalculator::pz_poly(ph.TofCor(),p.GetSpectrometer());
+	//
+	return MyMomentaCalculator::pz_polyRT(ph.TofCor(), ph.R(), p.GetSpectrometer());
+}
+double calcPr(const MyParticle &p, const MyParticleHit &ph)
+{
+	return MyMomentaCalculator::pr_polyRT(ph.TofCor(), ph.R(), p.GetSpectrometer());
 }
 double calcMass(const MyParticle &p, const MyParticleHit &ph)
 {
@@ -350,11 +358,11 @@ void MyAnalyzer::Analyze()
 				fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition);
 			}
 			//we reserve 100 histograms for one particle//
-			secondStartIdx +=100;
+			secondStartIdx +=50;
 			//std::cout <<j<<" "<< secondStartIdx<<std::endl;
 		}
 	}//------------------------------------------------------------------------------------------------------//
-	startIdx += (fParticles.GetNbrOfParticles()*100);
+	startIdx += (fParticles.GetNbrOfParticles()*50);
 
 	//fill histograms of hit count
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
@@ -414,7 +422,7 @@ void MyAnalyzer::Analyze()
 									fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
 								}
 							}
-							startIdx += 80;
+							startIdx += 60;
 						}
 					}
 				}
@@ -508,7 +516,7 @@ void MyAnalyzer::Analyze()
 	//}
 	//if (MoleculeAnalysis == 1) fillPIPICO(fParticles.GetParticle(0),fHi);
 
-	//std::cout << startIdx << std::endl;
+
 }
 //----------------------------------extraCondition----------------------------------------------------------------//
 bool PosCondition(const MyDetektorHit &dh)

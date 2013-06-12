@@ -21,6 +21,7 @@ public:
 	double		YCorRot()const		{return fYCorRot;}
 	double		XCorRotScl()const	{return fXCorRotScl;}
 	double		YCorRotScl()const	{return fYCorRotScl;}
+	double		R()const			{return fR;}
 	double		TofCor()const		{return fTofC;}
 	double		Mass()const			{return fMassCalc;}//added by motomura
 
@@ -52,6 +53,7 @@ private:
 	double		fPx;				//the momentum in x
 	double		fPy;				//the momentum in y
 	double		fPz;				//the momentum in z
+	double		fPr;
 	double		fP;					//the total momentum
 	double		fE;					//the energy
 	double		fXCor;				//corrected x position on the detektor
@@ -60,6 +62,7 @@ private:
 	double		fYCorRot;			//rotated and corrected y position on the detektor
 	double		fXCorRotScl;		//rotated, corrected and scaled x position on the detektor
 	double		fYCorRotScl;		//rotated, corrected and scaled y position on the detektor
+	double		fR;
 	double		fTofC;				//the corrected time of flight
 	double		fMassCalc;			//added by motomura
 	double		fThetaX;			//added by motomura
@@ -68,7 +71,7 @@ private:
 	double		fPhiXY;				//added by motomura				
 	double		fPhiYZ;				//added by motomura				
 	double		fPhiZX;				//added by motomura				
-	TVector3	fPvec;
+	TVector3	fPvec;				//3D vector of Momentam P
 
 	ClassDef(MyParticleHit,1)		//a hit of a particle on the detektor
 };

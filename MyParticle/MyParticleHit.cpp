@@ -6,6 +6,7 @@
 double calcPx(const MyParticle&, const MyParticleHit&);
 double calcPy(const MyParticle&, const MyParticleHit&);
 double calcPz(const MyParticle&, const MyParticleHit&);
+double calcPr(const MyParticle &, const MyParticleHit &);
 double calcMass(const MyParticle&, const MyParticleHit&);
 
 MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
@@ -19,14 +20,18 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 	fYCorRot	= (-TMath::Sin(p.GetAngle())*fXCor + TMath::Cos(p.GetAngle())*fYCor );
 	fXCorRotScl	= fXCorRot * p.GetSfx();
 	fYCorRotScl	= fYCorRot * p.GetSfy();
+	fR			= TMath::Sqrt(fXCorRotScl*fXCorRotScl+fYCorRotScl*fYCorRotScl);
+
 	fMassCalc	= calcMass(p,*this);//added by motomura
 
-
 	//calculate the momenta and energy of this Particle//
-	fPx = calcPx(p,*this);
-	fPy = calcPy(p,*this);
+	fPr = calcPr(p,*this);
+	//fPx = calcPx(p,*this);
+	fPx = fPr*fXCorRotScl/fR;
+	//fPy = calcPy(p,*this);
+	fPy = fPr*fYCorRotScl/fR;
 	fPz = calcPz(p,*this);
-
+	//set 3D vector
 	fPvec.SetXYZ(fPx, fPy, fPz);
 
 	fP  = TMath::Sqrt(fPx*fPx + fPy*fPy + fPz*fPz);

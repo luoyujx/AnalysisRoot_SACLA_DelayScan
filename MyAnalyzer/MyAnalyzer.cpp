@@ -34,7 +34,7 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	fOChain("OriginalEvent"),
 	fSAChain("SignalAnalyzedEvent"),
 	fSChain("SortedEvent"),
-	fHi(false,12000),//Max 10000?
+	fHi(false,15000),//Max 10000?
 	running(false),
 	processTimer(100),
 	molecule(0, std::vector<Molecule>(0)),

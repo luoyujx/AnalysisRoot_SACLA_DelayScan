@@ -59,6 +59,7 @@ public:
 	void					OpenIntensityData();
 	void					OpenIntPartition();
 	void					OpenMomInfoData();
+	void					OpenBeamPositionData();
 	void					ShowResult();
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
@@ -142,6 +143,9 @@ private:
 	std::vector<double>					intPartition;
 	//various molecule data for coincidence (Momentum information, coincidence count, ...)
 	std::vector< std::vector<Molecule> > molecule;
+	//Position data
+	std::map<unsigned int, double>		beamPosX;
+	std::map<unsigned int, double>		beamPosY;
 
 	//---Indicate some information on mass and tof spectrum
 	std::vector<TText>					txtMass;

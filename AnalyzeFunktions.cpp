@@ -165,6 +165,23 @@ void MyAnalyzer::Analyze()
 	//Get Tag number on this event
 	const unsigned int TagNumber = fOE.GetEventID();
 
+	//select tag number
+	//if (TagNumber < 489913416) return;
+
+	//Position information
+	//std::map<unsigned int, double>::iterator itPosX;//X
+	//std::map<unsigned int, double>::iterator itPosY;//Y
+	//itPosX = beamPosX.find(TagNumber);
+	//itPosY = beamPosY.find(TagNumber);
+	//if ((itPosX == beamPosX.end())||(itPosY == beamPosY.end()))
+	//{
+	//	std::cout <<"\r"<<TagNumber<< " is not found!!";
+	//	missedTagCount++;
+	//	return;
+	//}
+	//const double beamPositionX = itPosX->second;
+	//const double beamPositionY = itPosY->second;
+
 	//Get intensity from loaded data map
 	if ((intFileName != "")&&(existIntensityData))
 	{
@@ -230,6 +247,10 @@ void MyAnalyzer::Analyze()
 		startIdx++;
 		fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits());
 		startIdx++;
+		//fHi.fill(startIdx,"TrendBeamPosX",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionX);
+		//startIdx++;
+		//fHi.fill(startIdx,"TrendBeamPosY",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionY);
+		//startIdx++;
 
 		//--skip this shot event if FEL is below 0.1 (FEL is stopped)
 		if (fIntensities[0]<0.1) return;
@@ -365,16 +386,19 @@ void MyAnalyzer::Analyze()
 	startIdx += (fParticles.GetNbrOfParticles()*50);
 
 	//fill histograms of hit count
+	int iodineCount = 0;
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
 		fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j+1,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
-		
+		//Iodine rate
+		if ((fParticles.GetParticle(j).GetMass_au()*MyUnitsConv::au2amu() > 120)&&(fParticles.GetParticle(j).GetCharge_au() < 10)) iodineCount += fParticles.GetParticle(j).GetNbrOfParticleHits();
 		for (size_t k=0;k<fParticles.GetParticle(j).GetNbrOfParticleHits();++k)
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
 	}
 	startIdx += (2*fParticles.GetNbrOfParticles())+1;
-
+	fHi.fill(startIdx,"IodineHits",iodineCount,"Number of Hits",100,0,100);
+	startIdx++;
 	//now you have found the particles//
 	//we can look for coincidences//
 	//get coincidence by calcurating aligned momentum-sum

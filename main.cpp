@@ -25,6 +25,8 @@ int main(int argc, char *argv[])
 
 	fAn.OpenIntensityData();
 	fAn.OpenIntPartition();
+	//test
+	//fAn.OpenBeamPositionData();
 
 	std::cout<<"Root File Name : "<<fAn.GetFileName()<<std::endl;
 	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;

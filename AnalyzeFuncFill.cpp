@@ -53,6 +53,10 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"Px",ph.Px(),"px [a.u.]",300,-MomLim*3,MomLim*3,Form("%s//Momenta",p.GetName()));
 	hi.fill(hiOff++,"Py",ph.Py(),"py [a.u.]",300,-MomLim*3,MomLim*3,Form("%s//Momenta",p.GetName()));
 	hi.fill(hiOff++,"Pz",ph.Pz(),"pz [a.u.]",300,-MomLim*3,MomLim*3,Form("%s//Momenta",p.GetName()));
+	//hi.fill(hiOff++,"PzVsBmPosX",ph.Pz(),BmPosX,"pz [a.u.]","Beam position [a.u.]",300,-MomLim,MomLim,300,-0.04,0.04,Form("%s/Momenta",p.GetName()));
+	//hi.fill(hiOff++,"PzVsBmPosY",ph.Pz(),BmPosY,"pz [a.u.]","Beam position [a.u.]",300,-MomLim,MomLim,300,-0.04,0.04,Form("%s/Momenta",p.GetName()));
+	//hi.fill(hiOff++,"PyVsBmPosX",ph.Py(),BmPosX,"pz [a.u.]","Beam position [a.u.]",300,-MomLim,MomLim,300,-0.04,0.04,Form("%s/Momenta",p.GetName()));
+	//hi.fill(hiOff++,"PyVsBmPosY",ph.Py(),BmPosY,"pz [a.u.]","Beam position [a.u.]",300,-MomLim,MomLim,300,-0.04,0.04,Form("%s/Momenta",p.GetName()));
 
 	hi.fill(hiOff++,"PxPy",ph.Px(),ph.Py(),"px [a.u.]","py [a.u.]",300,-MomLim,MomLim,300,-MomLim,MomLim,Form("%s/Momenta",p.GetName()));
 	if (TMath::Abs(ph.Pz()) < SliceLim) 
@@ -147,7 +151,7 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 			//if (angleP1P2 > 160) hi.fill(hiOff+21,"RatioPCPerPICond160", ratioP1P2,"Ratio",200,0,2,Form("%s/MomSums",Hname.Data()));
 			//1st condition
 			if (angleP1P2 < 150) continue;
-			if ((ratioP1P2 < 0.4) || (ratioP1P2 > 1.2)) continue;
+			if ((ratioP1P2 < 0.2) || (ratioP1P2 > 1.2)) continue;
 
 			//calcutrate momentum sum by Edwin's method
 			const double ThetaXY = TMath::ATan2(p2[j].Py(),p2[j].Px());
@@ -283,6 +287,7 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 							hi.fill(hiOff+49,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",intPart.size()-1,&intPart.front(),"PowerDependence");
 						//Ratio PI/PC
 						hi.fill(hiOff+15,"RatioPCPerPICondXYZ",p1[i].P()/p2[j].P(),"Ratio",200,0,2,Form("%s/MomSums",Hname.Data()));
+						hi.fill(hiOff+16,"RatioXYPCPerPICondXYZ",ratioP1P2XY,"Ratio",200,0,2,Form("%s/MomSums",Hname.Data()));
 						//Formed angle VS Ratio
 						hi.fill(hiOff+22,"AngleVsRatioCondXYZ",angleP1P2, ratioP1P2,"angle","Ratio",180,0,180,100,0,2, Form("%s/MomSums",Hname.Data()));
 						hi.fill(hiOff+23,"AngleVsRatioXYCondXYZ",angleP1P2XY, ratioP1P2XY,"angle","Ratio",180,0,180,100,0,2, Form("%s/MomSums",Hname.Data()));

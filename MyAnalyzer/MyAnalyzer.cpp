@@ -213,6 +213,9 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	afterAnalysis=static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
 	trendStep=static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
 }
+
+
+//
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
 {
@@ -244,7 +247,7 @@ void MyAnalyzer::OpenIntensityData()
 		}
 	}
 
-	std::cout << tagIntensity.size() << " records have been loaded." << std::endl;
+	std::cout << "Intensity data: "<< tagIntensity.size() << " records have been loaded." << std::endl;
 	std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
 	std::map<unsigned int, double>::iterator itend = tagIntensity.end();
 	itend--;
@@ -392,3 +395,36 @@ void MyAnalyzer::OpenMomInfoData()
 		}
 	}
 }
+
+void MyAnalyzer::OpenBeamPositionData()
+{
+	//if ((intFileName == "")||(!existIntensityData)) return;
+	const TString posFileName("BeamPosition.txt");
+	std::ifstream ifs(posFileName,std::ios::in);
+	if (ifs.fail()){
+		std::cout<<"Can not open "<<posFileName<<std::endl;
+		return;
+	}
+
+	unsigned int uintBuf = 0;
+	double doubleBuf1;
+	double doubleBuf2;
+	char tmp[256];
+	while (!ifs.eof())
+	{
+		//read the data Tag and Intensity (uint/double)
+		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
+		//go to nextline
+		ifs.getline(tmp,256);
+		if (uintBuf % 6 != 0)
+			std::cout<< "wrong Tag number!! "<< uintBuf;
+		if (!ifs.fail())
+		{
+			//add to map (tagIntensity)
+			beamPosX.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
+			beamPosY.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
+		}
+	}
+
+	std::cout << "Position data: "<< beamPosX.size() << " records have been loaded." << std::endl;
+}	

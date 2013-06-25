@@ -212,6 +212,10 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	checkingResult=static_cast<int>(set.GetValue("CheckResult", false)+0.1);
 	afterAnalysis=static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
 	trendStep=static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
+	momFactorLowerLimit=set.GetValue("MomFactorLowerLimit", 0.0);
+	momFactorUpperLimit=set.GetValue("MomFactorUpperLimit", 2);
+	angleCondition=set.GetValue("AngleCondition", 0.0);
+
 }
 
 
@@ -329,6 +333,7 @@ void MyAnalyzer::OpenMomInfoData()
 		ofs.close();
 		return;
 	}
+
 	//-----can open MomentumInfo
 	double doubleBuf[6];
 	string strBuf;
@@ -379,6 +384,9 @@ void MyAnalyzer::OpenMomInfoData()
 						molecule[i][j].momSumWindowY = it->second.momSumWindowY;
 						molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
 						molecule[i][j].momSumFactor = it->second.momSumFactor;
+						molecule[i][j].angleCondition = angleCondition;
+						molecule[i][j].momSumFactorLow = momFactorLowerLimit;
+						molecule[i][j].momSumFactorUp = momFactorUpperLimit;
 					}
 					else
 					{

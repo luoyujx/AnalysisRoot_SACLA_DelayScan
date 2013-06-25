@@ -29,13 +29,20 @@ public:
 		momSumWindowY(0),
 		momSumWindowZ(0),
 		momSumFactor(0),
-		CoincidenceCount(0)
+		CoincidenceCount(0),
+		angleCondition(0),
+		momSumFactorLow(0),
+		momSumFactorUp(2)
 	{};
 public:
 	double					momSumWindowX;
 	double					momSumWindowY;
 	double					momSumWindowZ;
 	double					momSumFactor;
+	double					angleCondition;
+	double					momSumFactorLow;
+	double					momSumFactorUp;
+
 	size_t					CoincidenceCount;
 	std::vector<size_t>		CoinHitNbrC;
 	std::vector<size_t>		CoinHitNbrI;
@@ -126,6 +133,11 @@ private:
 	double intensityUpperLimit;
 	//Counter for missed intensity data
 	size_t missedTagCount;
+	//C-I momentums limits
+	double momFactorLowerLimit;
+	double momFactorUpperLimit;
+	double angleCondition;
+
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;

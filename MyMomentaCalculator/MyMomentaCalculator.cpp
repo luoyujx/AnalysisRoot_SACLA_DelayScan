@@ -463,6 +463,20 @@ double MyMomentaCalculator::pz_polyRT(double tof_ns, double r, const MySpectrome
 	return pz;
 }
 
+double MyMomentaCalculator::pz_polyRT_Another(double tof_ns, double r, const MySpectrometer& sp)
+{
+	if (sp.GetSpectrometerRegions().size() !=7 ) return 0.0;
+	const SpecRegions &sr = sp.GetSpectrometerRegions(); 
+	const double tp0 = tof_ns - sr[0].EField_Vpcm();
+	const double pz =
+		+ sr[1].EField_Vpcm()*tp0
+		+ sr[2].EField_Vpcm()*tp0*tp0
+		+ sr[3].EField_Vpcm()*tp0*tp0*tp0
+		+ sr[4].EField_Vpcm()*tp0*tp0*tp0*tp0
+		+ sr[5].EField_Vpcm()*r*r
+		+ sr[6].EField_Vpcm()*r*r*r*r;
+	return pz;
+}
 double MyMomentaCalculator::pr_polyRT(double tof_ns, double r, const MySpectrometer& sp)
 {
 	if (sp.GetSpectrometerRegions().size() !=7 ) return 0.0;

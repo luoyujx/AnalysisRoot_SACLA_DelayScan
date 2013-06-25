@@ -44,8 +44,10 @@ double calcPz(const MyParticle &p, const MyParticleHit &ph)
 	//return MyMomentaCalculator::pz(ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
 	//simple poly
 	//return MyMomentaCalculator::pz_poly(ph.TofCor(),p.GetSpectrometer());
-	//
+	//Polynomial with R
 	return MyMomentaCalculator::pz_polyRT(ph.TofCor(), ph.R(), p.GetSpectrometer());
+	//Polynomial with R another version
+	//return MyMomentaCalculator::pz_polyRT_Another(ph.TofCor(), ph.R(), p.GetSpectrometer());
 }
 double calcPr(const MyParticle &p, const MyParticleHit &ph)
 {
@@ -356,6 +358,7 @@ void MyAnalyzer::Analyze()
 			fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",20000,0,maxTof,"Ion");
 			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
 			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
+			fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
 		}
 
 		//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//
@@ -435,14 +438,16 @@ void MyAnalyzer::Analyze()
 						{
 							if (molecule[i][j].CoincidenceCount == 1) 
 							{
-								//int otherHits = 0;
-								//for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
-								//{
-								//	if ( (k!=i)&&(k!=j) ) otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
-								//}
-								//if (otherHits == 0)
+								int otherHits = 0;
+								for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+								{
+									if ( (k!=i)&&(k!=j) ) 
+										otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
+								}
+								if (otherHits == 0)
 								{
 									const MyParticle &hp = fParticles.GetParticle(1);
+									if (hp.GetNbrOfParticleHits() < 4)
 									fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
 								}
 							}
@@ -494,18 +499,28 @@ void MyAnalyzer::Analyze()
 			//check whether ip have counts and gatting paticle (I+, I++, ...)
 			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1))
 			{
-				//fill Ion spectra 
-				fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));
-				//loop to fill the target particles
+				int hitCounter = 0;
 				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
 				{
-					const MyParticle &jp = fParticles.GetParticle(j);
-					//Target particle (C+.N+..O+..CO+..,H+)
-					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))
-					{
-						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2);
-					}
+					if ((j != i) && (fParticles.GetParticle(j).GetCoinGroup() == 1))
+						hitCounter += fParticles.GetParticle(j).GetNbrOfParticleHits();
 				}
+				if (!hitCounter)
+				{
+					//fill Ion spectra 
+					fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));
+					//loop to fill the target particles
+					for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+					{
+						const MyParticle &jp = fParticles.GetParticle(j);
+						//Target particle (C+.N+..O+..CO+..,H+)
+						if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))
+						{
+							fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2);
+						}
+					}
+
+				}			
 			}
 		}
 		//Skip already used ID

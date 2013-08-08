@@ -436,18 +436,18 @@ void MyAnalyzer::Analyze()
 						//for proton
 						if (extraCondition == 1)
 						{
-							if (molecule[i][j].CoincidenceCount == 1) 
+							if (molecule[i][j].CoincidenceCount > 0) 
 							{
-								int otherHits = 0;
-								for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
-								{
-									if ( (k!=i)&&(k!=j) ) 
-										otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
-								}
-								if (otherHits == 0)
+								//int otherHits = 0;
+								//for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+								//{
+								//	if ( (k!=i)&&(k!=j) ) 
+								//		otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
+								//}
+								//if (otherHits == 0)
 								{
 									const MyParticle &hp = fParticles.GetParticle(1);
-									if (hp.GetNbrOfParticleHits() < 4)
+									//if (hp.GetNbrOfParticleHits() < 4)
 									fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
 								}
 							}

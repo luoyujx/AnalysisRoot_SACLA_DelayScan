@@ -434,17 +434,20 @@ void MyAnalyzer::Analyze()
 						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
 						startIdx += 120;
 						//for proton
-						if (extraCondition == 1)
+						if (extraCondition > 0)
 						{
 							if (molecule[i][j].CoincidenceCount > 0) 
 							{
-								//int otherHits = 0;
-								//for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
-								//{
-								//	if ( (k!=i)&&(k!=j) ) 
-								//		otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
-								//}
-								//if (otherHits == 0)
+								int otherHits = 0;
+								if (extraCondition == 2)
+								{
+									for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+									{
+										if ( (k!=i)&&(k!=j) ) 
+											otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
+									} 
+								}
+								if (otherHits == 0)
 								{
 									const MyParticle &hp = fParticles.GetParticle(1);
 									//if (hp.GetNbrOfParticleHits() < 4)

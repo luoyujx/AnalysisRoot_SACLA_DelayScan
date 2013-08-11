@@ -422,9 +422,10 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 	Hname += p2.GetName();
 	Hname += p3.GetName();
 
-	const double pxSumWidth = 10;
-	const double pySumWidth = 10;
-	const double pzSumWidth = 10;
+	const double pxSumWidth = 40;
+	const double pySumWidth = 40;
+	const double pzSumWidth = 40;
+	const double pxyzSumWidth = 40;
 
 	for (size_t i=0; i<p1.GetNbrOfParticleHits();++i)
 	{
@@ -440,15 +441,17 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 			const TVector3 &pvecH = p1[i].Pvec();
 			const TVector3 &pvecC = p2[j].Pvec();
 			const TVector3 &pvecI = p3[k].Pvec();
-			const TVector3 pvecIC = pvecI + pvecC;
+			const TVector3 pvecIC = pvecI - pvecC;//molecule axis
+			const TVector3 pvecSumIC = pvecI + pvecC;//3*H+
+
 			//if (pvecIC.Z() > 0) continue;
 
-			hi.fill(hiOff+29,"Momentum_H",pvecH.Mag(),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
-			hi.fill(hiOff+30,"MomentumPC_PI",pvecIC.Mag(),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
-			hi.fill(hiOff+31,"MomentumPC_PI-H",pvecIC.Mag()/3/TMath::Cos(70*TMath::DegToRad()),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
-			hi.fill(hiOff+32,"PxPyPC_PI",pvecIC.X(),pvecIC.Y(),"px [a.u.]","py [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-			hi.fill(hiOff+33,"PyPzPC_PI",pvecIC.Y(),pvecIC.Z(),"py [a.u.]","pz [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-			hi.fill(hiOff+34,"PzPxPC_PI",pvecIC.Z(),pvecIC.X(),"pz [a.u.]","px [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(hiOff+29,"Momentum_H",pvecH.Mag(),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(hiOff+30,"MomentumPC_PI",pvecSumIC.Mag(),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(hiOff+31,"MomentumPC_PI-H",pvecSumIC.Mag()/3/TMath::Cos(70*TMath::DegToRad()),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(hiOff+32,"PxPyPC_PI",pvecSumIC.X(),pvecSumIC.Y(),"px [a.u.]","py [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(hiOff+33,"PyPzPC_PI",pvecSumIC.Y(),pvecSumIC.Z(),"py [a.u.]","pz [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
+			//hi.fill(hiOff+34,"PzPxPC_PI",pvecSumIC.Z(),pvecSumIC.X(),"pz [a.u.]","px [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 
 			const double angleHC = pvecH.Angle(-pvecC)*TMath::RadToDeg();
 			const double angleHI = pvecH.Angle(pvecI)*TMath::RadToDeg();
@@ -457,11 +460,11 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 			if (weightPerSin > 100) weightPerSin = 100;
 
 			//const double ratioHC = p1[i].P()/p2[j].P();
-			const double ratioHCI = pvecH.Mag()/(pvecIC.Mag());
-			const double ratioHCIcos = pvecH.Mag()*TMath::Cos((180-angleHCI)*TMath::DegToRad())*3/(pvecIC.Mag());
+			const double ratioHCI = pvecH.Mag()/(pvecSumIC.Mag());
+			const double ratioHCIcos = pvecH.Mag()*TMath::Cos((180-angleHCI)*TMath::DegToRad())*3/(pvecSumIC.Mag());
 			//const TVector3 crossHC = pvecC.Cross(pvecH);
 			const TVector3 crossHI = pvecI.Cross(pvecH);
-			const TVector3 crossHCI = pvecIC.Cross(pvecH);
+			//const TVector3 crossHCI = pvecIC.Cross(pvecH);
 			const double planeHCI = pvecC * crossHI/(pvecH.Mag()*pvecC.Mag()*pvecI.Mag());
 
 			TVector3 pvecHRot1(pvecH);
@@ -469,23 +472,24 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 			TVector3 pvecHRot3(pvecH);
 			pvecHRot2.Rotate(120*TMath::DegToRad(), pvecIC);//pvecIC
 			pvecHRot3.Rotate(-120*TMath::DegToRad(), pvecIC);//pvecIC
-			TVector3 pvecHRot(pvecHRot1+pvecHRot2+pvecHRot3);
-			const double ratioH3CI = pvecHRot.Mag()/pvecIC.Mag();
+			TVector3 pvec3Hp(pvecHRot1+pvecHRot2+pvecHRot3);
+			const double ratioH3CI = pvec3Hp.Mag()/pvecSumIC.Mag();
 			//Total momentum sum Vector
-			TVector3 pvecMomSum(pvecHRot+pvecIC);
+			TVector3 pvecMomSum(pvec3Hp+pvecI+pvecC);
 
 			//TVector3 pvecHRot(pvecH);
 			//pvecHRot.Rotate((180-angleHCI)*TMath::DegToRad() , crossHCI);
 
 			//TVector3 pvecHRot(-pvecIC);
 			//pvecHRot = pvecHRot.Unit() * 3 * TMath::Cos((180-angleHCI)*TMath::DegToRad()) * pvecH.Mag();
-			hi.fill(hiOff+17,"AngleVsMomSum",angleHCI, pvecMomSum.Mag(),"angle","MomSum",90,0,180,100,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
-			hi.fill(hiOff+18,"AngleVsPH",angleHCI, p1[i].P(),"angle","P",90,0,180,50,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
-			hi.fill(hiOff+19,"AngleVsRatioH3CI",angleHCI, ratioH3CI,"angle","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()),weightPerSin);
-			hi.fill(hiOff+20,"AngleVsRatioHCI",angleHCI, ratioHCI,"angle","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()),weightPerSin);
+
+			hi.fill(hiOff+17,"AngleVsMomSumH3CI",angleHCI, pvecMomSum.Mag(),"angle [deg]","MomSum",90,0,180,100,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
+			hi.fill(hiOff+18,"AngleVsMomH",angleHCI, p1[i].P(),"angle [deg]","H Momentum [a.u.]",90,0,180,50,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
+			hi.fill(hiOff+19,"AngleVsRatioH3_sumCI",angleHCI, ratioH3CI,"angle [deg]","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()),weightPerSin);
+			hi.fill(hiOff+20,"AngleVsRatioHCI",angleHCI, ratioHCI,"angle [deg]","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()),weightPerSin);
 			hi.fill(hiOff+21,"PlaneHCI",planeHCI,"cos",100,-1,1, Form("%s/Angular",Hname.Data()));
 			//hi.fill(hiOff+22,"AngleVsRatioRotHCI",pvecHRot.Angle(pvecIC)*TMath::RadToDeg(), ratioHCI,"angle","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()));
-			hi.fill(hiOff+23,"AngleVsRatioRotHI",pvecHRot.Angle(pvecI)*TMath::RadToDeg(), ratioHCI,"angle","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()));
+			hi.fill(hiOff+23,"AngleVsRatioRotHI",pvec3Hp.Angle(pvecI)*TMath::RadToDeg(), ratioHCI,"angle [deg]","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()));
 			hi.fill(hiOff+24,"AngleHCI",angleHCI,"angle [deg]",60,0,180, Form("%s/Angular",Hname.Data()),weightPerSin);
 			//1st condition
 			//if ((angleHC < 20) || (angleHC > 120)) continue;
@@ -553,7 +557,7 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 
 			///////////////////Momentum sum condition//////////////////////
 			//if ((planeHCI > -0.1)&&(planeHCI < 0.1))
-			if (pvecMomSum.Mag() < (pxSumWidth + pySumWidth + pzSumWidth))
+			if (pvecMomSum.Mag() < (pxyzSumWidth))
 			if (momSumX < pxSumWidth)
 				if (momSumY < pySumWidth)
 					if (momSumZ < pzSumWidth)
@@ -569,15 +573,16 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 						//Ratio PI/PC
 						//hi.fill(hiOff+15,"RatioPHPerPCPICondXYZ",p1[i].P()/(p3[k].P()-p2[j].P()),"Ratio",200,0,2,Form("%s/MomSums",Hname.Data()));
 						//Formed angle VS Ratio
-						hi.fill(hiOff+25,"AngleVsRatioRotHCICondXYZ",pvecHRot.Angle(pvecIC)*TMath::RadToDeg(), ratioHCI,"angle","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()));
-						hi.fill(hiOff+26,"AngleVsRatioHCICondXYZ",angleHCI, ratioHCI,"angle","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()),weightPerSin);
-						hi.fill(hiOff+27,"AngleVsRatioHCIcosCondXYZ",angleHCI, ratioHCIcos,"angle","Ratio",90,0,180,50,-4,4, Form("%s/Angular",Hname.Data()),weightPerSin);
+						hi.fill(hiOff+25,"AngleVsRatioH3-CICondXYZ",pvec3Hp.Angle(pvecIC)*TMath::RadToDeg(), ratioHCI,"angle [deg]","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()));
+						hi.fill(hiOff+26,"AngleVsRatioHCICondXYZ",angleHCI, ratioHCI,"angle [deg]","Ratio",90,0,180,50,0,4, Form("%s/Angular",Hname.Data()),weightPerSin);
+						//hi.fill(hiOff+27,"AngleVsRatioHCIcosCondXYZ",angleHCI, ratioHCIcos,"angle [deg]","Ratio",90,0,180,50,-4,4, Form("%s/Angular",Hname.Data()),weightPerSin);
 						hi.fill(hiOff+28,"AngleHCICondXYZ",angleHCI,"angle [deg]",60,0,180, Form("%s/Angular",Hname.Data()),weightPerSin);
-						hi.fill(hiOff+14,"AngleVsPHCondXYZ",angleHCI, p1[i].P(),"angle","P",90,0,180,50,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
+						hi.fill(hiOff+14,"AngleVsMomHCondXYZ",angleHCI, p1[i].P(),"angle [deg]","H Momentum [a.u.]",90,0,180,50,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
+						hi.fill(hiOff+27,"AngleVsMomSumH3CICondXYZ",angleHCI, pvecMomSum.Mag(),"angle [deg]","MomSum",90,0,180,100,0,200, Form("%s/Angular",Hname.Data()),weightPerSin);
 
 						
 						//Momentum first Ion//
-						int IDX = hiOff+40;
+						int IDX = hiOff+30;
 						hi.fill(IDX+0,Form("%sPxPy",p1.GetName()),p1[i].Px(),p1[i].Py(),"px [a.u.]","py [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						hi.fill(IDX+2,Form("%s-%s_PxPy",p2.GetName(),p3.GetName()),p2[j].Px()+p3[k].Px(),p2[j].Py()+p3[k].Py(),"px [a.u.]","py [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						if (TMath::Abs(p1[i].Pz()) < 30)
@@ -599,16 +604,15 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 							hi.fill(IDX+7,Form("%sPyPzSlice",p1.GetName()),p1[i].Pz(),p1[i].Py(),"pz [a.u.]","py [a.u.]",Mombins,-MomLim,MomLim,Mombins,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						}
 
-						hi.fill(IDX+9,Form("%sTotalMomentum",p1.GetName()),p1[i].P(),"p [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
+						hi.fill(IDX+9,Form("%sTotalMomentum",p1.GetName()),p1[i].P(),"Momentum [a.u.]",Mombins,0,MomLim,Form("%s/Momenta",Hname.Data()));
 						//hi.fill(IDX+2,Form("%sPx",p1.GetName()),p1[i].Px(),"px [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						//hi.fill(IDX+5,Form("%sPy",p1.GetName()),p1[i].Py(),"py [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						//hi.fill(IDX+8,Form("%sPz",p1.GetName()),p1[i].Pz(),"pz [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
-						/*
+						
 						//Energy First Ion//
 						hi.fill(IDX+10,Form("%sEnergy",p1.GetName()),p1[i].E(),"Energy [eV]",200,0,400,Form("%s/Energy",Hname.Data()));
 						hi.fill(IDX+11,Form("%sEnergy",p2.GetName()),p2[j].E(),"Energy [eV]",200,0,400,Form("%s/Energy",Hname.Data()));
 						hi.fill(IDX+12,Form("%sEnergy",p3.GetName()),p3[k].E(),"Energy [eV]",200,0,400,Form("%s/Energy",Hname.Data()));
-						if(p1[i].ThetaZ()<30) hi.fill(IDX+25,Form("%sEnergyCondZ30",p1.GetName()),p1[i].E(),"Energy [eV]",200,0,400,Form("%s/Energy",Hname.Data()));
 						//Raw
 						//hi.fill(IDX+11,Form("%sTOF",p1.GetName()),p1[i].TofCor(),"Tof [ns]",300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,Form("%s/Raw",Hname.Data()));
 						//hi.fill(IDX+12,Form("%sDetCor",p1.GetName()),p1[i].XCor(),p1[i].YCor(),"x [mm]","y [mm]",300,0-p1.GetCondRad()*1.3,0+p1.GetCondRad()*1.3,300,0-p1.GetCondRad()*1.3,0+p1.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
@@ -636,7 +640,7 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 						//hi.fill(IDX+33,Form("KEIplusKECperQ_%s",Hname.Data()),
 						//	(p1[i].E()+p2[j].E())/(p1.GetCharge_au()*p2.GetCharge_au()),
 						//	"KE [eV]",200,0,20,Form("%s/KER",Hname.Data()));
-					*/
+					
 					}
 						
 		}

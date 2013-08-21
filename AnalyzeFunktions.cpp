@@ -491,7 +491,7 @@ void MyAnalyzer::Analyze()
 	}
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
-	const int nbrOfHistosInfillMol2 = 15;//
+	const int nbrOfHistosInfillMol2 = 20;//
 	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 	if (MoleculeAnalysis == 2)
 	{
@@ -500,7 +500,7 @@ void MyAnalyzer::Analyze()
 		{
 			const MyParticle &ip = fParticles.GetParticle(i);
 			//check whether ip have counts and gatting paticle (I+, I++, ...)
-			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1))
+			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1 || ip.GetCoinGroup()==2 ))
 			{
 				int hitCounter = 0;
 				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
@@ -517,9 +517,11 @@ void MyAnalyzer::Analyze()
 					{
 						const MyParticle &jp = fParticles.GetParticle(j);
 						//Target particle (C+.N+..O+..CO+..,H+)
-						if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0))
+						if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0 || jp.GetCoinGroup()==2))
 						{
-							fillMoleculeHistogram2(ip,jp,fIntensities,fHi,startIdx+ (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2);
+							int tmpIdx = startIdx + (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
+							fillMoleculeHistogram2(ip,jp,fIntensities,fHi,tmpIdx);
+							fillAngleHistogram(ip, jp, fHi, tmpIdx + 17);	
 						}
 					}
 

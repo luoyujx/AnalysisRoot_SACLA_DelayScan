@@ -22,6 +22,7 @@ void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int h
 //-------------------fill particle Histograms---------------------------------------------------//
 void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::vector<double>& intPart )
 {	
+	if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
 	double MomLim = 800;
 	TString pname(p.GetName());
 	if (pname == "H1p") MomLim = 200;
@@ -657,8 +658,10 @@ void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vec
 
 	const double MomLim = 800;
 
-	for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)//i=j
+	for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)
 	{
+		if (!(p1[0].E() > p1.GetEnergyFrom() && p1[0].E() < p1.GetEnergyTo())) return;
+
 		if (intensity.size())
 			hi.fill(hiOff+0,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",300,0,1000,"Intensity");
 
@@ -697,7 +700,45 @@ void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vec
 		hi.fill(IDX+12,Form("%sDetCor",p2.GetName()),p2[i].XCor(),p2[i].YCor(),"x [mm]","y [mm]",300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,300,0-p2.GetCondRad()*1.3,0+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
 		hi.fill(IDX+13,Form("%sXPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].XCorRotScl(),"tof [ns]","x [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetXcor()-p2.GetCondRad()*1.3,p2.GetXcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
 		hi.fill(IDX+14,Form("%sYPosVsTof",p2.GetName()),p2[i].TofCor(),p2[i].YCorRotScl(),"tof [ns]","y [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetYcor()-p2.GetCondRad()*1.3,p2.GetYcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
+		
+		//anglar
+		//for (int j = 0; j < p1.GetNbrOfParticleHits(); j++)
+		//{
+		//	if ((i>=j) && (p1==p2)) continue;
+		//	const TVector3 &PIodine = p1[j].Pvec();
+		//	const TVector3 &PTarget = p2[i].Pvec();
+		//	double formedAngle =  PIodine.Angle(PTarget) * TMath::RadToDeg();			
+		//	double weightPerSin = 1/TMath::Sin(formedAngle*TMath::DegToRad());
+		//	if (weightPerSin > 100) weightPerSin = 100;
 
+		//	hi.fill(IDX+15,Form("Angle%s-%s",p1.GetName(),p2.GetName()),formedAngle,"Formed angle [deg]",180,0,180,Form("%s/Angle",Hname.Data()),weightPerSin);
+		//}
+	}
+}
+void fillAngleHistogram(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff)
+{
+	//TString Hname(p2.GetName());
+	//Hname += "GatedBy";
+	//Hname += p1.GetName();
+
+	for (size_t i = 0; i < p1.GetNbrOfParticleHits(); ++i)
+	{
+		for (int j = 0; j < p2.GetNbrOfParticleHits(); ++j)
+		{
+			if ((i>=j) && (p1==p2)) continue;
+			if (!(p1[i].E() > p1.GetEnergyFrom() && p1[i].E() < p1.GetEnergyTo())) return;//energy in range
+			if (!(p2[j].E() > p2.GetEnergyFrom() && p2[j].E() < p2.GetEnergyTo())) return;
+
+			const TVector3 &PIodine = p1[i].Pvec();
+			const TVector3 &PTarget = p2[j].Pvec();
+			double formedAngle =  PIodine.Angle(PTarget) * TMath::RadToDeg();			
+			double weightPerSin = 1/TMath::Sin(formedAngle*TMath::DegToRad());
+			if (weightPerSin > 100) weightPerSin = 100;
+
+			hi.fill(hiOff+0,Form("Angle%s-%s",p1.GetName(),p2.GetName()),formedAngle,"Formed angle [deg]",180,0,180,"AngularDist",weightPerSin);
+			hi.fill(hiOff+1,Form("Angle%s-%sVsEnegy%s",p1.GetName(),p2.GetName(),p1.GetName()),formedAngle,p1[i].E(),"Formed angle [deg]","Energy [eV]",180,0,180,100,0,100,"AngularEnergyDist",weightPerSin);
+			//hi.fill(hiOff+2,Form("Angle%s-%sVsEnegy%s",p1.GetName(),p2.GetName(),p2.GetName()),formedAngle,p2[j].E(),"Formed angle [deg]","Energy [eV]",180,0,180,100,0,300,"AngularEnergyDist",weightPerSin);
+		}
 	}
 }
 //----------------------------------PIPICO ALL-----------------------------------------------------------------//

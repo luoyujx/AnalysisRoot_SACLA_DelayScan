@@ -12,5 +12,7 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff);
 void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff);
 void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2,const MyParticle &p3, MyHistos &hi, int hiOff, Molecule &mol);
+void fillAngleHistogram(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff);
+void fill3BodyHistogram(const MyParticle &p1, const MyParticle &p2,const MyParticle &p3, MyHistos &hi, int hiOff);
 
 #endif

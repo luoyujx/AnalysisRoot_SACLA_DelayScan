@@ -57,6 +57,9 @@ public:
 	double							 GetMass_amu()const					{return fMass_amu;}
 	int								 GetKindParticle()const				{return fKindParticle;}
 	int								 GetCoinGroup()const				{return fCoinGroup;}
+	double							 GetEnergyFrom()const				{return fEnergyFrom;}
+	double							 GetEnergyTo()const					{return fEnergyTo;}
+
 
 private:
 	//these informations will be in the info class//
@@ -82,6 +85,8 @@ private:
 
 	int								 fKindParticle;						//kind of perticle 0:atom 1:molecule 2:electron 3:Ion 4:Ion(simple)
 	int								 fCoinGroup;						//if this number is Zero or same, do not calc coinsidence
+	double							 fEnergyFrom;						//Energy limit (ev)
+	double							 fEnergyTo;							//Energy limit (ev)
 
 	MySpectrometer					 fSp;								//the Spectrometer Properties this Particle flies through
 

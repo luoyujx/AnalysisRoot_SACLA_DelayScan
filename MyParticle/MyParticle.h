@@ -63,11 +63,11 @@ public:
 	int								 GetKindParticle()const				{return fKindParticle;}
 	int								 GetCoinGroup()const				{return fCoinGroup;}
 
-	double							 GetXVelocity()const				{return fXVelocity;}
-	double							 GetYVelocity()const				{return fYVelocity;}
+	double							 GetEnergyFrom()const				{return fEnergyFrom;}
+	double							 GetEnergyTo()const					{return fEnergyTo;}
 
-	void							 SetXVelocity(double in)			{fXVelocity=in;}
-	void							 SetYVelocity(double in)			{fYVelocity=in;}
+	//void							 SetEnergyFrom(double in)			{fEnergyFrom=in;}
+	//void							 SetEnergyTo(double in)				{fEnergyTo=in;}
 	
 private:
 	particleHits					 fPh;								//this contains all Hits on the detektor that belong to this particle
@@ -92,9 +92,9 @@ private:
 	double							 fCharge_au;						//!the Charge of this Particle in a.u.
 	TString							 fName;								//!how is this particle called
 
-	int								 fKindParticle;						//kind of particle;motomura
-	double							 fXVelocity;						// Jet velocity (mm/ns);motomura
-	double							 fYVelocity;						// Jet velocity (mm/ns);motomura
+	double							 fEnergyFrom;						//Energy limit (ev)
+	double							 fEnergyTo;							//Energy limit (ev)
+	int								 fKindParticle;						//kind of particle
 	int								 fCoinGroup;
 
 	MySpectrometer					 fSp;								//!the Spectrometer Properties this Particle flies through

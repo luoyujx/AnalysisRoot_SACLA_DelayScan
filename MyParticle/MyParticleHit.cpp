@@ -14,8 +14,8 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 {
 	//calculate the values for this particlehit from the detektorhit//
 	fTofC		= fTof - p.GetT0();
-	fXCor		= fX_mm - p.GetXcor() - (p.GetXVelocity() * fTofC);
-	fYCor		= fY_mm - p.GetYcor() - (p.GetYVelocity() * fTofC);
+	fXCor		= fX_mm - p.GetXcor();// - (p.GetXVelocity() * fTofC);
+	fYCor		= fY_mm - p.GetYcor();// - (p.GetYVelocity() * fTofC);
 	fXCorRot	= ( TMath::Cos(p.GetAngle())*fXCor + TMath::Sin(p.GetAngle())*fYCor );
 	fYCorRot	= (-TMath::Sin(p.GetAngle())*fXCor + TMath::Cos(p.GetAngle())*fYCor );
 	fXCorRotScl	= fXCorRot * p.GetSfx();

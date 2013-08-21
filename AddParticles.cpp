@@ -44,10 +44,14 @@ void AddIUracil(MyParticleContainer &particles)
 	particles.Add("C2p",2,MyMass::Carbon12(),1,0);//4
 	particles.Add("N2p",2,MyMass::Nitrogen14(),1,0);//
 	particles.Add("O2p",2,MyMass::Oxygen16(),1,0);//
+	particles.Add("O2pL",2,MyMass::Oxygen16(),1,0);//
+	particles.Add("O2pH",2,MyMass::Oxygen16(),1,0);//
 
 	particles.Add("C1p",1,MyMass::Carbon12(),1,0);//5
 	particles.Add("N1p",1,MyMass::Nitrogen14(),1,0);//
-	particles.Add("O1p",1,MyMass::Oxygen16(),1,0);//
+	particles.Add("O1p",1,MyMass::Oxygen16(),1,2);//
+	particles.Add("O1pL",1,MyMass::Oxygen16(),1,2);//
+	particles.Add("O1pH",1,MyMass::Oxygen16(),1,2);//
 
 	particles.Add("CC1p",1,MyMass::Carbon12()*2,1,0);//
 	particles.Add("CN1p",1,MyMass::Carbon12() + MyMass::Nitrogen14(),1,0);//

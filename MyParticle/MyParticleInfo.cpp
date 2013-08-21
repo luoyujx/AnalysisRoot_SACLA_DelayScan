@@ -35,6 +35,8 @@ void MyParticleInfo::Load()
 	fCondWidthX	= e.GetValue("Conditions.WidthOfX_mm",0.);
 	fCondWidthY	= e.GetValue("Conditions.WidthOfY_mm",0.);
 	fPosFlag	= e.GetValue("Conditions.UseQuadForPosCondition",false);
+	fEnergyFrom = e.GetValue("Conditions.EnegyFrom",0.);
+	fEnergyTo	= e.GetValue("Conditions.EnegyTo",10000);
 
 	//Spectrometer//
 	fSp.Clear();
@@ -48,6 +50,7 @@ void MyParticleInfo::Load()
 		double f = e.GetValue(Form("Spectrometer.Region%d.EField_VPercm",i+1),10.);
 		fSp.AddSpectrometerRegion(l,f);
 	}
+
 }
 
 //___________________________________________________________________________________________________________________________________________________________

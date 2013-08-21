@@ -26,8 +26,8 @@ void MyParticle::ReadFromInfo(const MyParticleInfo &pi)
 	fName		= pi.GetName();
 	fSp			= pi.GetSpectrometer();
 	fKindParticle = pi.GetKindParticle();
-	fXVelocity = 0.;
-	fYVelocity = 0.;
+	fEnergyFrom = pi.GetEnergyFrom();
+	fEnergyTo = pi.GetEnergyTo();
 	fCoinGroup = pi.GetCoinGroup();
 
 }

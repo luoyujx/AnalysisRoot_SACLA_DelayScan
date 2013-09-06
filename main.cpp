@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 
 	fAn.OpenIntensityData();
 	fAn.OpenIntPartition();
+	fAn.Open3BodyCombination();
 	//test
 	//fAn.OpenBeamPositionData();
 

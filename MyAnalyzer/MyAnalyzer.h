@@ -67,6 +67,7 @@ public:
 	void					OpenIntPartition();
 	void					OpenMomInfoData();
 	void					OpenBeamPositionData();
+	void					Open3BodyCombination();
 	void					ShowResult();
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
@@ -158,6 +159,8 @@ private:
 	//Position data
 	std::map<unsigned int, double>		beamPosX;
 	std::map<unsigned int, double>		beamPosY;
+	//3-body combination data
+	std::vector<std::string>			threeBodyComb;
 
 	//---Indicate some information on mass and tof spectrum
 	std::vector<TText>					txtMass;

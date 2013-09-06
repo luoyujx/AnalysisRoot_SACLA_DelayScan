@@ -435,4 +435,32 @@ void MyAnalyzer::OpenBeamPositionData()
 	}
 
 	std::cout << "Position data: "<< beamPosX.size() << " records have been loaded." << std::endl;
+}
+//_____Open 3-body combination data
+void MyAnalyzer::Open3BodyCombination()
+{
+	//if ((intFileName == "")||(!existIntensityData)) return;
+	const TString posFileName("3bodyCombination.txt");
+	std::ifstream ifs(posFileName,std::ios::in);
+	if (ifs.fail()){
+		std::cout<<"Can not open "<<posFileName<<std::endl;
+		return;
+	}
+
+	std::string strBuff;
+	char tmp[256];
+	while (!ifs.eof())
+	{
+		//read the data
+		ifs >> strBuff;
+		//go to nextline
+		ifs.getline(tmp,256);
+		if (!ifs.fail())
+		{
+			//add to vector
+			threeBodyComb.push_back(strBuff);
+		}
+	}
+
+	std::cout << "3-body combination data: "<< threeBodyComb.size() << " records have been loaded." << std::endl;
 }	

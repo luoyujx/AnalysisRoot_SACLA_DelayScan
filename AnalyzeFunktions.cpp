@@ -379,7 +379,11 @@ void MyAnalyzer::Analyze()
 			if (dh.RekMeth() < rekmeth)
 			{
 				const MyParticleHit &ph = p.AddHit(dh);
-				fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition);
+				//Check the angle of phiZX. if ph is out of condition, it delete.
+				if (p.CheckPhiZX(ph))
+				{
+					fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition);
+				}
 			}
 			//we reserve 100 histograms for one particle//
 			secondStartIdx +=50;

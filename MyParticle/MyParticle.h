@@ -33,8 +33,11 @@ public:
 	bool							 CheckRad(const MyDetektorHit &dh)			{return (TMath::Sqrt((dh.X()-fCondRadX)*(dh.X()-fCondRadX) + (dh.Y()-fCondRadY)*(dh.Y()-fCondRadY)) < fCondRad);}
 	bool							 CheckQuad(const MyDetektorHit &dh)			{return (TMath::Abs(dh.X()-fCondRadX) < fCondWidthX) && (TMath::Abs(dh.Y()-fCondRadY) < fCondWidthY);}
 	bool							 CheckTofAndPos(const MyDetektorHit &dh)	{return (CheckTof(dh) && CheckPos(dh));}
+	bool							 CheckPhiZX(const MyParticleHit &ph);
+	bool							 CheckPhiZX(const MyParticleHit &ph, double from, double to);
 	//particlehit stuff//
 	const MyParticleHit				&AddHit(const MyDetektorHit&);
+	void							EraseHit(size_t idx);
 	const size_t					 GetNbrOfParticleHits()const 		{return fPh.size();}
 	const MyParticleHit				&operator[](size_t idx)const		{return fPh[idx];}
 	void							 Clear()							{fPh.clear();}
@@ -94,6 +97,10 @@ private:
 
 	double							 fEnergyFrom;						//Energy limit (ev)
 	double							 fEnergyTo;							//Energy limit (ev)
+	double							 fPhiZXFrom;
+	double							 fPhiZXTo;
+
+
 	int								 fKindParticle;						//kind of particle
 	int								 fCoinGroup;
 

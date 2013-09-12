@@ -31,6 +31,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	const double SliceLim = 20;
 	if (p.GetCharge_au()>8) MomLim = 1200;
 
+	//limit detection angle
+	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
+
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
 	if (intensity.size() && (intPart.size()>1)) hi.fill(hiOff++,Form("Intensity%s",p.GetName()),intensity[0],"Laser Power",intPart.size()-1,&intPart.front(),Form("%s",p.GetName()));
@@ -659,6 +662,10 @@ void fillMoleculeHistogram2(const MyParticle &p1, const MyParticle &p2, std::vec
 	for (size_t i=0;i<p2.GetNbrOfParticleHits();++i)
 	{
 		if (!(p1[0].E() > p1.GetEnergyFrom() && p1[0].E() < p1.GetEnergyTo())) return;
+		//limit detection angle
+		//if (!( (p1[0].PhiZX() > 40 && p1[0].PhiZX() < 140) || (p1[0].PhiZX() > -140 && p1[0].PhiZX() < -40) )) return;
+		//if (!( (p2[i].PhiZX() > 40 && p2[i].PhiZX() < 140) || (p2[i].PhiZX() > -140 && p2[i].PhiZX() < -40) )) continue;
+
 
 		if (intensity.size())
 			hi.fill(hiOff+0,Form("intensity%s%s",p1.GetName(),p2.GetName()),intensity[0], "[arb. unit]",300,0,1000,"Intensity");
@@ -737,6 +744,9 @@ void fillAngleHistogram(const MyParticle &p1, const MyParticle &p2, MyHistos &hi
 			if ((i>=j) && (p1==p2)) continue;
 			if (!(p1[i].E() > p1.GetEnergyFrom() && p1[i].E() < p1.GetEnergyTo())) return;//energy in range
 			if (!(p2[j].E() > p2.GetEnergyFrom() && p2[j].E() < p2.GetEnergyTo())) return;
+			//limit detection angle
+			//if (!((p1[i].PhiZX() > 40 && p1[i].PhiZX() < 140) || (p1[i].PhiZX() > -140 && p1[i].PhiZX() < -40))) continue;
+			//if (!((p2[j].PhiZX() > 40 && p2[j].PhiZX() < 140) || (p2[j].PhiZX() > -140 && p2[j].PhiZX() < -40))) continue;
 
 			const TVector3 &PIodine = p1[i].Pvec();
 			const TVector3 &PTarget = p2[j].Pvec();
@@ -762,8 +772,10 @@ void fill3BodyHistogram(const MyParticle &p1, const MyParticle &p2,const MyParti
 			if ((p1==p2) && (i==j)) continue;
 			if ((p2==p3) && (j==k)) continue;
 			if ((p3==p1) && (k==i)) continue;
-			//if (!(p1[i].E() > p1.GetEnergyFrom() && p1[i].E() < p1.GetEnergyTo())) return;//energy in range
-			//if (!(p2[j].E() > p2.GetEnergyFrom() && p2[j].E() < p2.GetEnergyTo())) return;
+			//if (!((p1[i].PhiZX() > 40 && p1[i].PhiZX() < 140) || (p1[i].PhiZX() > -140 && p1[i].PhiZX() < -40))) continue;
+			//if (!((p2[j].PhiZX() > 40 && p2[j].PhiZX() < 140) || (p2[j].PhiZX() > -140 && p2[j].PhiZX() < -40))) continue;
+			//if (!((p3[k].PhiZX() > 40 && p3[k].PhiZX() < 140) || (p3[k].PhiZX() > -140 && p3[k].PhiZX() < -40))) continue;
+
 
 			const TVector3 &pvec1 = p1[i].Pvec();
 			const TVector3 &pvec2 = p2[j].Pvec();

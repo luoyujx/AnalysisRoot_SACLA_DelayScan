@@ -59,6 +59,8 @@ public:
 	int								 GetCoinGroup()const				{return fCoinGroup;}
 	double							 GetEnergyFrom()const				{return fEnergyFrom;}
 	double							 GetEnergyTo()const					{return fEnergyTo;}
+	double							 GetPhiZXFrom()const				{return fPhiZXFrom;}
+	double							 GetPhiZXTo()const					{return fPhiZXTo;}
 
 
 private:
@@ -87,6 +89,8 @@ private:
 	int								 fCoinGroup;						//if this number is Zero or same, do not calc coinsidence
 	double							 fEnergyFrom;						//Energy limit (ev)
 	double							 fEnergyTo;							//Energy limit (ev)
+	double							 fPhiZXFrom;
+	double							 fPhiZXTo;
 
 	MySpectrometer					 fSp;								//the Spectrometer Properties this Particle flies through
 

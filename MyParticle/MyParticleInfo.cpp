@@ -37,6 +37,8 @@ void MyParticleInfo::Load()
 	fPosFlag	= e.GetValue("Conditions.UseQuadForPosCondition",false);
 	fEnergyFrom = e.GetValue("Conditions.EnegyFrom",0.);
 	fEnergyTo	= e.GetValue("Conditions.EnegyTo",10000);
+	fPhiZXFrom	= e.GetValue("Conditions.PhiZXFrom",0);
+	fPhiZXTo	= e.GetValue("Conditions.PhiZXTo",0);
 
 	//Spectrometer//
 	fSp.Clear();

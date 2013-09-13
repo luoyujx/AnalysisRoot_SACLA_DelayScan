@@ -755,8 +755,8 @@ void fillAngleHistogram(const MyParticle &p1, const MyParticle &p2, MyHistos &hi
 			if (weightPerSin > 100) weightPerSin = 100;
 
 			hi.fill(hiOff+0,Form("Angle%s-%s",p1.GetName(),p2.GetName()),formedAngle,"Formed angle [deg]",180,0,180,"AngularDist",weightPerSin);
-			hi.fill(hiOff+1,Form("Angle%s-%sVsEnegy%s",p1.GetName(),p2.GetName(),p1.GetName()),formedAngle,p1[i].E(),"Formed angle [deg]","Energy [eV]",180,0,180,100,0,100,"AngularEnergyDist",weightPerSin);
-			//hi.fill(hiOff+2,Form("Angle%s-%sVsEnegy%s",p1.GetName(),p2.GetName(),p2.GetName()),formedAngle,p2[j].E(),"Formed angle [deg]","Energy [eV]",180,0,180,100,0,300,"AngularEnergyDist",weightPerSin);
+			hi.fill(hiOff+1,Form("Angle%s-%sVsMomRatio",p1.GetName(),p2.GetName()),formedAngle, p2[j].P()/p1[i].P(),"Formed angle [deg]","Energy [eV]",180,0,180,100,0,3,"AngleVsMomRatio",weightPerSin);
+			hi.fill(hiOff+2,Form("Enegy%sVsEnegy%s",p2.GetName(),p1.GetName()),p1[i].E(),p2[j].E(),Form("Energy%s [eV]",p1.GetName()),Form("Energy%s [eV]",p2.GetName()),100,0,300,100,0,300,"KEcorrelation");
 		}
 	}
 }

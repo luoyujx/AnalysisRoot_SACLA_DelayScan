@@ -452,10 +452,13 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 			const TVector3 pvecIC = pvecI - pvecC;//molecule axis
 			const TVector3 pvecSumIC = pvecI + pvecC;//3*H+
 
+			
+#ifdef TEST_RANDOM
 			//random test Sphere
-			//double rndPx, rndPy, rndPz;
-			//RandomGene.Sphere(rndPx, rndPy, rndPz, p1[i].P());
-			//const TVector3 pvecH(rndPx, rndPy, rndPz);
+			double rndPx, rndPy, rndPz;
+			RandomGene.Sphere(rndPx, rndPy, rndPz, p1[i].P());
+			const TVector3 pvecH(rndPx, rndPy, rndPz);
+#endif // TEST_RANDOM
 
 			//if (pvecIC.Z() > 0) continue;
 
@@ -480,6 +483,8 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2, const MyP
 			const TVector3 crossHI = pvecI.Cross(pvecH);
 			//const TVector3 crossHCI = pvecIC.Cross(pvecH);
 			const double planeHCI = pvecC * crossHI/(pvecH.Mag()*pvecC.Mag()*pvecI.Mag());
+			//test condition
+			//if ((planeHCI < -0.05) || (planeHCI > 0.05)) continue;
 
 			TVector3 pvecHRot1(pvecH);
 			TVector3 pvecHRot2(pvecH);

@@ -25,6 +25,11 @@ namespace MyUnitsConv
 	inline const double amu2au()		{return (amu2kg()*kg2au());}
 	//Atomic Units ->Atomic mass unit
 	inline const double au2amu()		{return 1./amu2au();}
+
+	//Momntum
+	inline const double au2kgmps()		{return 1.992851E-24;}
+	inline const double kgmps2au()		{return 1./au2kgmps();}
+
 }
 
 class MySpectrometer;
@@ -37,6 +42,7 @@ namespace MyMomentaCalculator
 	double pz_polyRT(double tof_ns, double r, const MySpectrometer& sp);
 	double pz_polyRT_Another(double tof_ns,double r, const MySpectrometer& sp);
 	double pr_polyRT(double tof_ns, double r, const MySpectrometer& sp);
+	double pr_VMI(double mass_au, double r, const MySpectrometer& sp);
 
 	double mass(double tof_ns, const MySpectrometer& sp);
 	double tof(double mass, const MySpectrometer& sp);

@@ -33,25 +33,34 @@
 double calcPx(const MyParticle &p, const MyParticleHit &ph)
 {
 	return MyMomentaCalculator::px(ph.XCorRotScl(),ph.YCorRotScl(),ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
+	//---vmi model
+	//return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.XCorRotScl(), p.GetSpectrometer());
+
 }
 double calcPy(const MyParticle &p, const MyParticleHit &ph)
 {
 	return MyMomentaCalculator::py(ph.XCorRotScl(),ph.YCorRotScl(),ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
+	//---vmi model
+	//return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.YCorRotScl(), p.GetSpectrometer());
 }
 double calcPz(const MyParticle &p, const MyParticleHit &ph)
 {
-	//coltrims
+	//---coltrims
 	//return MyMomentaCalculator::pz(ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
-	//simple poly
+	//---simple poly
 	//return MyMomentaCalculator::pz_poly(ph.TofCor(),p.GetSpectrometer());
-	//Polynomial with R
+	//---Polynomial with R
 	return MyMomentaCalculator::pz_polyRT(ph.TofCor(), ph.R(), p.GetSpectrometer());
-	//Polynomial with R another version
+	//---Polynomial with R another version
 	//return MyMomentaCalculator::pz_polyRT_Another(ph.TofCor(), ph.R(), p.GetSpectrometer());
 }
 double calcPr(const MyParticle &p, const MyParticleHit &ph)
 {
+	//return 0.0;
+	//---Polynomial with R and T
 	return MyMomentaCalculator::pr_polyRT(ph.TofCor(), ph.R(), p.GetSpectrometer());
+	//---vmi model
+	//return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.R(), p.GetSpectrometer());
 }
 double calcMass(const MyParticle &p, const MyParticleHit &ph)
 {
@@ -155,7 +164,7 @@ void MyAnalyzer::Analyze()
 {
 	MyDetektor &rd = fSE.GetDetektor(0);
 	
-	int startIdx=0;
+	int startIdx=10;
 
 	//for Trend Histogram
 	const int skipCounter = static_cast<int>(fEntryIterator/trendStep);
@@ -337,9 +346,9 @@ void MyAnalyzer::Analyze()
 		fHi.fill(startIdx+2,"TofAll",dh.Tof(),"tof [ns]",10000,0,maxTof);
 		fHi.fill(startIdx+3,"XPosVsTofAll",dh.Tof(),dh.X(),"tof [ns]","x [mm]",5000,0,maxTof,300,-maxPos,maxPos);
 		fHi.fill(startIdx+4,"YPosVsTofAll",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",5000,0,maxTof,300,-maxPos,maxPos);
-		fHi.fill(startIdx+5,"TofFine",dh.Tof(),"tof [ns]",static_cast<int>(maxTof),0,maxTof);
-		//fHi.fill(startIdx+6,"XPosVsTofFine",dh.Tof(),dh.X(),"tof [ns]","x [mm]",static_cast<int>(maxTof/5),0,maxTof,300,-maxPos,maxPos);
-		//fHi.fill(startIdx+7,"YPosVsTofFine",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",static_cast<int>(maxTof/5),0,maxTof,300,-maxPos,maxPos);
+		fHi.fill(startIdx+5,"TOF",dh.Tof(),"tof [ns]",4000,0,4000);
+		fHi.fill(startIdx+6,"XTOF",dh.Tof(),dh.X(),"tof [ns]","x [mm]",4000,0,4000,300,-50,50);
+		fHi.fill(startIdx+7,"YTOF",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",4000,0,4000,300,-50,50);
 
 		
 		//-----Particle(0)---Ion---

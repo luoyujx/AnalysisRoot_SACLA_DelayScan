@@ -489,7 +489,15 @@ double MyMomentaCalculator::pr_polyRT(double tof_ns, double r, const MySpectrome
 		+ sr[5].Length_mm()*tof_ns*tof_ns*tof_ns*tof_ns*tof_ns;
 	return pr;
 }
-
+double MyMomentaCalculator::pr_VMI(double mass_au, double r, const MySpectrometer& sp)
+{
+	if (sp.GetSpectrometerRegions().size() !=7 ) return 0.0;
+	const SpecRegions &sr = sp.GetSpectrometerRegions();
+	if ((sr[1].Length_mm() - sr[0].Length_mm() < 1)) return 0.0;
+	const double pr = mass_au*MyUnitsConv::au2kg() * 0.76 * r /1000 /((sr[1].Length_mm() - sr[0].Length_mm()) * 1e-9) * MyUnitsConv::kgmps2au();
+	//std::cout << pr << std::endl;
+	return pr;
+}
 
 double MyMomentaCalculator::mass(double tof_ns, const MySpectrometer& sp)//motomura
 {

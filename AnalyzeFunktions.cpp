@@ -32,16 +32,16 @@
 //momentum calculation
 double calcPx(const MyParticle &p, const MyParticleHit &ph)
 {
-	return MyMomentaCalculator::px(ph.XCorRotScl(),ph.YCorRotScl(),ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
+	//return MyMomentaCalculator::px(ph.XCorRotScl(),ph.YCorRotScl(),ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
 	//---vmi model
-	//return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.XCorRotScl(), p.GetSpectrometer());
+	return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.XCorRotScl(), p.GetSpectrometer());
 
 }
 double calcPy(const MyParticle &p, const MyParticleHit &ph)
 {
-	return MyMomentaCalculator::py(ph.XCorRotScl(),ph.YCorRotScl(),ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
+	//return MyMomentaCalculator::py(ph.XCorRotScl(),ph.YCorRotScl(),ph.TofCor(),p.GetMass_au(),p.GetCharge_au(),p.GetSpectrometer());
 	//---vmi model
-	//return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.YCorRotScl(), p.GetSpectrometer());
+	return MyMomentaCalculator::pr_VMI(p.GetMass_au(), ph.YCorRotScl(), p.GetSpectrometer());
 }
 double calcPz(const MyParticle &p, const MyParticleHit &ph)
 {
@@ -80,25 +80,25 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	particles.Add("Ion",1,1,0);//------------particle 0 --- Do not comment out!
 
 
-	if (whichParticles=="") return;
-	else if(whichParticles=="CH3I") 
-	{//---SACLA CH3I molecule
-		AddCH3I(particles);
-	}
-	else if(whichParticles=="IUracil") 
-	{//---SACLA I-Uracil
-		AddIUracil(particles);
-	}
-	else if(whichParticles=="Argon") 
-	{
-		//---SACLA Ar atom
-		AddArgon(particles);
-	}
-	else
-	{
-		std::cout << "can not find particles!!" << std::endl;
-		return;
-	}
+	//if (whichParticles=="") return;
+	//else if(whichParticles=="CH3I") 
+	//{//---SACLA CH3I molecule
+	//	AddCH3I(particles);
+	//}
+	//else if(whichParticles=="IUracil") 
+	//{//---SACLA I-Uracil
+	//	AddIUracil(particles);
+	//}
+	//else if(whichParticles=="Argon") 
+	//{
+	//	//---SACLA Ar atom
+	//	AddArgon(particles);
+	//}
+	//else
+	//{
+	//	std::cout << "can not find particles!!" << std::endl;
+	//	return;
+	//}
 
 	
 	
@@ -196,7 +196,7 @@ void MyAnalyzer::Analyze()
 	//Get intensity from loaded data map
 	if ((intFileName != "")&&(existIntensityData))
 	{
-		std::map<unsigned int, double>::iterator itTagInt;//BM1
+		std::map<unsigned int, double>::iterator itTagInt;//Delay
 		std::map<unsigned int, double>::iterator itTagInt2;//PD
 		itTagInt = tagIntensity.find(TagNumber);
 		itTagInt2 = tagIntensity2.find(TagNumber);
@@ -208,8 +208,8 @@ void MyAnalyzer::Analyze()
 			return;
 		}
 
-		fIntensities.push_back(itTagInt2->second*factorPD);//[0]	PD:
-		fIntensities.push_back(itTagInt->second*factorBM1);//[1]	BM1:24486*1000000
+		fIntensities.push_back((factorPMDOffset - itTagInt->second) / factorPMD);//[0] Delay	BM1:24486*1000000
+		fIntensities.push_back(itTagInt2->second * factorPD);//[1] PD:
 
 
 		////------------------------------------------SACLA 2012A
@@ -240,40 +240,40 @@ void MyAnalyzer::Analyze()
 				fHi.fill(startIdx++,Form("IntDep(%d)(%d)",i,j),fIntensities[i], fIntensities[j],Form("Int %d",i),Form("Int %d",j),1000,0,1000,1000,0,1000,"Intensity");
 			}
 		}
-		if (fIntensities.size() > 1)
-			if ( fIntensities[0]*fIntensities[1]>0)
-				fHi.fill(startIdx+1,"IntensityDivide0by1",fIntensities[0]/fIntensities[1],"IntensityDivide0by1",1000,0,5,"Intensity");
+		//if (fIntensities.size() > 1)
+		//	if ( fIntensities[0]*fIntensities[1]>0)
+		//		fHi.fill(startIdx+1,"IntensityDivide0by1",fIntensities[0]/fIntensities[1],"IntensityDivide0by1",1000,0,5,"Intensity");
 		startIdx+=2;
 
-		//-----------------------------------
-		fHi.fill(startIdx,"IntensityBM1",fIntensities[1],"[arb. unit]",1000,0,1000);
+		////-----------------------------------
+		fHi.fill(startIdx,"IntensityFEL",fIntensities[1],"[arb. unit]",1000,0,1000);
 		startIdx++;
-		fHi.fill(startIdx,"IntensityPD",fIntensities[0],"[arb. unit]",1000,0,500);
+		fHi.fill(startIdx,"Delay",fIntensities[0],"[arb. unit]",1000,-50,50);
 		startIdx++;
 
-		//-----Trend plot BM1 & PD intensity
-		fHi.fill(startIdx,"TrendIntensityBM1",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]);
-		startIdx++;
-		fHi.fill(startIdx,"TrendIntensityPD",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[0]);
-		startIdx++;
-		fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits());
-		startIdx++;
+		////-----Trend plot BM1 & PD intensity
+		//fHi.fill(startIdx,"TrendIntensityFEL",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]/skipCounter);
+		//startIdx++;
+		//fHi.fill(startIdx,"TrendDelay",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[0]/skipCounter);
+		//startIdx++;
+		//fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits()/skipCounter);
+		//startIdx++;
 		//fHi.fill(startIdx,"TrendBeamPosX",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionX);
 		//startIdx++;
 		//fHi.fill(startIdx,"TrendBeamPosY",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionY);
 		//startIdx++;
 
 		//--skip this shot event if FEL is below 0.1 (FEL is stopped)
-		if (fIntensities[0]<0.1) return;
+		if (fIntensities[1]< 5) return;
 
 		if (selectIntensity)
 		{
 			//---skip this shot event if FEL is below the lower limit
-			if (fIntensities[0]<intensityLowerLimit) return;
+			if (fIntensities[1]<intensityLowerLimit) return;
 			//---skip this shot event if FEL is over the upper limit
-			if (fIntensities[0]>intensityUpperLimit) return;
+			if (fIntensities[1]>intensityUpperLimit) return;
 		}
-		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[0],"[arb. unit]",1000,0,500);
+		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[1],"[arb. unit]",1000,0,500);
 		startIdx++;
 
 		if (existIntPartition)
@@ -296,6 +296,28 @@ void MyAnalyzer::Analyze()
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
+
+	//MCP intensity
+	//Xe2p
+	double McpIntensityXe2p = Average(fOE.GetChannel(7-1),5200,5800,true);
+//	double McpIntensityXe2p = 0.;
+	//
+	double McpIntensityXe3p = Average(fOE.GetChannel(7-1),4400,4900,true);
+//	double McpIntensityXe3p = 0.;
+
+	//----------------------------------
+	//Delay dependence SACLA2014A
+	//----------------------------------
+	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]",500,-50,50);
+	fHi.fill(startIdx+1,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
+	fHi.fill(startIdx+2,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
+	fHi.fill(startIdx+3,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]",500,-50,50,"",McpIntensityXe2p);
+	fHi.fill(startIdx+4,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]",500,-50,50,"",McpIntensityXe3p);
+
+
+
+	startIdx +=5;
+
 
 	//---get the raw mcp events called times//
 	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
@@ -361,7 +383,7 @@ void MyAnalyzer::Analyze()
 		{
 			const MyParticleHit &ph = p.AddHit(dh);
 
-			fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",10000,0,200,"Ion");
+			fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",10000,0,500,"Ion");
 			fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.1,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.1,"Ion");
 			fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
 			fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",20000,0,maxTof,"Ion");

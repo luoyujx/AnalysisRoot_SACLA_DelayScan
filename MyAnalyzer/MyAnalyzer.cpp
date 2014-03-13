@@ -34,7 +34,7 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	fOChain("OriginalEvent"),
 	fSAChain("SignalAnalyzedEvent"),
 	fSChain("SortedEvent"),
-	fHi(false,15000),//Max 10000?
+	fHi(false,10000),//Max 10000?
 	running(false),
 	processTimer(100),
 	molecule(0, std::vector<Molecule>(0)),
@@ -204,6 +204,8 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
 	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
+	factorPMDOffset=set.GetValue("ConversionPMOffset", -1750);
+	factorPMD=set.GetValue("ConversionPMtoDelay", 150);
 	factorBM1=set.GetValue("ConversionFactorBM1", 10e+9);
 	factorPD=set.GetValue("ConversionFactorPD", 10000);
 	selectIntensity=static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
@@ -241,7 +243,7 @@ void MyAnalyzer::OpenIntensityData()
 		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
 		//go to nextline
 		ifs.getline(tmp,256);
-		if (uintBuf % 6 != 0)
+		if (uintBuf % 2 != 0)
 			std::cout<< "wrong Tag number!! "<< uintBuf;
 		if (!ifs.fail())
 		{

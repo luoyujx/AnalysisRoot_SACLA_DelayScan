@@ -138,7 +138,9 @@ private:
 	double momFactorLowerLimit;
 	double momFactorUpperLimit;
 	double angleCondition;
-
+	//PM to Delay (2014A)
+	double factorPMD;
+	double factorPMDOffset;
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;

@@ -26,10 +26,12 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 
 	//calculate the momenta and energy of this Particle//
 	fPr = calcPr(p,*this);
-	//fPx = calcPx(p,*this);
 	fPx = fPr*fXCorRotScl/fR;
-	//fPy = calcPy(p,*this);
 	fPy = fPr*fYCorRotScl/fR;
+	//pr_VMI
+	//fPx = calcPx(p,*this);
+	//fPy = calcPy(p,*this);
+	//PZ
 	fPz = calcPz(p,*this);
 	//set 3D vector
 	fPvec.SetXYZ(fPx, fPy, fPz);

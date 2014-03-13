@@ -49,6 +49,7 @@ public:
 	double		PhiYZ()const		{return fPhiYZ;}//added by motomura
 	double		PhiZX()const		{return fPhiZX;}//added by motomura
 
+	void		MultiplyP(double factor)	{fPx *= factor; fPy *= factor; fPz *= factor;}
 private:
 	double		fPx;				//the momentum in x
 	double		fPy;				//the momentum in y

@@ -961,15 +961,18 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	size_t idx = 9000;
 
 	TH1D* delayVsShots = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots"));
+	TH1D* delayDependenceXe1p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1p"));
 	TH1D* delayDependenceXe2p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p"));
 	TH1D* delayDependenceXe3p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p"));
 
 
 
-	TH1D* delayDepXe2pNorm = dynamic_cast<TH1D*>(hi.create1d(idx,"DelayDependenceXe2p_Norm","Delay [ps]",500,-50,50));
-	TH1D* delayDepXe3pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+1,"DelayDependenceXe3p_Norm","Delay [ps]",500,-50,50));
+	TH1D* delayDepXe1pNorm = dynamic_cast<TH1D*>(hi.create1d(idx,"DelayDependenceXe1p_Norm","Delay [ps]",1000,-50,50));
+	TH1D* delayDepXe2pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+1,"DelayDependenceXe2p_Norm","Delay [ps]",1000,-50,50));
+	TH1D* delayDepXe3pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+2,"DelayDependenceXe3p_Norm","Delay [ps]",1000,-50,50));
 
 
+	delayDepXe1pNorm->Divide(delayDependenceXe1p, delayVsShots);
 	delayDepXe2pNorm->Divide(delayDependenceXe2p, delayVsShots);
 	delayDepXe3pNorm->Divide(delayDependenceXe3p, delayVsShots);
 

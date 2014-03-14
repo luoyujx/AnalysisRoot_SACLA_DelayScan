@@ -298,25 +298,38 @@ void MyAnalyzer::Analyze()
 	startIdx++;
 
 	//MCP intensity
+	//Ar1p
+	//Ar2p
+	//Ar3p
+//	double McpIntensityAr1p = Average(fOE.GetChannel(7-1),    7000,7560,true);//Voltage D2:4000
+//	double McpIntensityAr2p = Average(fOE.GetChannel(7-1),    5250,5680,true);//Voltage D2:4000
+//	double McpIntensityAr3p = Average(fOE.GetChannel(7-1),    4400,4740,true);//Voltage D2:4000 // Ar is not yet
+
+	//Xe1p
 	//Xe2p
-	double McpIntensityXe2p = Average(fOE.GetChannel(7-1),5200,5800,true);
-//	double McpIntensityXe2p = 0.;
-	//
-	double McpIntensityXe3p = Average(fOE.GetChannel(7-1),4400,4900,true);
-//	double McpIntensityXe3p = 0.;
+	//Xe3p
+	double McpIntensityXe1p = Average(fOE.GetChannel(7-1),7000,7600,true);//Voltage D2:4000
+	double McpIntensityXe2p = Average(fOE.GetChannel(7-1),5250,5680,true);//Voltage D2:4000
+	double McpIntensityXe3p = Average(fOE.GetChannel(7-1),4400,4740,true);//Voltage D2:4000
+
+	//double McpIntensityXe1p = Average(fOE.GetChannel(7-1),5200,5800,true);//Voltage D2:8000
+	//double McpIntensityXe2p = Average(fOE.GetChannel(7-1),4000,4280,true);//Voltage D2:8000
+	//double McpIntensityXe3p = Average(fOE.GetChannel(7-1),3400,3550,true);//Voltage D2:8000
 
 	//----------------------------------
 	//Delay dependence SACLA2014A
 	//----------------------------------
-	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]",500,-50,50);
-	fHi.fill(startIdx+1,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
-	fHi.fill(startIdx+2,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
-	fHi.fill(startIdx+3,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]",500,-50,50,"",McpIntensityXe2p);
-	fHi.fill(startIdx+4,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]",500,-50,50,"",McpIntensityXe3p);
+	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]",1000,-50,50);
+	fHi.fill(startIdx+1,"DelayDependenceXe1p2D",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
+	fHi.fill(startIdx+2,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
+	fHi.fill(startIdx+3,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
+	fHi.fill(startIdx+4,"DelayDependenceXe1p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe1p);
+	fHi.fill(startIdx+5,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe2p);
+	fHi.fill(startIdx+6,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe3p);
 
 
 
-	startIdx +=5;
+	startIdx +=10;
 
 
 	//---get the raw mcp events called times//
@@ -368,9 +381,9 @@ void MyAnalyzer::Analyze()
 		fHi.fill(startIdx+2,"TofAll",dh.Tof(),"tof [ns]",10000,0,maxTof);
 		fHi.fill(startIdx+3,"XPosVsTofAll",dh.Tof(),dh.X(),"tof [ns]","x [mm]",5000,0,maxTof,300,-maxPos,maxPos);
 		fHi.fill(startIdx+4,"YPosVsTofAll",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",5000,0,maxTof,300,-maxPos,maxPos);
-		fHi.fill(startIdx+5,"TOF",dh.Tof(),"tof [ns]",4000,0,4000);
-		fHi.fill(startIdx+6,"XTOF",dh.Tof(),dh.X(),"tof [ns]","x [mm]",4000,0,4000,300,-50,50);
-		fHi.fill(startIdx+7,"YTOF",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",4000,0,4000,300,-50,50);
+		fHi.fill(startIdx+5,"TOF",dh.Tof(),"tof [ns]",4000,0,6000);
+		fHi.fill(startIdx+6,"XTOF",dh.Tof(),dh.X(),"tof [ns]","x [mm]",4000,0,6000,300,-50,50);
+		fHi.fill(startIdx+7,"YTOF",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",4000,0,6000,300,-50,50);
 
 		
 		//-----Particle(0)---Ion---
@@ -390,6 +403,7 @@ void MyAnalyzer::Analyze()
 			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
 			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
 			fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
+			fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",5000,0,maxTof,100,-50,50,"Ion");
 		}
 
 		//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//

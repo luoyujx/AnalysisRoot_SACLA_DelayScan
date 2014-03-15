@@ -26,11 +26,14 @@ void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int h
 void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::vector<double>& intPart )
 {	
 	//if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
-	double MomLim = 800;
+	double MomLim = 3000;
 	TString pname(p.GetName());
 	if (pname == "H1p") MomLim = 400;
 	const double SliceLim = 20;
 	if (p.GetCharge_au()>8) MomLim = 1200;
+
+	double delay = 0.0;
+	if (intensity.size()) delay = intensity[0];
 
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
@@ -38,6 +41,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
 	if (intensity.size() && (intPart.size()>1)) hi.fill(hiOff++,Form("Intensity%s",p.GetName()),intensity[0],"Laser Power",intPart.size()-1,&intPart.front(),Form("%s",p.GetName()));
+	if (intensity.size()) hi.fill(hiOff++,"Delay",delay,"Delay [ps]",200,-50,50,Form("%s/Delay",p.GetName()));
 
 	//detektor pictures//
 	hi.fill(hiOff++,"Det"			,ph.X()			,ph.Y()			,"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
@@ -52,6 +56,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//pos vs tof//
 	hi.fill(hiOff++,"XPosVsTof",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,300,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 	hi.fill(hiOff++,"YPosVsTof",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
+
+	//delay vs Tof
+	hi.fill(hiOff++,"DelayVsTof",ph.TofCor(),delay,"tof [ns]","delay [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,200,-50,50,Form("%s/Delay",p.GetName()));
 
 	//hi.fill(hiOff++,"XPosVsTofFine",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 	//hi.fill(hiOff++,"YPosVsTofFine",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
@@ -84,12 +91,14 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	const double auTokgms = 1.992851E-24;
 	//hi.fill(hiOff++,"MomentumXYkgmsC2p",TMath::Sqrt(ph.Px()*ph.Px() + ph.Py()*ph.Py())*auTokgms,"pXY [kgm/s]",100,0,1.25432720949584E-21,Form("%s/Momenta",p.GetName()));
 	//hi.fill(hiOff++,"MomentumXYkgmsI6p",TMath::Sqrt(ph.Px()*ph.Px() + ph.Py()*ph.Py())*auTokgms,"pXY [kgm/s]",100,0,7.10635791785064E-21,Form("%s/Momenta",p.GetName()));
-	hi.fill(hiOff++,"MomentumXYkgmsC2p",TMath::Sqrt(ph.Px()*ph.Px() + ph.Py()*ph.Py())*auTokgms,"pXY [kgm/s]",100, 7.261170E-25, 1.254326E-21, Form("%s/Momenta",p.GetName()));
+	/*hi.fill(hiOff++,"MomentumXYkgmsC2p",TMath::Sqrt(ph.Px()*ph.Px() + ph.Py()*ph.Py())*auTokgms,"pXY [kgm/s]",100, 7.261170E-25, 1.254326E-21, Form("%s/Momenta",p.GetName()));
 	hi.fill(hiOff++,"MomentumXYkgmsI6p",TMath::Sqrt(ph.Px()*ph.Px() + ph.Py()*ph.Py())*auTokgms,"pXY [kgm/s]",100, 2.610880E-24, 7.106361E-21, Form("%s/Momenta",p.GetName()));
-	
+	*/
 	
 	//Energy//
 	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",400,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,200,-50,50,Form("%s/Delay",p.GetName()));
+
 	//Angle//
 	hi.fill(hiOff++,"ThetaX",ph.ThetaX(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));
 	hi.fill(hiOff++,"ThetaY",ph.ThetaY(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));
@@ -964,21 +973,27 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	TH1D* delayDependenceXe1p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1p"));
 	TH1D* delayDependenceXe2p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p"));
 	TH1D* delayDependenceXe3p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p"));
+	TH1D* delayVsShotsUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots_UltraWide"));
+	TH1D* delayDependenceXe1pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1p_UltraWide"));
+	TH1D* delayDependenceXe2pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p_UltraWide"));
+	TH1D* delayDependenceXe3pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p_UltraWide"));
 
 
 
 	TH1D* delayDepXe1pNorm = dynamic_cast<TH1D*>(hi.create1d(idx,"DelayDependenceXe1p_Norm","Delay [ps]",1000,-50,50));
 	TH1D* delayDepXe2pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+1,"DelayDependenceXe2p_Norm","Delay [ps]",1000,-50,50));
 	TH1D* delayDepXe3pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+2,"DelayDependenceXe3p_Norm","Delay [ps]",1000,-50,50));
+	TH1D* delayDepXe1pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+3,"DelayDependenceXe1p_NormUW","Delay [ps]",1000,-50,550));
+	TH1D* delayDepXe2pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+4,"DelayDependenceXe2p_NormUW","Delay [ps]",1000,-50,550));
+	TH1D* delayDepXe3pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+5,"DelayDependenceXe3p_NormUW","Delay [ps]",1000,-50,550));
 
 
 	delayDepXe1pNorm->Divide(delayDependenceXe1p, delayVsShots);
 	delayDepXe2pNorm->Divide(delayDependenceXe2p, delayVsShots);
 	delayDepXe3pNorm->Divide(delayDependenceXe3p, delayVsShots);
-
-
-
-
+	delayDepXe1pNormUW->Divide(delayDependenceXe1pUW, delayVsShotsUW);
+	delayDepXe2pNormUW->Divide(delayDependenceXe2pUW, delayVsShotsUW);
+	delayDepXe3pNormUW->Divide(delayDependenceXe3pUW, delayVsShotsUW);
 
 
 	////-------------------------------------------------------------------------------------------------------------------------------

@@ -132,3 +132,16 @@ void AddXenon132(MyParticleContainer &particles)
 	particles.Add("132Xe26P",26,MyMass::Xenon132(),0);
 
 }
+
+void AddXeCluster(MyParticleContainer &particles)
+{
+	//SACLA Xe Cluster experiment
+	particles.Add("Xe1P",1,MyMass::Xenon(),0);
+	particles.Add("Xe2P",2,MyMass::Xenon(),0);
+	particles.Add("Xe3P",3,MyMass::Xenon(),0);
+	particles.Add("Xe4P",4,MyMass::Xenon(),0);
+	particles.Add("XeXe1P",1,MyMass::Xenon()*2,0);
+	particles.Add("XeXeXe1P",1,MyMass::Xenon()*3,0);
+	particles.Add("XeXeXeXe1P",1,MyMass::Xenon()*4,0);
+
+}

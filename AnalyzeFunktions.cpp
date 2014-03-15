@@ -80,25 +80,30 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	particles.Add("Ion",1,1,0);//------------particle 0 --- Do not comment out!
 
 
-	//if (whichParticles=="") return;
-	//else if(whichParticles=="CH3I") 
-	//{//---SACLA CH3I molecule
-	//	AddCH3I(particles);
-	//}
-	//else if(whichParticles=="IUracil") 
-	//{//---SACLA I-Uracil
-	//	AddIUracil(particles);
-	//}
-	//else if(whichParticles=="Argon") 
-	//{
-	//	//---SACLA Ar atom
-	//	AddArgon(particles);
-	//}
-	//else
-	//{
-	//	std::cout << "can not find particles!!" << std::endl;
-	//	return;
-	//}
+	if (whichParticles=="") return;
+	else if(whichParticles=="CH3I") 
+	{//---SACLA CH3I molecule
+		AddCH3I(particles);
+	}
+	else if(whichParticles=="IUracil") 
+	{//---SACLA I-Uracil
+		AddIUracil(particles);
+	}
+	else if(whichParticles=="Argon") 
+	{
+		//---SACLA Ar atom
+		AddArgon(particles);
+	}
+	else if(whichParticles=="XeCluster") 
+	{
+		//---SACLA Xe cluster
+		AddXeCluster(particles);
+	}
+	else
+	{
+		std::cout << "can not find particles!!" << std::endl;
+		return;
+	}
 
 	
 	
@@ -308,14 +313,23 @@ void MyAnalyzer::Analyze()
 	//Xe1p
 	//Xe2p
 	//Xe3p
-	double McpIntensityXe1p = Average(fOE.GetChannel(7-1),7000,7600,true);//Voltage D2:4000
-	double McpIntensityXe2p = Average(fOE.GetChannel(7-1),5250,5680,true);//Voltage D2:4000
-	double McpIntensityXe3p = Average(fOE.GetChannel(7-1),4400,4740,true);//Voltage D2:4000
+	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),7000,7600,true);//Voltage D2:4000
+	//const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),5250,5680,true);//Voltage D2:4000
+	//const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),4400,4740,true);//Voltage D2:4000
 
 	//double McpIntensityXe1p = Average(fOE.GetChannel(7-1),5200,5800,true);//Voltage D2:8000
 	//double McpIntensityXe2p = Average(fOE.GetChannel(7-1),4000,4280,true);//Voltage D2:8000
 	//double McpIntensityXe3p = Average(fOE.GetChannel(7-1),3400,3550,true);//Voltage D2:8000
 
+
+	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),14127,17150,true);//Voltage D2:800
+	//const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),10254,12300,true);//Voltage D2:800
+	//const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),8256,10108,true);//Voltage D2:800
+
+	//Argon D2:800V setting
+	const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),8600,9600,true);//Voltage D2:800
+	const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),6450,6900,true);//Voltage D2:800
+	const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),5400,5600,true);//Voltage D2:800
 	//----------------------------------
 	//Delay dependence SACLA2014A
 	//----------------------------------
@@ -327,6 +341,15 @@ void MyAnalyzer::Analyze()
 	fHi.fill(startIdx+5,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe2p);
 	fHi.fill(startIdx+6,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe3p);
 
+	startIdx += 7;
+	
+	fHi.fill(startIdx+0,"DelayVsShots_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550);
+	fHi.fill(startIdx+1,"DelayDependenceXe1p2D_UltraWide",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
+	fHi.fill(startIdx+2,"DelayDependenceXe2p2D_UltraWide",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
+	fHi.fill(startIdx+3,"DelayDependenceXe3p2D_UltraWide",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",500,-50,550,500,0,1000);
+	fHi.fill(startIdx+4,"DelayDependenceXe1p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe1p);
+	fHi.fill(startIdx+5,"DelayDependenceXe2p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe2p);
+	fHi.fill(startIdx+6,"DelayDependenceXe3p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe3p);
 
 
 	startIdx +=10;

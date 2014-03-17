@@ -119,7 +119,7 @@ void MyAnalyzer::Init()
 	fParticles.Init();
 
 	//Init Covariance stuff//
-	//fWf.Init(fOE,fHi);
+	fWf.Init(fOE,fHi);
 
 	if (MoleculeAnalysis == 1)OpenMomInfoData();
 }
@@ -166,10 +166,10 @@ void MyAnalyzer::Run()
 			realyBreak=true;
 			break;
 		}
+		//Analyze Raw waveform//
+		fWf.ExtractWaveform(fOE,fHi,7-1);
 		//analyze the event//
-		Analyze();
-		//calc covariance map//
-		//fWf.ExtractWaveform(fOE,fHi,7-1);
+		Analyze(fWf);
 		//increase the counter//
 		fEntryIterator++;
 		//if(fEntryIterator > 1000) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
@@ -179,7 +179,7 @@ void MyAnalyzer::Run()
 	if (WasRunningBefore)
 	{
 		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
-		//fWf.FillHist(fHi);
+		fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
 

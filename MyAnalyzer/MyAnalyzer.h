@@ -60,7 +60,7 @@ public:
 	void					 Init();
 	void					 Init(MySettings &set);
 	void					 Run();
-	void					 Analyze();
+	void					 Analyze(MyWaveform&);
 	void					 FileOpen();
 	void					SetParameter(MySettings &set);
 	void					OpenIntensityData();

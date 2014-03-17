@@ -11,7 +11,7 @@
 #include "FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEventInfo.h"
 #include "FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEventInfo.h"
 
-MyWaveform::MyWaveform():IDOffset(4000), eventCounter(0),aveIntensity(0.),varIntensity(0.)
+MyWaveform::MyWaveform():IDOffset(9900), eventCounter(0),aveIntensity(0.),varIntensity(0.)
 {
 }
 MyWaveform::~MyWaveform()
@@ -20,15 +20,15 @@ MyWaveform::~MyWaveform()
 void MyWaveform::Init(const MyOriginalEvent &oe, MyHistos &rm)
 {
 	length= oe.GetNbrSamples();
-	arraySize = 500;
-	rebin = 5;
-	TimeRangeFrom = 2500;
+//	arraySize = 500;
+	//rebin = 5;
+	//TimeRangeFrom = 2500;
 
 	//--allocate array and clear---//
 	waveform.resize(length,0.);
 	aveWaveform.resize(length,0.);
-	rebinWaveform.resize(arraySize,0.);
-	aveRebinWaveform.resize(arraySize,0.);
+	//rebinWaveform.resize(arraySize,0.);
+	//aveRebinWaveform.resize(arraySize,0.);
 
 	// make histgram ---ToF, Intensity,,,,
 	rm.create1d(IDOffset+1,"WaveTrace","SampleInt",length,0,length);
@@ -56,9 +56,9 @@ void MyWaveform::Init(const MyOriginalEvent &oe, MyHistos &rm)
 void MyWaveform::Clear()
 {
 	std::fill(waveform.begin(),waveform.end(),0.);
-	std::fill(rebinWaveform.begin(),rebinWaveform.end(),0.);
+	//std::fill(rebinWaveform.begin(),rebinWaveform.end(),0.);
 	std::fill(aveWaveform.begin(),aveWaveform.end(),0.);
-	std::fill(aveRebinWaveform.begin(),aveRebinWaveform.end(),0.);
+	//std::fill(aveRebinWaveform.begin(),aveRebinWaveform.end(),0.);
 }
 
 void MyWaveform::ExtractWaveform(const MyOriginalEvent &oe, MyHistos &rm, int chan)

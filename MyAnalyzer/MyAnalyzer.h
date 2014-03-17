@@ -141,6 +141,12 @@ private:
 	//PM to Delay (2014A)
 	double factorPMD;
 	double factorPMDOffset;
+
+	int delayBins;
+	double delayFrom;
+	double delayTo;
+
+
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;

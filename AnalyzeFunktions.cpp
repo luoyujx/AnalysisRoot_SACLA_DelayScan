@@ -333,13 +333,14 @@ void MyAnalyzer::Analyze()
 	//----------------------------------
 	//Delay dependence SACLA2014A
 	//----------------------------------
-	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]",1000,-50,50);
+
+	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo);
 	fHi.fill(startIdx+1,"DelayDependenceXe1p2D",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	fHi.fill(startIdx+2,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	fHi.fill(startIdx+3,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
-	fHi.fill(startIdx+4,"DelayDependenceXe1p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe1p);
-	fHi.fill(startIdx+5,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe2p);
-	fHi.fill(startIdx+6,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]",1000,-50,50,"",McpIntensityXe3p);
+	fHi.fill(startIdx+4,"DelayDependenceXe1p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1p);
+	fHi.fill(startIdx+5,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe2p);
+	fHi.fill(startIdx+6,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
 
 	startIdx += 7;
 	
@@ -426,7 +427,7 @@ void MyAnalyzer::Analyze()
 			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
 			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
 			fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-			fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",5000,0,maxTof,100,-50,50,"Ion");
+			fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
 		}
 
 		//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//
@@ -450,7 +451,7 @@ void MyAnalyzer::Analyze()
 				//Check the angle of phiZX. if ph is out of condition, it delete.
 				if (p.CheckPhiZX(ph))
 				{
-					fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition);
+					fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo);
 				}
 			}
 			//we reserve 100 histograms for one particle//
@@ -762,4 +763,25 @@ double calcFormedAngleXY(const MyParticleHit &ph1,const MyParticleHit &ph2)
 	const double angle = TMath::ACos(calcInnerProductXY(ph1,ph2)/(calcMagXY(ph1)*calcMagXY(ph2)));
 
 	return angle * TMath::RadToDeg();
+}
+//Divide 2D histogram by 1D histogram
+void DivideHisto2Dby1D(TH2D *h2d, TH1D *h1d)
+{
+		if ((h2d->GetNbinsY() != h1d->GetNbinsX()))
+		{
+			std::cout <<"Histos must have the same binning"<<std::endl;
+			return;
+		}
+
+		for (int i=1;i<=h2d->GetNbinsX();++i)
+		{
+			for (int j=1;j<=h2d->GetNbinsY();++j)
+			{
+				double temp;
+				temp = 0.;
+				if (fabs(h1d->GetBinContent(j))>1.e-50) temp = h2d->GetBinContent(i,j) / h1d->GetBinContent(j);
+				h2d->SetBinContent(i,j,temp);
+			}
+		}
+
 }

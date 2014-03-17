@@ -178,7 +178,7 @@ void MyAnalyzer::Run()
 	}
 	if (WasRunningBefore)
 	{
-		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1);
+		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
 		//fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
@@ -217,6 +217,10 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	momFactorLowerLimit=set.GetValue("MomFactorLowerLimit", 0.0);
 	momFactorUpperLimit=set.GetValue("MomFactorUpperLimit", 2);
 	angleCondition=set.GetValue("AngleCondition", 0.0);
+
+	delayBins=static_cast<int>(set.GetValue("DelayBins", 300));
+	delayFrom=set.GetValue("DelayFrom", -10);
+	delayTo=set.GetValue("DelayTo", 20);
 
 }
 

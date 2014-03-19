@@ -133,15 +133,27 @@ void AddXenon132(MyParticleContainer &particles)
 
 }
 
+//SACLA 2014A Xe cluster pump-probe expriment
 void AddXeCluster(MyParticleContainer &particles)
 {
-	//SACLA Xe Cluster experiment
 	particles.Add("Xe1P",1,MyMass::Xenon(),0);
 	particles.Add("Xe2P",2,MyMass::Xenon(),0);
 	particles.Add("Xe3P",3,MyMass::Xenon(),0);
 	particles.Add("Xe4P",4,MyMass::Xenon(),0);
 	particles.Add("XeXe1P",1,MyMass::Xenon()*2,0);
 	particles.Add("XeXeXe1P",1,MyMass::Xenon()*3,0);
-	particles.Add("XeXeXeXe1P",1,MyMass::Xenon()*4,0);
+	//particles.Add("XeXeXeXe1P",1,MyMass::Xenon()*4,0);
+
+}
+//SACLA 2014A Xe cluster pump-probe expriment
+void AddArCluster(MyParticleContainer &particles)
+{
+	particles.Add("Ar1P",1,MyMass::Argon40(),0);
+	particles.Add("Ar2P",2,MyMass::Argon40(),0);
+	particles.Add("Ar3P",3,MyMass::Argon40(),0);
+	particles.Add("Ar4P",4,MyMass::Argon40(),0);
+	particles.Add("ArAr1P",1,MyMass::Argon40()*2,0);
+	particles.Add("ArArAr1P",1,MyMass::Argon40()*3,0);
+	//particles.Add("ArArArAr1P",1,MyMass::Argon40()*4,0);
 
 }

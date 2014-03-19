@@ -122,6 +122,7 @@ private:
 	//File name of Momentum sum imformation
 	TString MomSumInfoName;
 
+	TString whichParticles;
 	//reconstruction method (resort parameter)
 	int rekmeth;
 	//conversion factor for intensity

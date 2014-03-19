@@ -10,6 +10,7 @@ void AddCH3I(MyParticleContainer &particles);
 void AddNitrogen(MyParticleContainer &particles);
 void AddIUracil(MyParticleContainer &particles);
 void AddXeCluster(MyParticleContainer &particles);
+void AddArCluster(MyParticleContainer &particles);
 
 namespace MyMass
 {

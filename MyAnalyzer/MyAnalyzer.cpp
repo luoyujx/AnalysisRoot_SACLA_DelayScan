@@ -22,6 +22,7 @@
 
 #include "../AnalyzeFunktions.h"
 #include "../AnalyzeFuncFill.h"
+#include "../MyMomentaCalculator/MyMomentaCalculator.h"
 
 //#include "../MyCovariance.h"
 //#include "../MyWaveform.h"
@@ -74,8 +75,8 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	fSAE.ReadFromEventInfo(*SAEInfo);
 	fSE.ReadFromEventInfo(*SEInfo);
 
-	const TString whichPar = set.GetString("WhichParticles","");
-	DefineParticlesAndRootFile(fParticles,fHi,whichPar);
+	whichParticles = set.GetString("WhichParticles","");
+	DefineParticlesAndRootFile(fParticles,fHi,whichParticles);
 	const bool UseGUI=static_cast<int>(set.GetValue("UseGUI", true)+0.1);
 	if (UseGUI)
 	{
@@ -118,7 +119,7 @@ void MyAnalyzer::Init()
 	//read the particle info to the actual particle//
 	fParticles.Init();
 
-	//Init Covariance stuff//
+	//Init Raw waveform stuff//
 	fWf.Init(fOE,fHi);
 
 	if (MoleculeAnalysis == 1)OpenMomInfoData();
@@ -223,7 +224,47 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	delayTo=set.GetValue("DelayTo", 20);
 
 }
+//__________Show mass &ToF spactrum with Particle name_________________________________________
+void MyAnalyzer::ShowResult()
+{
+	canv = new TCanvas("Result","Result",100,100,1000+4,600+28);
+	//gStyle->SetOptStat(0);
+	//gStyle->SetOptFit(0);
+	canv->Divide(1,2,0.002,0.002);
 
+	TH1D* massHisto = dynamic_cast<TH1D*>(gFile->GetDirectory("/Ion")->FindObject("Mass"));
+	canv->cd(1);
+	massHisto->Draw("L");
+	txtMass.assign(fParticles.GetNbrOfParticles(),TText());
+	for (int i = 1; i < fParticles.GetNbrOfParticles(); i++)
+	{
+		txtMass[i].SetTextSize(0.04);
+		txtMass[i].SetTextAlign(21);
+		txtMass[i].SetTextColor(kBlack);
+		double massPerQ = fParticles.GetParticle(i).GetMass_au()*MyUnitsConv::au2amu()/fParticles.GetParticle(i).GetCharge_au();
+		double height = massHisto->GetBinContent((massHisto->FindBin(massPerQ)));
+		txtMass[i].DrawText(massPerQ, height*1.8, fParticles.GetParticle(i).GetName());
+	}
+
+	TH1D* tofHisto = dynamic_cast<TH1D*>(gFile->GetDirectory("/Ion")->FindObject("Tof"));
+	canv->cd(2);
+	tofHisto->Draw("L");
+	txtTof.assign(fParticles.GetNbrOfParticles(),TText());
+	boxTof.assign(fParticles.GetNbrOfParticles(),TBox());
+	for (int i = 1; i < fParticles.GetNbrOfParticles(); i++)
+	{
+		txtTof[i].SetTextSize(0.04);
+		txtTof[i].SetTextAlign(21);
+		txtTof[i].SetTextColor(kBlack);
+		double t0 = fParticles.GetParticle(0).GetT0();
+		double tofPos = calcTof(fParticles.GetParticle(i),fParticles.GetParticle(0)) + t0;
+		double height = tofHisto->GetBinContent((tofHisto->FindBin(tofPos)));
+		txtTof[i].DrawText(tofPos, height*1.8, fParticles.GetParticle(i).GetName());
+		boxTof[i].SetFillColor(kRed);
+		boxTof[i].SetFillStyle(3001);
+		boxTof[i].DrawBox(fParticles.GetParticle(i).GetCondTofFr(), 0,  fParticles.GetParticle(i).GetCondTofTo(), height *1.6);
+	}
+}
 
 //
 //_____Read Intensity DATA
@@ -262,7 +303,8 @@ void MyAnalyzer::OpenIntensityData()
 	std::map<unsigned int, double>::iterator itend = tagIntensity.end();
 	itend--;
 	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
-}	
+}
+
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntPartition()
 {

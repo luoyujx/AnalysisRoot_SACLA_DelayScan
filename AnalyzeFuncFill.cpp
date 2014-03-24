@@ -965,6 +965,10 @@ double CalcFactorial(int n)
 	return x;
 }
 
+void fillMCPToFHistograms(const MyOriginalEvent &oe, MyHistos &hi, std::vector<MCPToFRegion> &mcpTofRegion)
+{
+
+}
 void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos &hi,size_t nRegion,int delayBins,double delayFrom,double delayTo )
 {
 	std::cout << std::endl << "Running post analysis." << std::endl;

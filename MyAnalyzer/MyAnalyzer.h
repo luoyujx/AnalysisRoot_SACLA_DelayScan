@@ -48,6 +48,17 @@ public:
 	std::vector<size_t>		CoinHitNbrI;
 };
 
+class MCPToFRegion
+{
+public:
+	MCPToFRegion():particleName(""),tofFrom(0.0),tofTo(0.0){};
+	MCPToFRegion(TString pname, double tfr, double tto)
+		:particleName(pname),tofFrom(tfr),tofTo(tto) {};
+public:
+	TString particleName;
+	double tofFrom;
+	double tofTo;
+};
 //___Analyze class___
 class MyAnalyzer
 {
@@ -68,6 +79,8 @@ public:
 	void					OpenMomInfoData();
 	void					OpenBeamPositionData();
 	void					Open3BodyCombination();
+	void					OpenMCPToFRegion();
+
 	void					ShowResult();
 
 	//void test(){std::cout<<"Vals have changed"<<std::endl;	for (size_t i=0; i<ParticleInfos.size();ParticleInfos[i++]->Save());}
@@ -170,6 +183,8 @@ private:
 	std::map<unsigned int, double>		beamPosY;
 	//3-body combination data
 	std::vector<std::string>			threeBodyComb;
+	//ToF region of MCP intensity 
+	std::vector<MCPToFRegion>			mcpTofRegion;
 
 	//---Indicate some information on mass and tof spectrum
 	std::vector<TText>					txtMass;

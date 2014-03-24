@@ -264,6 +264,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
 
+
+	//Analyze MCP intensity
+
+	fillMCPToFHistograms(fOE, fHi, mcpTofRegion);
+
 	//MCP intensity
 	//Ar1p
 	//Ar2p

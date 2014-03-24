@@ -472,7 +472,7 @@ void MyAnalyzer::OpenBeamPositionData()
 		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
 		//go to nextline
 		ifs.getline(tmp,256);
-		if (uintBuf % 6 != 0)
+		if (uintBuf % 2 != 0)
 			std::cout<< "wrong Tag number!! "<< uintBuf;
 		if (!ifs.fail())
 		{
@@ -490,7 +490,8 @@ void MyAnalyzer::Open3BodyCombination()
 	//if ((intFileName == "")||(!existIntensityData)) return;
 	const TString posFileName("3bodyCombination.txt");
 	std::ifstream ifs(posFileName,std::ios::in);
-	if (ifs.fail()){
+	if (ifs.fail())
+	{
 		std::cout<<"Can not open "<<posFileName<<std::endl;
 		return;
 	}
@@ -511,4 +512,39 @@ void MyAnalyzer::Open3BodyCombination()
 	}
 
 	std::cout << "3-body combination data: "<< threeBodyComb.size() << " records have been loaded." << std::endl;
+}
+
+void MyAnalyzer::OpenMCPToFRegion()
+{
+	//if ((intFileName == "")||(!existIntensityData)) return;
+	const TString posFileName("MCPToFRegion.txt");
+	std::ifstream ifs(posFileName,std::ios::in);
+	if (ifs.fail())
+	{
+		std::cout<<"Can not open "<<posFileName<<std::endl;
+		return;
+	}
+
+	TString strBuff;
+	double doubleBuff1;
+	double doubleBuff2;
+	char tmp[256];
+	while (!ifs.eof())
+	{
+		//read the data
+		ifs >> strBuff >> doubleBuff1 >> doubleBuff2;
+		//go to nextline
+		ifs.getline(tmp,256);
+		if (!ifs.fail())
+		{
+			//add to vector
+			//MCPToFRegion mtr (strBuff,doubleBuff1, doubleBuff2);
+			//mtr.particleName = strBuff;
+			//mtr.tofFrom = doubleBuff1;
+			//mtr.tofTo = doubleBuff2;
+			mcpTofRegion.push_back(MCPToFRegion(strBuff,doubleBuff1, doubleBuff2));
+		}
+	}
+
+	std::cout << "ToF (MCP) region data: "<< mcpTofRegion.size() << " records have been loaded." << std::endl;
 }	

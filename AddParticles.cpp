@@ -152,6 +152,7 @@ void AddArCluster(MyParticleContainer &particles)
 	particles.Add("Ar2P",2,MyMass::Argon40(),0);
 	particles.Add("Ar3P",3,MyMass::Argon40(),0);
 	particles.Add("Ar4P",4,MyMass::Argon40(),0);
+	particles.Add("Ar5P",5,MyMass::Argon40(),0);
 	particles.Add("ArAr1P",1,MyMass::Argon40()*2,0);
 	particles.Add("ArArAr1P",1,MyMass::Argon40()*3,0);
 	//particles.Add("ArArArAr1P",1,MyMass::Argon40()*4,0);

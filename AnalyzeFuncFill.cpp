@@ -38,6 +38,8 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
+	if (ph.ThetaZ() > 180 ) return;
+
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
 	if (intensity.size() && (intPart.size()>1)) hi.fill(hiOff++,Form("Intensity%s",p.GetName()),intensity[0],"Laser Power",intPart.size()-1,&intPart.front(),Form("%s",p.GetName()));

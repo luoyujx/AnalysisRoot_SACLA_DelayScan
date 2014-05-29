@@ -103,7 +103,13 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	{
 		//---SACLA Xe cluster
 		AddArCluster(particles);
-	}	else
+	}
+	else if(whichParticles=="XeIsotope") 
+	{
+		//---SACLA Xe XeIsotope
+		AddXeIsotope(particles);
+	}
+	else
 	{
 		std::cout << "can not find particles!!" << std::endl;
 		return;

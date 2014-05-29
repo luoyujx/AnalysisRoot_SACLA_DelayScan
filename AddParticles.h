@@ -11,6 +11,7 @@ void AddNitrogen(MyParticleContainer &particles);
 void AddIUracil(MyParticleContainer &particles);
 void AddXeCluster(MyParticleContainer &particles);
 void AddArCluster(MyParticleContainer &particles);
+void AddXeIsotope(MyParticleContainer &particles);
 
 namespace MyMass
 {

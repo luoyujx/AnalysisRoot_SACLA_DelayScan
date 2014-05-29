@@ -158,23 +158,39 @@ void AddArCluster(MyParticleContainer &particles)
 	//particles.Add("ArArArAr1P",1,MyMass::Argon40()*4,0);
 
 }
+<<<<<<< HEAD
 
 //SACLA 2014A Xe cluster pump-probe expriment for isotope of Xe
 void AddXeIsotope(MyParticleContainer &particles)
 {	//particles.Add("128Xe1P",1,MyMass::Xenon128(),0);
 	particles.Add("129Xe1P",1,MyMass::Xenon129(),0);
 	//particles.Add("130Xe1P",1,MyMass::Xenon130(),0);
+=======
+void AddXeIsotope(MyParticleContainer &particles)
+{
+	//SACLA 2014A Xe cluster pump-probe expriment for isotope of Xe
+	particles.Add("128Xe1P",1,MyMass::Xenon128(),0);
+	particles.Add("129Xe1P",1,MyMass::Xenon129(),0);
+	particles.Add("130Xe1P",1,MyMass::Xenon130(),0);
+>>>>>>> 3a32505270b637578770321855f3fcd6821d009a
 	particles.Add("131Xe1P",1,MyMass::Xenon131(),0);
 	particles.Add("132Xe1P",1,MyMass::Xenon132(),0);
 	particles.Add("134Xe1P",1,MyMass::Xenon134(),0);
 	particles.Add("136Xe1P",1,MyMass::Xenon136(),0);
+<<<<<<< HEAD
 	//particles.Add("128Xe2P",2,MyMass::Xenon128(),0);
 	particles.Add("129Xe2P",2,MyMass::Xenon129(),0);
 	//particles.Add("130Xe2P",2,MyMass::Xenon130(),0);
+=======
+	particles.Add("128Xe2P",2,MyMass::Xenon128(),0);
+	particles.Add("129Xe2P",2,MyMass::Xenon129(),0);
+	particles.Add("130Xe2P",2,MyMass::Xenon130(),0);
+>>>>>>> 3a32505270b637578770321855f3fcd6821d009a
 	particles.Add("131Xe2P",2,MyMass::Xenon131(),0);
 	particles.Add("132Xe2P",2,MyMass::Xenon132(),0);
 	particles.Add("134Xe2P",2,MyMass::Xenon134(),0);
 	particles.Add("136Xe2P",2,MyMass::Xenon136(),0);
+<<<<<<< HEAD
 	//particles.Add("128Xe3P",3,MyMass::Xenon128(),0);
 	//particles.Add("129Xe3P",3,MyMass::Xenon129(),0);
 	//particles.Add("130Xe3P",3,MyMass::Xenon130(),0);
@@ -182,4 +198,15 @@ void AddXeIsotope(MyParticleContainer &particles)
 	//particles.Add("132Xe3P",3,MyMass::Xenon132(),0);
 	//particles.Add("134Xe3P",3,MyMass::Xenon134(),0);
 	//particles.Add("136Xe3P",3,MyMass::Xenon136(),0);
+=======
+	particles.Add("128Xe3P",3,MyMass::Xenon128(),0);
+	particles.Add("129Xe3P",3,MyMass::Xenon129(),0);
+	particles.Add("130Xe3P",3,MyMass::Xenon130(),0);
+	particles.Add("131Xe3P",3,MyMass::Xenon131(),0);
+	particles.Add("132Xe3P",3,MyMass::Xenon132(),0);
+	particles.Add("134Xe3P",3,MyMass::Xenon134(),0);
+	particles.Add("136Xe3P",3,MyMass::Xenon136(),0);
+
+
+>>>>>>> 3a32505270b637578770321855f3fcd6821d009a
 }

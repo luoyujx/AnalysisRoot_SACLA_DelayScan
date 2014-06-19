@@ -18,6 +18,7 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 	fYCor		= fY_mm - p.GetYcor();// - (p.GetYVelocity() * fTofC);
 	fXCorRot	= ( TMath::Cos(p.GetAngle())*fXCor + TMath::Sin(p.GetAngle())*fYCor );
 	fYCorRot	= (-TMath::Sin(p.GetAngle())*fXCor + TMath::Cos(p.GetAngle())*fYCor );
+
 	fXCorRotScl	= fXCorRot * p.GetSfx();
 	fYCorRotScl	= fYCorRot * p.GetSfy();
 	fR			= TMath::Sqrt(fXCorRotScl*fXCorRotScl+fYCorRotScl*fYCorRotScl);
@@ -45,6 +46,14 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 
 	fPhiXY = atan2(fPy, fPx)/TMath::Pi()*180.;				
 	fPhiYZ = atan2(fPz, fPy)/TMath::Pi()*180.;				
-	fPhiZX = atan2(fPx, fPz)/TMath::Pi()*180.;				
+	fPhiZX = atan2(fPx, fPz)/TMath::Pi()*180.;
 
+	if (sin(fThetaZ / 180*TMath::Pi()<0.001))
+	{
+		fSinThetaZInv =1000;
+	}
+	else
+	{
+		fSinThetaZInv = 1/sin(fThetaZ / 180*TMath::Pi());
+	}
 } 

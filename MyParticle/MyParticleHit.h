@@ -48,7 +48,9 @@ public:
 	double		PhiXY()const		{return fPhiXY;}//added by motomura
 	double		PhiYZ()const		{return fPhiYZ;}//added by motomura
 	double		PhiZX()const		{return fPhiZX;}//added by motomura
-
+	
+	double		SinThetaZInv()const	{return fSinThetaZInv;}//added by kumagai
+	
 	void		MultiplyP(double factor)	{fPx *= factor; fPy *= factor; fPz *= factor;}
 private:
 	double		fPx;				//the momentum in x
@@ -71,7 +73,8 @@ private:
 	double		fThetaZ;			//added by motomura
 	double		fPhiXY;				//added by motomura				
 	double		fPhiYZ;				//added by motomura				
-	double		fPhiZX;				//added by motomura				
+	double		fPhiZX;				//added by motomura
+	double		fSinThetaZInv;		//added by kumagai
 	TVector3	fPvec;				//3D vector of Momentam P
 
 	ClassDef(MyParticleHit,1)		//a hit of a particle on the detektor

@@ -38,7 +38,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
-	//if (ph.ThetaZ() > 180 ) return;
+	//if (ph.ThetaZ() > 5 ) return;
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
@@ -98,7 +98,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	*/
 	
 	//Energy//
-	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",400,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",4000,0,400,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,400,0,400,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",300,0,300,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 

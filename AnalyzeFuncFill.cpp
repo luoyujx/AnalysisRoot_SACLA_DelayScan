@@ -38,7 +38,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
-	//if (ph.ThetaZ() > 5 ) return;
+	//if (ph.ThetaZ() > 20 ) return;
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
@@ -98,8 +98,8 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	*/
 	
 	//Energy//
-	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",4000,0,400,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,400,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",2000,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,2000,0,400,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",300,0,300,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 
 	//Angle//
@@ -117,7 +117,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"PhiYZvsEnergy",ph.PhiYZ(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
 	hi.fill(hiOff++,"PhiZXvsEnergy",ph.PhiZX(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
 
-	hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,200,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,200,Form("%s/Angle",p.GetName()),ph.SinThetaZInv());
 	//,ph.SinThetaZInv()
 	//hi.fill(hiOff,"ThetaY_double",ph.ThetaY(),"#theta [deg]",180,0,360,Form("%s/Angle",p.GetName()));
 	//hi.fill(hiOff++,"ThetaY_double",360 - ph.ThetaY(),"#theta [deg]",180,0,360,Form("%s/Angle",p.GetName()));
@@ -1014,6 +1014,8 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 
 	TH2D* delayVsTOF = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOF") );
 	DivideHisto2Dby1D(delayVsTOF,delayVsShots);
+	TH2D* delayVsTOFCor = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOFCor") );
+	DivideHisto2Dby1D(delayVsTOFCor,delayVsShots);
 	//TH2D* delayVsMCPSignal = dynamic_cast<TH2D*>( gFile->FindObject("DelayVsMCPSignal") );
 	//DivideHisto2Dby1D(delayVsMCPSignal, delayVsShots);
 
@@ -1029,6 +1031,7 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 		//get histogram
 		TH1D* delayVsCount = dynamic_cast<TH1D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("Delay") );
 		TH2D* delayVsTof = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsTof") );
+		TH2D* delayVsTofCor = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsTofCor") );
 		TH2D* delayVsEnergy = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsEnergy") );
 
 		//TH1D* nbrParticleHits = dynamic_cast<TH1D*>(gFile->FindObject("NumberOfParticleHits"));
@@ -1039,6 +1042,8 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 		}
 
 	}
+
+
 	////-------------------------------------------------------------------------------------------------------------------------------
 	//TH1D* nbrPartHitsNorm = dynamic_cast<TH1D*>(hi.create1d(idx,"NbrParticleHits_normalized","Number of Hits",particles.size()+1,0,particles.size()+1));
 	//TH1D* nbrPartHitsPois = dynamic_cast<TH1D*>(hi.create1d(idx+1,"NbrParticleHits_Poisson","Number of Hits",particles.size()+1,0,particles.size()+1));

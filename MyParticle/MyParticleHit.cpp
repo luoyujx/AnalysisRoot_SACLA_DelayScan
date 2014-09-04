@@ -38,7 +38,7 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 	fPvec.SetXYZ(fPx, fPy, fPz);
 
 	fP  = TMath::Sqrt(fPx*fPx + fPy*fPy + fPz*fPz);
-	fE  = (13.6* fP*fP / p.GetMass_au());
+	fE  = (13.598434005136* fP*fP / p.GetMass_au());
 
 	fThetaX = acos(fPx / fP )/TMath::Pi()*180.;
 	fThetaY = acos(fPy / fP )/TMath::Pi()*180.;

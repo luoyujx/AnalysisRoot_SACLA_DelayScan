@@ -38,7 +38,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
-	//if (ph.ThetaZ() > 20 ) return;
+	if (ph.ThetaZ() > 90 ) return;
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
@@ -98,22 +98,22 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	*/
 	
 	//Energy//
-	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",2000,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",800,0,40,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,2000,0,400,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",300,0,300,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 
-	if (ph.ThetaZ() <  10) hi.fill(hiOff++,"EnergyUpto010deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  20) hi.fill(hiOff++,"EnergyUpto020deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  30) hi.fill(hiOff++,"EnergyUpto030deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  40) hi.fill(hiOff++,"EnergyUpto040deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  50) hi.fill(hiOff++,"EnergyUpto050deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  60) hi.fill(hiOff++,"EnergyUpto060deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  70) hi.fill(hiOff++,"EnergyUpto070deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  80) hi.fill(hiOff++,"EnergyUpto080deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  90) hi.fill(hiOff++,"EnergyUpto090deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 100) hi.fill(hiOff++,"EnergyUpto100deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  10) hi.fill(hiOff++,"EnergyUpto010deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  20) hi.fill(hiOff++,"EnergyUpto020deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  30) hi.fill(hiOff++,"EnergyUpto030deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  40) hi.fill(hiOff++,"EnergyUpto040deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  50) hi.fill(hiOff++,"EnergyUpto050deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  60) hi.fill(hiOff++,"EnergyUpto060deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  70) hi.fill(hiOff++,"EnergyUpto070deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  80) hi.fill(hiOff++,"EnergyUpto080deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() <  90) hi.fill(hiOff++,"EnergyUpto090deg",ph.E(),"Energy [eV]",80,0,40,Form("%s/Energy",p.GetName()));else hiOff++;
+	/*if (ph.ThetaZ() < 100) hi.fill(hiOff++,"EnergyUpto100deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 110) hi.fill(hiOff++,"EnergyUpto110deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	/*if (ph.ThetaZ() < 120) hi.fill(hiOff++,"EnergyUpto120deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
+	if (ph.ThetaZ() < 120) hi.fill(hiOff++,"EnergyUpto120deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 130) hi.fill(hiOff++,"EnergyUpto130deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 140) hi.fill(hiOff++,"EnergyUpto140deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 150) hi.fill(hiOff++,"EnergyUpto150deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
@@ -121,6 +121,8 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	if (ph.ThetaZ() < 170) hi.fill(hiOff++,"EnergyUpto170deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 180) hi.fill(hiOff++,"EnergyUpto180deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	*/
+
+	if (ph.ThetaZ() <  90) hi.fill(hiOff++,"CorEnergy",ph.E(),"Energy [eV]",800,0,40,Form("%s/Energy",p.GetName()),ph.SolidAngel());else hiOff++; 
 
 	//Angle//
 	hi.fill(hiOff++,"ThetaX",ph.ThetaX(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));
@@ -137,7 +139,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"PhiYZvsEnergy",ph.PhiYZ(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
 	hi.fill(hiOff++,"PhiZXvsEnergy",ph.PhiZX(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
 
-	hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,200,Form("%s/Angle",p.GetName()),ph.SinThetaZInv());
+	hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,40,Form("%s/Angle",p.GetName()),ph.SinThetaZInv());
 	//,ph.SinThetaZInv()
 	//hi.fill(hiOff,"ThetaY_double",ph.ThetaY(),"#theta [deg]",180,0,360,Form("%s/Angle",p.GetName()));
 	//hi.fill(hiOff++,"ThetaY_double",360 - ph.ThetaY(),"#theta [deg]",180,0,360,Form("%s/Angle",p.GetName()));

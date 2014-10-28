@@ -139,9 +139,9 @@
       <ForcedIncludeFiles>w32pragma.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;libPhysics.lib;libMathCore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;libPhysics.lib;libMathCore.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)\..\Binaries\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;$(ProjectDir)\..\SQLiteProcessor;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -253,11 +253,13 @@
     <ClCompile Include="..\MyGui\MyPar\MyPar.cpp" />
     <ClCompile Include="..\MyGui\MyPar\MySpec\MySpec.cpp" />
     <ClCompile Include="..\MyGui\MyPar\MySpec\MySpecReg.cpp" />
+    <ClCompile Include="..\SQLiteProcessor\DataBase0d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AddParticles.h" />
     <ClInclude Include="..\AnalyzeFuncFill.h" />
     <ClInclude Include="..\AnalyzeFunktions.h" />
+    <ClInclude Include="..\SQLiteProcessor\DataBase0d.h" />
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannel.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>

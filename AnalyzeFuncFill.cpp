@@ -122,8 +122,6 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	if (ph.ThetaZ() < 180) hi.fill(hiOff++,"EnergyUpto180deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	*/
 
-	if (ph.ThetaZ() <  90) hi.fill(hiOff++,"CorEnergy",ph.E(),"Energy [eV]",800,0,40,Form("%s/Energy",p.GetName()),ph.SolidAngel());else hiOff++; 
-
 	//Angle//
 	hi.fill(hiOff++,"ThetaX",ph.ThetaX(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));
 	hi.fill(hiOff++,"ThetaY",ph.ThetaY(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));

@@ -271,39 +271,81 @@ void MyAnalyzer::ShowResult()
 void MyAnalyzer::OpenIntensityData()
 {
 	if ((intFileName == "")||(!existIntensityData)) return;
-	
-	std::ifstream ifs(intFileName,std::ios::in);
-	if (ifs.fail()){
-		std::cout<<"Can not open "<<intFileName<<std::endl;
-		return;
-	}
 
-	unsigned int uintBuf = 0;
-	double doubleBuf1;
-	double doubleBuf2;
-	char tmp[256];
-	while (!ifs.eof())
+	else if (existIntensityData==1)
 	{
-		//read the data Tag and Intensity (uint/double)
-		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
-		//go to nextline
-		ifs.getline(tmp,256);
-		if (uintBuf % 2 != 0)
-			std::cout<< "wrong Tag number!! "<< uintBuf;
-		if (!ifs.fail())
-		{
-			//add to map (tagIntensity)
-			tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
-			tagIntensity2.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
+		std::ifstream ifs(intFileName,std::ios::in);
+		if (ifs.fail()){
+			std::cout<<"Can not open "<<intFileName<<std::endl;
+			return;
 		}
-	}
 
-	std::cout << "Intensity data: "<< tagIntensity.size() << " records have been loaded." << std::endl;
-	std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
-	std::map<unsigned int, double>::iterator itend = tagIntensity.end();
-	itend--;
-	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
+		unsigned int uintBuf = 0;
+		double doubleBuf1;
+		double doubleBuf2;
+		char tmp[256];
+		while (!ifs.eof())
+		{
+			//read the data Tag and Intensity (uint/double)
+			ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
+			//go to nextline
+			ifs.getline(tmp,256);
+			if (uintBuf % 2 != 0)
+				std::cout<< "wrong Tag number!! "<< uintBuf;
+			if (!ifs.fail())
+			{
+				//add to map (tagIntensity)
+				tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
+				tagIntensity2.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
+			}
+		}
+
+		std::cout << "Intensity data: "<< tagIntensity.size() << " records have been loaded." << std::endl;
+		std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
+		std::map<unsigned int, double>::iterator itend = tagIntensity.end();
+		itend--;
+		std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
+	}
+	else if (existIntensityData==2)
+	{}
 }
+
+//void MyAnalyzer::Open0D_Data()
+//{
+//	if ((intFileName == "")||(!existIntensityData)) return;
+//	
+//	std::ifstream ifs(intFileName,std::ios::in);
+//	if (ifs.fail()){
+//		std::cout<<"Can not open "<<intFileName<<std::endl;
+//		return;
+//	}
+//
+//	unsigned int uintBuf = 0;
+//	double doubleBuf1;
+//	double doubleBuf2;
+//	char tmp[256];
+//	while (!ifs.eof())
+//	{
+//		//read the data Tag and Intensity (uint/double)
+//		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
+//		//go to nextline
+//		ifs.getline(tmp,256);
+//		if (uintBuf % 2 != 0)
+//			std::cout<< "wrong Tag number!! "<< uintBuf;
+//		if (!ifs.fail())
+//		{
+//			//add to map (tagIntensity)
+//			tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
+//			tagIntensity2.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
+//		}
+//	}
+//
+//	std::cout << "Intensity data: "<< tagIntensity.size() << " records have been loaded." << std::endl;
+//	std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
+//	std::map<unsigned int, double>::iterator itend = tagIntensity.end();
+//	itend--;
+//	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
+//}
 
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntPartition()

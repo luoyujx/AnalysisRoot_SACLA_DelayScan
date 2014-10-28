@@ -257,6 +257,9 @@
     <ClCompile Include="..\AnalyzeFuncFill.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\SQLiteProcessor\DataBase0d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AnalyzeFunktions.h">
@@ -278,6 +281,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\AnalyzeFuncFill.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SQLiteProcessor\DataBase0d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

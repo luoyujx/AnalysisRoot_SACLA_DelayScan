@@ -11,6 +11,7 @@
 #include "TText.h"
 #include "TBox.h"
 
+
 #include "../MyParticle/MyParticleContainer.h"
 #include "../FilesFromLma2Root/MyEvent/MyOriginalEvent/MyOriginalEvent.h"
 #include "../FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEvent.h"
@@ -19,7 +20,7 @@
 #include "../FilesFromLma2Root/MySettings/MySettings.h"
 
 #include "../MyWaveform.h"
-
+#include "../SQLiteProcessor/DataBase0d.h"
 //_____Information for calc coincidence_____
 struct Molecule
 {
@@ -132,6 +133,8 @@ private:
 	TString fileName;
 	//File name of intensity data
 	TString intFileName;
+	//Path name of 0D data
+	TString path0D_DataBase;
 	//File name of Momentum sum imformation
 	TString MomSumInfoName;
 
@@ -156,6 +159,9 @@ private:
 	double factorPMD;
 	double factorPMDOffset;
 
+	int tagFrom;
+	int tagTo;
+
 	int delayBins;
 	double delayFrom;
 	double delayTo;
@@ -165,10 +171,12 @@ private:
 	int MoleculeAnalysis;
 	int extraCondition;
 	bool existIntensityData;
+	int method0D_Data;
 	bool existIntPartition;
 	bool checkingResult;
 	bool afterAnalysis;
 	bool selectIntensity;
+
 
 	//BM1 data
 	std::map<unsigned int, double>		tagIntensity;
@@ -190,6 +198,8 @@ private:
 	std::vector<TText>					txtMass;
 	std::vector<TText>					txtTof;
 	std::vector<TBox>					boxTof;
+
+	//DataBase0d db;
 };
 
 

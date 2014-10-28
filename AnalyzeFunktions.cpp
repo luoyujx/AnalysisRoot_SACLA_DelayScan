@@ -136,7 +136,7 @@ void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const
 void MyAnalyzer::Analyze(MyWaveform &wf)
 {
 	MyDetektor &rd = fSE.GetDetektor(0);
-	
+
 	int startIdx=10;
 
 	//for Trend Histogram
@@ -169,20 +169,29 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//Get intensity from loaded data map
 	if ((intFileName != "")&&(existIntensityData))
 	{
-		std::map<unsigned int, double>::iterator itTagInt;//Delay
-		std::map<unsigned int, double>::iterator itTagInt2;//PD
-		itTagInt = tagIntensity.find(TagNumber);
-		itTagInt2 = tagIntensity2.find(TagNumber);
-
-		if ((itTagInt == tagIntensity.end())||(itTagInt2 == tagIntensity2.end()))
+		if (method0D_Data==1)
 		{
-			std::cout <<"\r"<<TagNumber<< " is not found!!";
-			missedTagCount++;
-			return;
+			std::map<unsigned int, double>::iterator itTagInt;//Delay
+			std::map<unsigned int, double>::iterator itTagInt2;//PD
+			itTagInt = tagIntensity.find(TagNumber);
+			itTagInt2 = tagIntensity2.find(TagNumber);
+
+			if ((itTagInt == tagIntensity.end())||(itTagInt2 == tagIntensity2.end()))
+			{
+				std::cout <<"\r"<<TagNumber<< " is not found!!";
+				missedTagCount++;
+				return;
+			}
+
+			fIntensities.push_back((factorPMDOffset - itTagInt->second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			fIntensities.push_back(itTagInt2->second * factorPD);//[1] PD:
 		}
 
-		fIntensities.push_back((factorPMDOffset - itTagInt->second) / factorPMD);//[0] Delay	BM1:24486*1000000
-		fIntensities.push_back(itTagInt2->second * factorPD);//[1] PD:
+		//if (method0D_Data==2)
+		//{
+		//	fIntensities.push_back((factorPMDOffset - db.GetData(TagNumber,0)) / factorPMD);//[0] Delay	BM1:24486*1000000
+		//	fIntensities.push_back(db.GetData(TagNumber,1) * factorPD);//[1] PD:
+		//}
 
 
 		////------------------------------------------SACLA 2012A
@@ -279,9 +288,9 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//Ar1p
 	//Ar2p
 	//Ar3p
-//	double McpIntensityAr1p = Average(fOE.GetChannel(7-1),    7000,7560,true);//Voltage D2:4000
-//	double McpIntensityAr2p = Average(fOE.GetChannel(7-1),    5250,5680,true);//Voltage D2:4000
-//	double McpIntensityAr3p = Average(fOE.GetChannel(7-1),    4400,4740,true);//Voltage D2:4000 // Ar is not yet
+	//	double McpIntensityAr1p = Average(fOE.GetChannel(7-1),    7000,7560,true);//Voltage D2:4000
+	//	double McpIntensityAr2p = Average(fOE.GetChannel(7-1),    5250,5680,true);//Voltage D2:4000
+	//	double McpIntensityAr3p = Average(fOE.GetChannel(7-1),    4400,4740,true);//Voltage D2:4000 // Ar is not yet
 
 	//Xe1p
 	//Xe2p
@@ -319,7 +328,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fHi.fill(startIdx+7,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
 
 	startIdx += 10;
-	
+
 	//fHi.fill(startIdx+0,"DelayVsShots_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550);
 	////fHi.fill(startIdx+1,"DelayDependenceXe1p2D_UltraWide",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
 	////fHi.fill(startIdx+2,"DelayDependenceXe2p2D_UltraWide",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
@@ -356,7 +365,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//	p.SetXVelocity(XVelocity);
 	//	p.SetYVelocity(YVelocity);
 	//}
-	
+
 	int secondStartIdx=startIdx+20;
 	//go through all resorted detektorhits//
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
@@ -386,57 +395,57 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		fHi.fill(startIdx+6,"XTOF",dh.Tof(),dh.X(),"tof [ns]","x [mm]",4000,0,6000,300,-50,50);
 		fHi.fill(startIdx+7,"YTOF",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",4000,0,6000,300,-50,50);
 
-		
+
 		//-----Particle(0)---Ion---
 		//get the particle from the vector//
 		MyParticle &p = fParticles.GetParticle(0);
 		//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
 		if (p.CheckTofAndPos(dh))
-		//select hit by reconstruction method//
-		if (dh.RekMeth() < rekmeth)//added by motomura
-		{
-			const MyParticleHit &ph = p.AddHit(dh);
-
-			fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",10000,0,500,"Ion");
-			//fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.1,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.1,"Ion");
-			fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",10000,0,maxTof,"Ion");
-			fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-			fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",20000,0,maxTof,"Ion");
-			fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
-			fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
-			fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-			fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
-			fHi.fill(startIdx+16,"DelayVsTOFCor",ph.TofCor(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
-		}
-
-		//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//
-		//if (extraCondition) TofCorrection(dh,  1.25, 2.6852e-5, -1.1172e-8, 0., 770);
-
-		secondStartIdx=startIdx+20;
-		//check wether this hit fits the conditions of the particles we created//
-		//if so, the add this hit to the particle and fill the particle histograms//
-		//go through all particles//
-		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
-		{
-			//get the particle from the vector//
-			MyParticle &p = fParticles.GetParticle(j);
-			if (p.GetKindParticle() < 0) continue;
-			//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
-			if (p.CheckTofAndPos(dh))
 			//select hit by reconstruction method//
-			if (dh.RekMeth() < rekmeth)
-			{
-				const MyParticleHit &ph = p.AddHit(dh);
-				//Check the angle of phiZX. if ph is out of condition, it delete.
-				if (p.CheckPhiZX(ph))
+				if (dh.RekMeth() < rekmeth)//added by motomura
 				{
-					fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo);
+					const MyParticleHit &ph = p.AddHit(dh);
+
+					fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",10000,0,500,"Ion");
+					//fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.1,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.1,"Ion");
+					fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",10000,0,maxTof,"Ion");
+					fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
+					fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",20000,0,maxTof,"Ion");
+					fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
+					fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
+					fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
+					fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
+					fHi.fill(startIdx+16,"DelayVsTOFCor",ph.TofCor(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
 				}
-			}
-			//we reserve 100 histograms for one particle//
-			secondStartIdx +=50;
-			//std::cout <<j<<" "<< secondStartIdx<<std::endl;
-		}
+
+				//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//
+				//if (extraCondition) TofCorrection(dh,  1.25, 2.6852e-5, -1.1172e-8, 0., 770);
+
+				secondStartIdx=startIdx+20;
+				//check wether this hit fits the conditions of the particles we created//
+				//if so, the add this hit to the particle and fill the particle histograms//
+				//go through all particles//
+				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+				{
+					//get the particle from the vector//
+					MyParticle &p = fParticles.GetParticle(j);
+					if (p.GetKindParticle() < 0) continue;
+					//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
+					if (p.CheckTofAndPos(dh))
+						//select hit by reconstruction method//
+							if (dh.RekMeth() < rekmeth)
+							{
+								const MyParticleHit &ph = p.AddHit(dh);
+								//Check the angle of phiZX. if ph is out of condition, it delete.
+								if (p.CheckPhiZX(ph))
+								{
+									fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo);
+								}
+							}
+							//we reserve 100 histograms for one particle//
+							secondStartIdx +=50;
+							//std::cout <<j<<" "<< secondStartIdx<<std::endl;
+				}
 	}//------------------------------------------------------------------------------------------------------//
 	startIdx += (fParticles.GetNbrOfParticles()*50);
 
@@ -467,80 +476,80 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				molecule[i][j].CoinHitNbrC.clear();
 				molecule[i][j].CoinHitNbrI.clear();
 			}
-		//loop from particle No.1 (except Ion)
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
-		{
-			const MyParticle &ip = fParticles.GetParticle(i);
-			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
+			//loop from particle No.1 (except Ion)
+			for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
 			{
-				const MyParticle &jp = fParticles.GetParticle(j);
-				//check if ip and jp is molecule -> particles.Add()
-				if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
+				const MyParticle &ip = fParticles.GetParticle(i);
+				for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
 				{
-					//
-					if (
-						((ip.GetCoinGroup() != jp.GetCoinGroup()))
-						||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
-						)
+					const MyParticle &jp = fParticles.GetParticle(j);
+					//check if ip and jp is molecule -> particles.Add()
+					if ((ip.GetKindParticle() == 1)&&(jp.GetKindParticle() == 1))
 					{
-						fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
-						startIdx += 120;
-						//for proton
-						//extraCondition is 0:do not run proton routine, 1:run proton routine, 2:select only one hit event 
-						if (extraCondition > 0)
+						//
+						if (
+							((ip.GetCoinGroup() != jp.GetCoinGroup()))
+							||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
+							)
 						{
-							if (molecule[i][j].CoincidenceCount > 0) 
+							fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
+							startIdx += 120;
+							//for proton
+							//extraCondition is 0:do not run proton routine, 1:run proton routine, 2:select only one hit event 
+							if (extraCondition > 0)
 							{
-								int otherHits = 0;
-								if (extraCondition == 2)
+								if (molecule[i][j].CoincidenceCount > 0) 
 								{
-									for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+									int otherHits = 0;
+									if (extraCondition == 2)
 									{
-										if ( (k!=i)&&(k!=j) ) 
-											otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
-									} 
+										for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+										{
+											if ( (k!=i)&&(k!=j) ) 
+												otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
+										} 
+									}
+									if (otherHits == 0)
+									{
+										const MyParticle &hp = fParticles.GetParticle(1);
+										//if (hp.GetNbrOfParticleHits() < 4)
+										fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
+									}
 								}
-								if (otherHits == 0)
-								{
-									const MyParticle &hp = fParticles.GetParticle(1);
-									//if (hp.GetNbrOfParticleHits() < 4)
-									fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
-								}
+								startIdx += 65;
 							}
-							startIdx += 65;
 						}
 					}
 				}
 			}
-		}
-		//--Fill Number of coincidence
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
-		{
-			for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
+			//--Fill Number of coincidence
+			for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)//from particle No.1
 			{
-				for (size_t k=0; k<molecule[i][j].CoincidenceCount; ++k)
+				for (size_t j=i;j<fParticles.GetNbrOfParticles();++j)
 				{
-					//Coincidence charge distribution
-					fHi.fill(startIdx,"NumberOfCoincidence",i,j,"Particle number","Particle number",
-						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
-						fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
-					fHi.fill(startIdx+1,"CoincidentChargeState",fParticles.GetParticle(i).GetCharge_au(),fParticles.GetParticle(j).GetCharge_au(),
-						"Carbon Chage","Iodine Chage",
-						6,1,7,
-						16,1,17);
-					if (fParticles.GetParticle(i).GetCoinGroup()==0 && fParticles.GetParticle(j).GetCoinGroup()==1)
+					for (size_t k=0; k<molecule[i][j].CoincidenceCount; ++k)
 					{
-						fHi.fill(startIdx+5+i, Form("CoincidentCarbon%dp",static_cast<int>(fParticles.GetParticle(i).GetCharge_au()+0.1)),
-							fParticles.GetParticle(j).GetCharge_au(),
-							"Iodine charge state", 20, 0, 20);
+						//Coincidence charge distribution
+						fHi.fill(startIdx,"NumberOfCoincidence",i,j,"Particle number","Particle number",
+							fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
+							fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
+						fHi.fill(startIdx+1,"CoincidentChargeState",fParticles.GetParticle(i).GetCharge_au(),fParticles.GetParticle(j).GetCharge_au(),
+							"Carbon Chage","Iodine Chage",
+							6,1,7,
+							16,1,17);
+						if (fParticles.GetParticle(i).GetCoinGroup()==0 && fParticles.GetParticle(j).GetCoinGroup()==1)
+						{
+							fHi.fill(startIdx+5+i, Form("CoincidentCarbon%dp",static_cast<int>(fParticles.GetParticle(i).GetCharge_au()+0.1)),
+								fParticles.GetParticle(j).GetCharge_au(),
+								"Iodine charge state", 20, 0, 20);
+						}
+						//sumed chage state
+						fHi.fill(startIdx+2, "SumOfChargeState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
+							"Charge State",	fParticles.GetNbrOfParticles()*2, 0, fParticles.GetNbrOfParticles()*2);
 					}
-					//sumed chage state
-					fHi.fill(startIdx+2, "SumOfChargeState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
-						"Charge State",	fParticles.GetNbrOfParticles()*2, 0, fParticles.GetNbrOfParticles()*2);
 				}
 			}
-		}
-		startIdx += 5 + fParticles.GetNbrOfParticles();
+			startIdx += 5 + fParticles.GetNbrOfParticles();
 	}
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
@@ -746,21 +755,21 @@ double calcFormedAngleXY(const MyParticleHit &ph1,const MyParticleHit &ph2)
 //Divide 2D histogram by 1D histogram
 void DivideHisto2Dby1D(TH2D *h2d, TH1D *h1d)
 {
-		if ((h2d->GetNbinsY() != h1d->GetNbinsX()))
-		{
-			std::cout <<"Histos must have the same binning"<<std::endl;
-			return;
-		}
+	if ((h2d->GetNbinsY() != h1d->GetNbinsX()))
+	{
+		std::cout <<"Histos must have the same binning"<<std::endl;
+		return;
+	}
 
-		for (int i=1;i<=h2d->GetNbinsX();++i)
+	for (int i=1;i<=h2d->GetNbinsX();++i)
+	{
+		for (int j=1;j<=h2d->GetNbinsY();++j)
 		{
-			for (int j=1;j<=h2d->GetNbinsY();++j)
-			{
-				double temp;
-				temp = 0.;
-				if (fabs(h1d->GetBinContent(j))>1.e-50) temp = h2d->GetBinContent(i,j) / h1d->GetBinContent(j);
-				h2d->SetBinContent(i,j,temp);
-			}
+			double temp;
+			temp = 0.;
+			if (fabs(h1d->GetBinContent(j))>1.e-50) temp = h2d->GetBinContent(i,j) / h1d->GetBinContent(j);
+			h2d->SetBinContent(i,j,temp);
 		}
+	}
 
 }

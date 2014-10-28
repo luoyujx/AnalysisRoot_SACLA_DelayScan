@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __DataBasse0d_H__
+#define __DataBasse0d_H__
+
 #include <vector>
 #include <map>
 #include <string>
@@ -46,3 +48,4 @@ private:
 	const size_t size;
 	size_t n;
 };
+#endif

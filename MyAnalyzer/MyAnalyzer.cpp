@@ -86,9 +86,9 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 		MyGui *gui = new MyGui(gClient->GetRoot(),fParticles.GetParticleInfos());
 		gui->Connect("ValsChanged()","MyAnalyzer",this,"Init()");
 	}
-		//start run//
-		runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
-		runTimer.Start(1000);
+	//start run//
+	runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
+	runTimer.Start(1000);
 }
 MyAnalyzer::~MyAnalyzer()
 {
@@ -103,7 +103,7 @@ void MyAnalyzer::FileOpen()
 	else 
 		fHi.OpenRootFile(fileName);
 }
-	
+
 //___________________________________________________________________________________________________________________________________________________________
 void MyAnalyzer::Init()
 {
@@ -188,7 +188,7 @@ void MyAnalyzer::Run()
 		fHi.FlushRootFile();
 		if (checkingResult) ShowResult();
 	}
-	
+
 	//restart run at this time//
 	if (!realyBreak) runTimer.Start(3000);
 	//std::cout << "leaving run"<<std::endl;
@@ -203,7 +203,11 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	rekmeth = static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1);
 	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
-	existIntensityData=static_cast<int>(set.GetValue("IntensityData", false)+0.1);
+	existIntensityData = static_cast<int>(set.GetValue("IntensityData", false)+0.1);
+	method0D_Data = static_cast<int>(set.GetValue("IntensityData", false)+0.1);
+	path0D_DataBase = set.GetString("0D_DataBase","");
+	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
+	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
 	factorPMDOffset=set.GetValue("ConversionPMOffset", -1750);
 	factorPMD=set.GetValue("ConversionPMtoDelay", 150);
@@ -271,43 +275,56 @@ void MyAnalyzer::ShowResult()
 void MyAnalyzer::OpenIntensityData()
 {
 	if ((intFileName == "")||(!existIntensityData)) return;
-
-	else if (existIntensityData==1)
 	{
-		std::ifstream ifs(intFileName,std::ios::in);
-		if (ifs.fail()){
-			std::cout<<"Can not open "<<intFileName<<std::endl;
-			return;
-		}
-
-		unsigned int uintBuf = 0;
-		double doubleBuf1;
-		double doubleBuf2;
-		char tmp[256];
-		while (!ifs.eof())
+		if (method0D_Data==1)
 		{
-			//read the data Tag and Intensity (uint/double)
-			ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
-			//go to nextline
-			ifs.getline(tmp,256);
-			if (uintBuf % 2 != 0)
-				std::cout<< "wrong Tag number!! "<< uintBuf;
-			if (!ifs.fail())
-			{
-				//add to map (tagIntensity)
-				tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
-				tagIntensity2.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
+
+
+			std::ifstream ifs(intFileName,std::ios::in);
+			if (ifs.fail()){
+				std::cout<<"Can not open "<<intFileName<<std::endl;
+				return;
 			}
+
+			unsigned int uintBuf = 0;
+			double doubleBuf1;
+			double doubleBuf2;
+			char tmp[256];
+			while (!ifs.eof())
+			{
+				//read the data Tag and Intensity (uint/double)
+				ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
+				//go to nextline
+				ifs.getline(tmp,256);
+				if (uintBuf % 2 != 0)
+					std::cout<< "wrong Tag number!! "<< uintBuf;
+				if (!ifs.fail())
+				{
+					//add to map (tagIntensity)
+					tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
+					tagIntensity2.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
+				}
+			}
+
+			std::cout << "Intensity data: "<< tagIntensity.size() << " records have been loaded." << std::endl;
+			std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
+			std::map<unsigned int, double>::iterator itend = tagIntensity.end();
+			itend--;
+			std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
 		}
 
-		std::cout << "Intensity data: "<< tagIntensity.size() << " records have been loaded." << std::endl;
-		std::map<unsigned int, double>::iterator itbegin = tagIntensity.begin();
-		std::map<unsigned int, double>::iterator itend = tagIntensity.end();
-		itend--;
-		std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
+		/*if (method0D_Data==2)
+		{
+			db.Open("path0D_DataBase");
+			vector<string> fields;
+			fields.push_back("xfel_bl_3_st3_motor/position");
+			fields.push_back("xfel_bl_3_st_3_pd_l0_fitting_peak/voltage");
+			db.LoadData(tagFrom, tagTo, fields);
+		}*/
+
 	}
-	else if (existIntensityData==2)
-	{}
+
+
 }
 
 //void MyAnalyzer::Open0D_Data()

@@ -29,6 +29,9 @@
 
 using namespace std;
 
+//Global object 
+DataBase0d DB;
+
 //##################################################################################
 //_____________________________The class Members______________________________________________________________________________________________________________________________
 MyAnalyzer::MyAnalyzer(MySettings &set):
@@ -313,14 +316,14 @@ void MyAnalyzer::OpenIntensityData()
 			std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
 		}
 
-		/*if (method0D_Data==2)
+		if (method0D_Data==2)
 		{
-			db.Open("path0D_DataBase");
+			DB.Open("path0D_DataBase");
 			vector<string> fields;
 			fields.push_back("xfel_bl_3_st3_motor/position");
 			fields.push_back("xfel_bl_3_st_3_pd_l0_fitting_peak/voltage");
-			db.LoadData(tagFrom, tagTo, fields);
-		}*/
+			DB.LoadData(tagFrom, tagTo, fields);
+		}
 
 	}
 

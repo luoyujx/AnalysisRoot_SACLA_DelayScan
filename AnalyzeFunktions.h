@@ -5,6 +5,7 @@
 #include <time.h>
 #include "TH2.h"
 #include "./MyAnalyzer/MyAnalyzer.h"
+#include "./SQLiteProcessor/DataBase0d.h"
 
 class MyParticleContainer;
 class MyHistos;
@@ -47,5 +48,7 @@ bool PosCondition(const MyDetektorHit &dh);
 bool TofPosCondition(const MyDetektorHit &dh);
 
 void DivideHisto2Dby1D(TH2D *h2d, TH1D *h1d);
+
+extern DataBase0d DB;
 
 #endif

@@ -187,11 +187,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			fIntensities.push_back(itTagInt2->second * factorPD);//[1] PD:
 		}
 
-		//if (method0D_Data==2)
-		//{
-		//	fIntensities.push_back((factorPMDOffset - db.GetData(TagNumber,0)) / factorPMD);//[0] Delay	BM1:24486*1000000
-		//	fIntensities.push_back(db.GetData(TagNumber,1) * factorPD);//[1] PD:
-		//}
+		if (method0D_Data==2)
+		{
+			fIntensities.push_back((factorPMDOffset - DB.GetData(TagNumber,0)) / factorPMD);//[0] Delay	BM1:24486*1000000
+			fIntensities.push_back(DB.GetData(TagNumber,1) * factorPD);//[1] PD:
+		}
 
 
 		////------------------------------------------SACLA 2012A

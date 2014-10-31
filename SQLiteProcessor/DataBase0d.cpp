@@ -22,6 +22,19 @@ void DataBase0d::Open(const string &dbFileName)
 		std::cout << "Error!!: " <<::sqlite3_errmsg(dataBase) << std::endl;
 	}
 }
+
+void DataBase0d::Open(const char *dbFileName)
+{
+	int result = sqlite3_open_v2(dbFileName, &dataBase, SQLITE_OPEN_READONLY, 0 );
+	if (result == SQLITE_OK) 
+	{
+		std::cout << dbFileName << " has been opened." << std::endl;
+	}
+	else
+	{
+		std::cout << "Error!!: " <<::sqlite3_errmsg(dataBase) << std::endl;
+	}
+}
 //
 void DataBase0d::LoadData(unsigned int firstTag, unsigned int lastTag, vector<string> &fields)
 {
@@ -49,11 +62,18 @@ void DataBase0d::LoadData(unsigned int firstTag, unsigned int lastTag, vector<st
 		for (unsigned int i = 0; i < fields.size(); i++)
 		{
 			const char* dataTmp = reinterpret_cast<const char*>(sqlite3_column_text(statement, i+1));
-			char *pEnd = NULL;
-			fieldData[i] = strtod(dataTmp, &pEnd);
-			if (!pEnd)
+			if (dataTmp == NULL)
 			{
 				fieldData[i] = std::numeric_limits<double>::quiet_NaN();
+			}
+			else
+			{
+				char *pEnd = NULL;
+				fieldData[i] = strtod(dataTmp, &pEnd);
+				if (!pEnd)
+				{
+					fieldData[i] = std::numeric_limits<double>::quiet_NaN();
+				}
 			}
 		}		
 		//Load data to internal table
@@ -75,7 +95,7 @@ void DataBase0d::ShowTable()
 		std::for_each(it->second.begin(), it->second.end(),outputTabDelim(std::cout, it->second.size()));
 	}
 }
-//
+
 double DataBase0d::GetData(unsigned int tag, unsigned int fieldNumber)
 {
 	tableIntDouble::iterator itFind = table.find(tag);
@@ -84,4 +104,19 @@ double DataBase0d::GetData(unsigned int tag, unsigned int fieldNumber)
 		return std::numeric_limits<double>::quiet_NaN();
 	}
 	return itFind->second[fieldNumber];
+}
+
+std::pair<int,double> DataBase0d::GetStatusAndData(unsigned int tag, unsigned int fieldNumber)
+{
+	std::pair<int,double> retval(0,std::numeric_limits<double>::quiet_NaN());
+	tableIntDouble::iterator itFind = table.find(tag);
+	if (itFind == table.end())
+	{
+		retval.first = 0;
+		retval.second = std::numeric_limits<double>::quiet_NaN();
+		return retval;
+	}
+	retval.first = 1;
+	retval.second = itFind->second[fieldNumber];
+	return retval;
 }

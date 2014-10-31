@@ -1,0 +1,38 @@
+#File name of output root file
+OutputROOTFile=Analysis_aq383.root
+#Use GUI for setting (true/false = 1/0)
+UseGUI=1
+#choose the particle sets for analysis (CH3I,IUracil,ArCluster,XeCluster)
+WhichParticles=ArCluster
+#Should be 18 or 21 (resort method)
+ReconstructionMethod=18
+#The way for extracting coincidence (1:Momentum sum 2:gated by particle)
+Molecule=0
+#Investigate proton (0:none 1:all 2:only)
+ExtraCondition=0
+#Information for the gate of momentum sums (only need if Molecule=1)
+MomSumInfoFile=gateParameter_PerNorm_Edwin.txt
+#choose the methode for 0D Data (0:no data, 1:scan.txt, 2:SQLiteDB)
+0D_Data=2
+0D_DataTxtFile=aq383_scan.txt
+0D_DataBase=D:\\work\\temp\\SACLA2014A.sqlite
+TagFrom=346238566
+TagTo=346383034
+ConversionPMtoDelay=150
+ConversionPMOffset=-1750
+ConversionFactorBM1=24.486e+9
+ConversionFactorPD=1582
+AfterAnalysis=1
+IntensityPartition=0
+SelectIntensity=0
+IntensityLowerLimit=0
+IntensityUpperLimit=0
+CheckResult=0
+TrendStep=10
+#Coincidence condition
+AngleCondition=150
+MomFactorLowerLimit=0
+MomFactorUpperLimit=100
+DelayBins=170
+DelayFrom=-5
+DelayTo=12

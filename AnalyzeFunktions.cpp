@@ -14,6 +14,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <float.h>
 #include <TTree.h>
 #include <TFile.h>
 #include <TAxis.h>
@@ -101,7 +102,7 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	}
 	else if(whichParticles=="ArCluster") 
 	{
-		//---SACLA Xe cluster
+		//---SACLA Ar cluster
 		AddArCluster(particles);
 	}
 	else if(whichParticles=="XeIsotope") 
@@ -167,30 +168,47 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//const double beamPositionY = itPosY->second;
 
 	//Get intensity from loaded data map
-	if ((intFileName != "")&&(existIntensityData))
+	if ((zeroDTxtFileName != "")&&(method0D_Data!=0))
 	{
 		if (method0D_Data==1)
 		{
-			std::map<unsigned int, double>::iterator itTagInt;//Delay
-			std::map<unsigned int, double>::iterator itTagInt2;//PD
+			std::map<unsigned int, double>::iterator itTagDelay;//Delay
+			std::map<unsigned int, double>::iterator itTagInt;//PD
+			itTagDelay = tagDelay.find(TagNumber);
 			itTagInt = tagIntensity.find(TagNumber);
-			itTagInt2 = tagIntensity2.find(TagNumber);
 
-			if ((itTagInt == tagIntensity.end())||(itTagInt2 == tagIntensity2.end()))
+			if ((itTagDelay == tagDelay.end())||(itTagInt == tagIntensity.end()))
 			{
 				std::cout <<"\r"<<TagNumber<< " is not found!!";
 				missedTagCount++;
 				return;
 			}
 
-			fIntensities.push_back((factorPMDOffset - itTagInt->second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			fIntensities.push_back(itTagInt2->second * factorPD);//[1] PD:
+			fIntensities.push_back((factorPMDOffset - itTagDelay->second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			fIntensities.push_back(itTagInt->second * factorPD);//[1] PD:
 		}
 
 		if (method0D_Data==2)
 		{
-			fIntensities.push_back((factorPMDOffset - DB.GetData(TagNumber,0)) / factorPMD);//[0] Delay	BM1:24486*1000000
-			fIntensities.push_back(DB.GetData(TagNumber,1) * factorPD);//[1] PD:
+			if(DB.GetStatusAndData(TagNumber,0).first==0)
+			{
+				std::cout <<"\r"<<TagNumber<< " is not found!!";
+				missedTagCount++;
+				return;;
+			}
+
+			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
+			{
+				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
+			}
+
+			if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
+			{
+				std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
+			}
+
+			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
 		}
 
 
@@ -198,11 +216,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		////PhotoDiode intensity
 		//if ( itTagInt->first < 156088080 )
 		//	//before changing Al plate
-		//	//fIntensities.push_back((tagIntensity2.find(TagNumber)->second)*1000*36.15);
-		//	fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/1.926E-5);//5.5keV PD->microJ(weak setting)
+		//	//fIntensities.push_back((tagIntensity.find(TagNumber)->second)*1000*36.15);
+		//	fIntensities.push_back((tagIntensity.find(TagNumber)->second)/1.926E-5);//5.5keV PD->microJ(weak setting)
 		//else
-		//	fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/6.963E-4);//5.5keV PD->microJ
-		//	//fIntensities.push_back((tagIntensity2.find(TagNumber)->second)/1.17E-3);//5.0keV PD->microJ
+		//	fIntensities.push_back((tagIntensity.find(TagNumber)->second)/6.963E-4);//5.5keV PD->microJ
+		//	//fIntensities.push_back((tagIntensity.find(TagNumber)->second)/1.17E-3);//5.0keV PD->microJ
 
 		////FEL is attenuated, set tag region
 		//const unsigned int tagFrom = 167982762;	//att0p4(5.5keV):159612312		Al25micro(5.0keV):167982762

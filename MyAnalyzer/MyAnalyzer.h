@@ -93,7 +93,7 @@ public:
 	int			GetRekMeth()const			{return rekmeth;}
 	int			GetMolecule()const			{return MoleculeAnalysis;}
 	int			GetCondition()const			{return extraCondition;}
-	TString		GetIntFileName()const		{return intFileName;}
+	TString		GetzeroDTxtFileName()const		{return zeroDTxtFileName;}
 
 private:
 	//the particles//
@@ -131,13 +131,12 @@ private:
 	//---Parametrs for analysis (defined by setting.txt)
 	//ROOT file name
 	TString fileName;
-	//File name of intensity data
-	TString intFileName;
+	//File name of 0D data Txt
+	TString zeroDTxtFileName;
 	//Path name of 0D data
-	TString path0D_DataBase;
+	const char *path0D_DataBase;
 	//File name of Momentum sum imformation
 	TString MomSumInfoName;
-
 	TString whichParticles;
 	//reconstruction method (resort parameter)
 	int rekmeth;
@@ -170,7 +169,6 @@ private:
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;
-	bool existIntensityData;
 	int method0D_Data;
 	bool existIntPartition;
 	bool checkingResult;
@@ -179,9 +177,9 @@ private:
 
 
 	//BM1 data
-	std::map<unsigned int, double>		tagIntensity;
+	std::map<unsigned int, double>		tagDelay;
 	//PD data
-	std::map<unsigned int, double>		tagIntensity2;
+	std::map<unsigned int, double>		tagIntensity;
 	//Intensity partition for making variable bin histogram
 	std::vector<double>					intPartition;
 	//various molecule data for coincidence (Momentum information, coincidence count, ...)

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	std::cout<<"Root File Name : "<<fAn.GetFileName()<<std::endl;
 	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;
 	std::cout<<"Analyze molecule : "<<fAn.GetMolecule()<<std::endl;
-	std::cout<<"Intensity data file name : "<<fAn.GetIntFileName()<<std::endl;
+	std::cout<<"Intensity data file name : "<<fAn.GetzeroDTxtFileName()<<std::endl;
 
 	theApp.Run();
 	return 0;

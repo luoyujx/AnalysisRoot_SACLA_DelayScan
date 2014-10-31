@@ -18,15 +18,19 @@ public:
 	~DataBase0d(void);
 public:
 	void Open(const string &dbFileName);
+	void Open(const char *dbFileName);
 	void LoadData(unsigned int firstTag, unsigned int lastTag, vector<string> &fields); 
 	void ShowTable();
 	double GetData(unsigned int tag, unsigned int fieldNumber);
+	std::pair<int,double> DataBase0d::GetStatusAndData(unsigned int tag, unsigned int fieldNumber);
+	//int GetfindStatus();
 private:
 	typedef map< unsigned int, vector<double> > tableIntDouble;
 	tableIntDouble table;
 	vector<string> fieldNames;
 	sqlite3* dataBase;
 	sqlite3_stmt *statement;
+	//int findStatus;
 };
 
 //Functor

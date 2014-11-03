@@ -12,6 +12,8 @@ void AddIUracil(MyParticleContainer &particles);
 void AddXeCluster(MyParticleContainer &particles);
 void AddArCluster(MyParticleContainer &particles);
 void AddXeIsotope(MyParticleContainer &particles);
+void AddKrCluster(MyParticleContainer &particles);
+void AddKrArCluster(MyParticleContainer &particles);
 
 namespace MyMass
 {
@@ -26,6 +28,7 @@ namespace MyMass
 	inline const double Krypton83()		{return 82.914135;}		//11.5%
 	inline const double Krypton84()		{return 83.911507;}		//57.0%
 	inline const double Krypton86()		{return 85.910616;}		//17.3%
+	inline const double Krypton()		{return 83.800025;}		// 100%
 
 	inline const double Xenon128()		{return 127.903531;}	// 1.91%
 	inline const double Xenon129()		{return 128.904780;}	//26.4%

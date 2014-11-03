@@ -145,7 +145,7 @@ void AddXeCluster(MyParticleContainer &particles)
 	//particles.Add("XeXeXeXe1P",1,MyMass::Xenon()*4,0);
 
 }
-//SACLA 2014A Xe cluster pump-probe expriment
+//SACLA 2014A Ar cluster pump-probe expriment
 void AddArCluster(MyParticleContainer &particles)
 {
 	particles.Add("Ar1P",1,MyMass::Argon40(),0);
@@ -158,7 +158,6 @@ void AddArCluster(MyParticleContainer &particles)
 	//particles.Add("ArArArAr1P",1,MyMass::Argon40()*4,0);
 
 }
-
 //SACLA 2014A Xe cluster pump-probe expriment for isotope of Xe
 void AddXeIsotope(MyParticleContainer &particles)
 {	//particles.Add("128Xe1P",1,MyMass::Xenon128(),0);
@@ -183,3 +182,37 @@ void AddXeIsotope(MyParticleContainer &particles)
 	//particles.Add("134Xe3P",3,MyMass::Xenon134(),0);
 	//particles.Add("136Xe3P",3,MyMass::Xenon136(),0);
 }
+//SACLA 2014B Kr cluster pump-probe expriment
+void AddKrCluster(MyParticleContainer &particles)
+{
+	particles.Add("Kr1P",1,MyMass::Krypton(),0);
+	particles.Add("Kr2P",2,MyMass::Krypton(),0);
+	particles.Add("Kr3P",3,MyMass::Krypton(),0);
+	particles.Add("Kr4P",4,MyMass::Krypton(),0);
+	particles.Add("Kr5P",5,MyMass::Krypton(),0);
+	particles.Add("KrKr1P",1,MyMass::Krypton()*2,0);
+	particles.Add("KrKrKr1P",1,MyMass::Krypton()*3,0);
+
+}
+//SACLA 2014B KrAr mixture cluster pump-probe expriment
+void AddKrArCluster(MyParticleContainer &particles)
+{
+	particles.Add("Kr1P",1,MyMass::Krypton(),0);
+	particles.Add("Kr2P",2,MyMass::Krypton(),0);
+	particles.Add("Kr3P",3,MyMass::Krypton(),0);
+	particles.Add("Kr4P",4,MyMass::Krypton(),0);
+	particles.Add("Kr5P",5,MyMass::Krypton(),0);
+	particles.Add("KrKr1P",1,MyMass::Krypton()*2,0);
+	particles.Add("KrKrKr1P",1,MyMass::Krypton()*3,0);
+	particles.Add("Ar1P",1,MyMass::Argon40(),0);
+	particles.Add("Ar2P",2,MyMass::Argon40(),0);
+	particles.Add("Ar3P",3,MyMass::Argon40(),0);
+	particles.Add("Ar4P",4,MyMass::Argon40(),0);
+	particles.Add("Ar5P",5,MyMass::Argon40(),0);
+	particles.Add("ArAr1P",1,MyMass::Argon40()*2,0);
+	particles.Add("ArArAr1P",1,MyMass::Argon40()*3,0);
+	particles.Add("KrAr1P",1,MyMass::Krypton()+MyMass::Argon40(),0);
+	particles.Add("KrKrAr1P",1,MyMass::Krypton()*2+MyMass::Argon40(),0);
+	particles.Add("KrArAr1P",1,MyMass::Krypton()+MyMass::Argon40()*2,0);
+}
+

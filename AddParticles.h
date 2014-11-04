@@ -14,6 +14,7 @@ void AddArCluster(MyParticleContainer &particles);
 void AddXeIsotope(MyParticleContainer &particles);
 void AddKrCluster(MyParticleContainer &particles);
 void AddKrArCluster(MyParticleContainer &particles);
+void AddKrIsotope(MyParticleContainer &particles);
 
 namespace MyMass
 {

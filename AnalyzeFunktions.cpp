@@ -107,7 +107,7 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	}
 	else if(whichParticles=="XeIsotope") 
 	{
-		//---SACLA Xe XeIsotope
+		//---SACLA Xe Isotope
 		AddXeIsotope(particles);
 	}
 	else if(whichParticles=="KrCluster") 
@@ -119,6 +119,11 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	{
 		//---SACLA KrAr cluster
 		AddKrArCluster(particles);
+	}
+	else if(whichParticles=="KrIsotope") 
+	{
+		//---SACLA Kr Isotope
+		AddKrIsotope(particles);
 	}
 	else
 	{

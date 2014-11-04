@@ -215,4 +215,26 @@ void AddKrArCluster(MyParticleContainer &particles)
 	particles.Add("KrKrAr1P",1,MyMass::Krypton()*2+MyMass::Argon40(),0);
 	particles.Add("KrArAr1P",1,MyMass::Krypton()+MyMass::Argon40()*2,0);
 }
+//SACLA 2014B Kr cluster pump-probe expriment for isotope of Kr
+void AddKrIsotope(MyParticleContainer &particles)
+{	
+	particles.Add("78Kr1P",1,MyMass::Krypton78(),0);
+	particles.Add("80Kr1P",1,MyMass::Krypton80(),0);
+	particles.Add("82Kr1P",1,MyMass::Krypton82(),0);
+	particles.Add("83Kr1P",1,MyMass::Krypton83(),0);
+	particles.Add("84Kr1P",1,MyMass::Krypton84(),0);
+	particles.Add("86Kr1P",1,MyMass::Krypton86(),0);
+	particles.Add("78Kr2P",2,MyMass::Krypton78(),0);
+	particles.Add("80Kr2P",2,MyMass::Krypton80(),0);
+	particles.Add("82Kr2P",2,MyMass::Krypton82(),0);
+	particles.Add("83Kr2P",2,MyMass::Krypton83(),0);
+	particles.Add("84Kr2P",2,MyMass::Krypton84(),0);
+	particles.Add("86Kr2P",2,MyMass::Krypton86(),0);
+	particles.Add("78Kr3P",3,MyMass::Krypton78(),0);
+	particles.Add("80Kr3P",3,MyMass::Krypton80(),0);
+	particles.Add("82Kr3P",3,MyMass::Krypton82(),0);
+	particles.Add("83Kr3P",3,MyMass::Krypton83(),0);
+	particles.Add("84Kr3P",3,MyMass::Krypton84(),0);
+	particles.Add("86Kr3P",3,MyMass::Krypton86(),0);
+}
 

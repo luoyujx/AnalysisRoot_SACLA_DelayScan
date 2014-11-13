@@ -48,12 +48,12 @@ MyParticleHit::MyParticleHit(const MyDetektorHit &dh, const MyParticle &p):
 	fPhiYZ = atan2(fPz, fPy)/TMath::Pi()*180.;				
 	fPhiZX = atan2(fPx, fPz)/TMath::Pi()*180.;
 
-	if (sin(fThetaZ / 180*TMath::Pi()<0.001))
+	if (TMath::Sin(fThetaZ / 180*TMath::Pi()<0.001))
 	{
 		fSinThetaZInv =1000;
 	}
 	else
 	{
-		fSinThetaZInv = 1/sin(fThetaZ / 180*TMath::Pi());
+		fSinThetaZInv = 1/TMath::Sin(fThetaZ / 180*TMath::Pi());
 	}
 } 

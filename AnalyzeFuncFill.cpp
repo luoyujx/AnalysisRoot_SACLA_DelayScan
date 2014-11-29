@@ -1001,10 +1001,10 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 
 	TH1D* delayVsShots = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots"));
 
-	TH1D* delayDependenceXe1pH = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pH"));
-	TH1D* delayDependenceXe1pL = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pL"));
-	TH1D* delayDependenceXe2p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p"));
-	TH1D* delayDependenceXe3p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p"));
+	//TH1D* delayDependenceXe1pH = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pH"));
+	//TH1D* delayDependenceXe1pL = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pL"));
+	//TH1D* delayDependenceXe2p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p"));
+	//TH1D* delayDependenceXe3p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p"));
 	//TH1D* delayVsShotsUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots_UltraWide"));
 	//TH1D* delayDependenceXe1pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1p_UltraWide"));
 	//TH1D* delayDependenceXe2pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p_UltraWide"));
@@ -1013,24 +1013,22 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 
 
 
-	TH1D* delayDepXe1pNormH = dynamic_cast<TH1D*>(hi.create1d(idx,"DelayDependenceXe1p_NormH","Delay [ps]",delayBins,delayFrom,delayTo));
-	TH1D* delayDepXe1pNormL = dynamic_cast<TH1D*>(hi.create1d(idx+1,"DelayDependenceXe1p_NormL","Delay [ps]",delayBins,delayFrom,delayTo));
-	TH1D* delayDepXe2pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+2,"DelayDependenceXe2p_Norm","Delay [ps]",delayBins,delayFrom,delayTo));
-	TH1D* delayDepXe3pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+3,"DelayDependenceXe3p_Norm","Delay [ps]",delayBins,delayFrom,delayTo));
+	//TH1D* delayDepXe1pNormH = dynamic_cast<TH1D*>(hi.create1d(idx,"DelayDependenceXe1p_NormH","Delay [ps]",delayBins,delayFrom,delayTo));
+	//TH1D* delayDepXe1pNormL = dynamic_cast<TH1D*>(hi.create1d(idx+1,"DelayDependenceXe1p_NormL","Delay [ps]",delayBins,delayFrom,delayTo));
+	//TH1D* delayDepXe2pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+2,"DelayDependenceXe2p_Norm","Delay [ps]",delayBins,delayFrom,delayTo));
+	//TH1D* delayDepXe3pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+3,"DelayDependenceXe3p_Norm","Delay [ps]",delayBins,delayFrom,delayTo));
 	//TH1D* delayDepXe1pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+3,"DelayDependenceXe1p_NormUW","Delay [ps]",1000,-50,550));
 	//TH1D* delayDepXe2pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+4,"DelayDependenceXe2p_NormUW","Delay [ps]",1000,-50,550));
 	//TH1D* delayDepXe3pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+5,"DelayDependenceXe3p_NormUW","Delay [ps]",1000,-50,550));
 
 	
-	delayDepXe1pNormH->Divide(delayDependenceXe1pH, delayVsShots);
-	delayDepXe1pNormL->Divide(delayDependenceXe1pL, delayVsShots);
-	delayDepXe2pNorm->Divide(delayDependenceXe2p, delayVsShots);
-	delayDepXe3pNorm->Divide(delayDependenceXe3p, delayVsShots);
+	//delayDepXe1pNormH->Divide(delayDependenceXe1pH, delayVsShots);
+	//delayDepXe1pNormL->Divide(delayDependenceXe1pL, delayVsShots);
+	//delayDepXe2pNorm->Divide(delayDependenceXe2p, delayVsShots);
+	//delayDepXe3pNorm->Divide(delayDependenceXe3p, delayVsShots);
 	//delayDepXe1pNormUW->Divide(delayDependenceXe1pUW, delayVsShotsUW);
 	//delayDepXe2pNormUW->Divide(delayDependenceXe2pUW, delayVsShotsUW);
 	//delayDepXe3pNormUW->Divide(delayDependenceXe3pUW, delayVsShotsUW);
-
-
 
 	TH2D* delayVsTOF = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOF") );
 	DivideHisto2Dby1D(delayVsTOF,delayVsShots);
@@ -1044,23 +1042,23 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	for(size_t i=1; i< particles.size(); i++)
 	{
 		//create a histogram that will take the normalized Data//
-		TH1D* delayVsCountNorm = dynamic_cast<TH1D*>(hi.create1d( (idx+10*i) + 1,"DelayVsCount_Norm","delay [ps]",delayBins,delayFrom,delayTo,Form("%s/Delay",particles[i].GetName())));
-		//TH2D* DealyVsEnergyNorm = dynamic_cast<TH2D*>(hi.create1d( (idx+10*i) + 2,"DealyVsEnergy_Norm","Number of Hits"     , delayBins,delayFrom,delayTo,Form("%s",particles[i].GetName())));
-		//TH2D* DealyVsTofNorm = dynamic_cast<TH2D*>(hi.create1d( (idx+10*i) + 3,"DealyVsTof_Norm","Number of Hits"     , delayBins,delayFrom,delayTo,Form("%s",particles[i].GetName())));
+		TH1D* delayVsCountNorm = dynamic_cast<TH1D*>(hi.create1d( (idx+10*i) + 1,"DelayVsCount_Norm","delay [ps]", delayBins,delayFrom,delayTo,Form("%s/Delay",particles[i].GetName())));
+		//TH2D* DealyVsEnergyNorm = dynamic_cast<TH2D*>(hi.create2d( (idx+10*i) + 2,"DealyVsEnergy_Norm","Number of Hits", delayBins,delayFrom,delayTo,Form("%s",particles[i].GetName())));
 		
 		//get histogram
 		TH1D* delayVsCount = dynamic_cast<TH1D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("Delay") );
-		TH2D* delayVsTof = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsTof") );
-		TH2D* delayVsTofCor = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsTofCor") );
-		TH2D* delayVsEnergy = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsEnergy") );
 
 		//TH1D* nbrParticleHits = dynamic_cast<TH1D*>(gFile->FindObject("NumberOfParticleHits"));
 		if (delayVsCount) 
 		{
 			delayVsCountNorm->Divide(delayVsCount,delayVsShots);
-			DivideHisto2Dby1D(delayVsTof,delayVsShots);
 		}
-
+		
+		//TH2D* delayVsEnergy = dynamic_cast<TH2D*>( gFile->GetDirectory(Form("%s/Delay",particles[i].GetName()))->FindObject("DelayVsEnergy") );
+		//TH2D* DealyVsEnergyNorm = dynamic_cast<TH2D*>(delayVsEnergy ->Clone("DealyVsEnergy"));
+		//DealyVsEnergyNorm -> SetUniqueID((idx+20*i));
+		//DealyVsEnergyNorm -> SetTitle("DealyVsEnergy_Norm");
+		//DivideHisto2Dby1D(DealyVsEnergyNorm,delayVsShots);
 	}
 
 

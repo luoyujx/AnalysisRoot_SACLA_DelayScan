@@ -355,10 +355,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//fHi.fill(startIdx+1,"DelayDependenceXe1p2D",fIntensities[0], McpIntensityXe1pH,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	//fHi.fill(startIdx+2,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2pL,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	//fHi.fill(startIdx+3,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
-	fHi.fill(startIdx+4,"DelayDependenceXe1pH",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pH);
-	fHi.fill(startIdx+5,"DelayDependenceXe1pL",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pL);
-	fHi.fill(startIdx+6,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe2p);
-	fHi.fill(startIdx+7,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
+	//fHi.fill(startIdx+4,"DelayDependenceXe1pH",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pH);
+	//fHi.fill(startIdx+5,"DelayDependenceXe1pL",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pL);
+	//fHi.fill(startIdx+6,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe2p);
+	//fHi.fill(startIdx+7,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
 
 	startIdx += 10;
 

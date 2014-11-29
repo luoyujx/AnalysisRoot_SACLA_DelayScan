@@ -472,7 +472,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 								//Check the angle of phiZX. if ph is out of condition, it delete.
 								if (p.CheckPhiZX(ph))
 								{
-									fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo);
+									fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo,limitTheataZ);
 								}
 							}
 							//we reserve 100 histograms for one particle//

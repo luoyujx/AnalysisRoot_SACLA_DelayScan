@@ -23,7 +23,7 @@ void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int h
 	}
 }
 //-------------------fill particle Histograms---------------------------------------------------//
-void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::vector<double>& intPart,int delayBins,double delayFrom,double delayTo)//, double limitTheataZ 
+void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::vector<double>& intPart,int delayBins,double delayFrom,double delayTo,double limitTheataZ ) 
 {	
 	//if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
 	double MomLim = 1000;
@@ -38,8 +38,8 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
-	//if (ph.ThetaZ() > limitTheataZ ) return;
-	if (ph.ThetaZ() > 90 ) return;
+	if (ph.ThetaZ() > limitTheataZ ) return;
+	//if (ph.ThetaZ() > 90 ) return;
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));

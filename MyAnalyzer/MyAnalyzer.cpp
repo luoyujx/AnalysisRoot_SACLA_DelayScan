@@ -227,6 +227,7 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	delayFrom=set.GetValue("DelayFrom", -10);
 	delayTo=set.GetValue("DelayTo", 20);
 
+	limitTheataZ=set.GetValue("LimitOfTheataZ", 90);
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()

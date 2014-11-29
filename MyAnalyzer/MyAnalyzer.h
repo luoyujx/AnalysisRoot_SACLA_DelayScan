@@ -165,6 +165,9 @@ private:
 	double delayFrom;
 	double delayTo;
 
+	//Limitation of TheataZ
+	double limitTheataZ;
+
 
 	//---Analysis frags
 	int MoleculeAnalysis;

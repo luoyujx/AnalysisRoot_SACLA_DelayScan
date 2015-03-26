@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <TString.h>
 #include <fstream>
+#include <TApplication.h>
 
 #include "./MyAnalyzer/MyAnalyzer.h"
 #include "./FilesFromLma2Root/MySettings/MySettings.h"
@@ -11,6 +12,7 @@ bool LoadSettings(TString &filename, MySettings &set);
 
 int main(int argc, char *argv[])
 {
+	//TApplication theApp("App", &argc, argv);
 	TRint theApp("App", &argc, argv);
 		
 	MySettings set(true);
@@ -33,8 +35,13 @@ int main(int argc, char *argv[])
 	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;
 	std::cout<<"Analyze molecule : "<<fAn.GetMolecule()<<std::endl;
 	std::cout<<"Intensity data file name : "<<fAn.GetzeroDTxtFileName()<<std::endl;
-
+	
+	//fAn.Run();
+	//_sleep(10000);
 	theApp.Run();
+	//theApp.ReturnFromRun();
+	//theApp.Terminate(0);
+	
 	return 0;
 }
 

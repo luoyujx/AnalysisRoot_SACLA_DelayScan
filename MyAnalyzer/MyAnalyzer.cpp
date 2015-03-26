@@ -90,6 +90,7 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	//start run//
 	runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
 	runTimer.Start(1000);
+
 }
 MyAnalyzer::~MyAnalyzer()
 {
@@ -317,8 +318,8 @@ void MyAnalyzer::OpenIntensityData()
 		{
 			DB.Open(path0D_DataBase);
 			vector<string> fields;
-			fields.push_back("xfel_bl_3_st3_motor_24/position");
-			fields.push_back("xfel_bl_3_st_3_pd_10_fitting_peak/voltage");
+			fields.push_back("xfel_bl_3_st_4_motor_25/position");
+			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");
 			DB.LoadData(tagFrom, tagTo, fields);
 			//DB.ShowTable();
 		}

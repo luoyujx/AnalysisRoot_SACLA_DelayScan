@@ -249,7 +249,7 @@ void MyAnalyzer::ShowResult()
 		txtMass[i].SetTextColor(kBlack);
 		double massPerQ = fParticles.GetParticle(i).GetMass_au()*MyUnitsConv::au2amu()/fParticles.GetParticle(i).GetCharge_au();
 		double height = massHisto->GetBinContent((massHisto->FindBin(massPerQ)));
-		txtMass[i].DrawText(massPerQ, height*1.8, fParticles.GetParticle(i).GetName());
+		//txtMass[i].DrawText(massPerQ, height*1.8, fParticles.GetParticle(i).GetName());
 	}
 
 	TH1D* tofHisto = dynamic_cast<TH1D*>(gFile->GetDirectory("/Ion")->FindObject("Tof"));
@@ -265,7 +265,7 @@ void MyAnalyzer::ShowResult()
 		double t0 = fParticles.GetParticle(0).GetT0();
 		double tofPos = calcTof(fParticles.GetParticle(i),fParticles.GetParticle(0)) + t0;
 		double height = tofHisto->GetBinContent((tofHisto->FindBin(tofPos)));
-		txtTof[i].DrawText(tofPos, height*1.8, fParticles.GetParticle(i).GetName());
+		//txtTof[i].DrawText(tofPos, height*1.8, fParticles.GetParticle(i).GetName());
 		boxTof[i].SetFillColor(kRed);
 		boxTof[i].SetFillStyle(3001);
 		boxTof[i].DrawBox(fParticles.GetParticle(i).GetCondTofFr(), 0,  fParticles.GetParticle(i).GetCondTofTo(), height *1.6);
@@ -320,7 +320,7 @@ void MyAnalyzer::OpenIntensityData()
 			vector<string> fields;
 			fields.push_back("xfel_bl_3_st_4_motor_25/position");
 			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");
-			DB.LoadData(tagFrom, tagTo, fields);
+			DB.LoadDataL(tagFrom, tagTo, fields);
 			//DB.ShowTable();
 		}
 

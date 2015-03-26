@@ -74,6 +74,14 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)\..\DataBase0d\mysql_include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\..\DataBase0d\mysql_lib;$(ProjectDir)\..\DataBase0d\mysql_lib\vs11;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)\..\DataBase0d\mysql_include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\..\DataBase0d\mysql_lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
@@ -92,7 +100,7 @@
     <Link>
       <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(TargetPath)</OutputFile>
-      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\DataBase0d\mysql_lib\vs11;$(ProjectDir)\..\DataBase0d\mysql_lib;$(ProjectDir)\..\DataBase0d;$(ROOTSYS)\lib;%(AdditionalLibraryDirectories);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -139,9 +147,9 @@
       <ForcedIncludeFiles>w32pragma.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;libPhysics.lib;libMathCore.lib;sqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGpad.lib;libGraf.lib;libPhysics.lib;libMathCore.lib;sqlite3.lib;libmysql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(ProjectDir)\..\Binaries\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;$(ProjectDir)\..\SQLiteProcessor;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\DataBase0d\mysql_lib;$(ProjectDir)\..\DataBase0d;$(ROOTSYS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -181,6 +189,7 @@
     <ClCompile Include="..\AddParticles.cpp" />
     <ClCompile Include="..\AnalyzeFuncFill.cpp" />
     <ClCompile Include="..\AnalyzeFunktions.cpp" />
+    <ClCompile Include="..\DataBase0d\DataBase0d.cpp" />
     <ClCompile Include="..\FilesFromLma2Root\MyEvent\MySignalAnalyzedEvent\MySignalAnalyzedChannel\MyChannelSectionDict.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\MyAnalyzer\MyAnalyzer.cpp" />
@@ -253,13 +262,11 @@
     <ClCompile Include="..\MyGui\MyPar\MyPar.cpp" />
     <ClCompile Include="..\MyGui\MyPar\MySpec\MySpec.cpp" />
     <ClCompile Include="..\MyGui\MyPar\MySpec\MySpecReg.cpp" />
-    <ClCompile Include="..\SQLiteProcessor\DataBase0d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AddParticles.h" />
     <ClInclude Include="..\AnalyzeFuncFill.h" />
     <ClInclude Include="..\AnalyzeFunktions.h" />
-    <ClInclude Include="..\SQLiteProcessor\DataBase0d.h" />
     <CustomBuild Include="..\FilesFromLma2Root\MyEvent\MyOriginalEvent\MyOriginalChannel\MyOriginalChannel.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ROOTSYS)\bin\rootcint -f "%(RootDir)%(Directory)%(Filename)Dict.cpp" -c "%(RootDir)%(Directory)%(Filename)%(Extension)+"</Command>
@@ -420,6 +427,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(RootDir)%(Directory)\%(Filename)Dict.h;%(RootDir)%(Directory)\%(Filename)Dict.cpp;%(Outputs)</Outputs>
     </CustomBuild>
+    <ClInclude Include="..\DataBase0d\DataBase0d.h" />
     <ClInclude Include="..\MyCovariance.h" />
     <ClInclude Include="..\MyMomentaCalculator\MyMomentaCalculator.h" />
     <ClInclude Include="..\MyParticle\MyParticleContainer.h" />

@@ -449,6 +449,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
 					fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
 					fHi.fill(startIdx+16,"DelayVsTOFCor",ph.TofCor(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
+					fHi.fill(startIdx+17,"FELIntensityVsTOFCor",ph.TofCor(),fIntensities[1],"tof [ns]","FEL intensity [arb. unit]",1000,0,maxTof, 1200, 0, 1200,"Ion");
+
 				}
 
 				//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//

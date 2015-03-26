@@ -207,9 +207,9 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		{
 			if(DB.GetStatusAndData(TagNumber,0).first==0)
 			{
-				std::cout <<"\r"<<TagNumber<< " is not found!!";
+				//std::cout <<"\r"<<TagNumber<< " is not found!!";
 				missedTagCount++;
-				return;;
+				return;
 			}
 
 			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
@@ -338,10 +338,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 
 	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),14127,17150,true);//Voltage D2:800
-	const double McpIntensityXe1pH = Average(fOE.GetChannel(7-1),14000,16200,true);//Voltage D2:800<----High energy region
-	const double McpIntensityXe1pL = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800<----Low energy region
-	const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),10254,12300,true);//Voltage D2:800
-	const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800
+	//const double McpIntensityXe1pH = Average(fOE.GetChannel(7-1),14000,16200,true);//Voltage D2:800<----High energy region
+	//const double McpIntensityXe1pL = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800<----Low energy region
+	//const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),10254,12300,true);//Voltage D2:800
+	//const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800
 
 	//Argon D2:800V setting
 	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),8600,9600,true);//Voltage D2:800
@@ -352,6 +352,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//----------------------------------
 
 	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo);
+	fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,delayBins/5, delayFrom, delayTo,60 ,0 ,600);
+	//fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,32 , -5, 11, 30, 0, 600);
 	//fHi.fill(startIdx+1,"DelayDependenceXe1p2D",fIntensities[0], McpIntensityXe1pH,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	//fHi.fill(startIdx+2,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2pL,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	//fHi.fill(startIdx+3,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
@@ -421,7 +423,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		const double maxTof	= fOE.GetNbrSamples()*fOE.GetSampleInterval()*1e9;
 
 		fHi.fill(startIdx+1,"DetAll",dh.X(),dh.Y(),"x [mm]","y [mm]",300,-maxPos,maxPos,300,-maxPos,maxPos);
-		fHi.fill(startIdx+2,"TofAll",dh.Tof(),"tof [ns]",10000,0,maxTof);
+		fHi.fill(startIdx+2,"TofAll",dh.Tof(),"tof [ns]",30000,0,maxTof);
 		fHi.fill(startIdx+3,"XPosVsTofAll",dh.Tof(),dh.X(),"tof [ns]","x [mm]",5000,0,maxTof,300,-maxPos,maxPos);
 		fHi.fill(startIdx+4,"YPosVsTofAll",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",5000,0,maxTof,300,-maxPos,maxPos);
 		fHi.fill(startIdx+5,"TOF",dh.Tof(),"tof [ns]",4000,0,6000);
@@ -449,6 +451,9 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
 					fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
 					fHi.fill(startIdx+16,"DelayVsTOFCor",ph.TofCor(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
+					fHi.fill(startIdx+17,"FELIntensityVsTOFCor",ph.TofCor(),fIntensities[1],"tof [ns]","FEL intensity [arb. unit]",1000,0,maxTof, 1000, 0, 1000,"Ion");
+					fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, delayBins/5, -5, delayTo, 60, 0, 600, "Ion");
+					//fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, 32, -5, 11, 30, 0, 600, "Ion");
 				}
 
 				//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//

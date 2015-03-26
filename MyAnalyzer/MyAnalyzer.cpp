@@ -90,6 +90,7 @@ MyAnalyzer::MyAnalyzer(MySettings &set):
 	//start run//
 	runTimer.Connect("Timeout()","MyAnalyzer",this,"Run()");
 	runTimer.Start(1000);
+
 }
 MyAnalyzer::~MyAnalyzer()
 {

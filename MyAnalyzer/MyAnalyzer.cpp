@@ -214,13 +214,17 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
 	method0D_Data = static_cast<int>(set.GetValue("0D_Data", false)+0.1);
-	path0D_DataBaseL = set.GetString("0D_DataBase","");
-	path0D_DataBaseM = set.GetString("0D_DataBase","");
+	pathSQLite = set.GetString("pathSQLite","");
+	hostMySQL = set.GetString("hostMySQL","");
+	userMySQL = set.GetString("userMySQL","");
+	passMySQL = set.GetString("passMySQL","");
+	nameMySQL = set.GetString("nameMySQL","");
+	runMode = static_cast<int>(set.GetValue("runMode", false)+0.1);
+	runNum = static_cast<int>(set.GetValue("runNumber", false)+0.1);
 	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
 	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
+	intfield = set.GetString("intensityFieldName","");
 	existIntPartition=static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
-	factorPMDOffset=set.GetValue("ConversionPMOffset", -1750);
-	factorPMD=set.GetValue("ConversionPMtoDelay", 150);
 	factorBM1=set.GetValue("ConversionFactorBM1", 10e+9);
 	factorPD=set.GetValue("ConversionFactorPD", 10000);
 	selectIntensity=static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
@@ -233,7 +237,9 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	momFactorUpperLimit=set.GetValue("MomFactorUpperLimit", 2);
 	angleCondition=set.GetValue("AngleCondition", 0.0);
 	optShutMode = static_cast<int>(set.GetValue("OpticalLaser_OnOff", false)+0.1);
-
+	delayfield = set.GetString("delayFieldName","");;
+	factorPMDOffset=set.GetValue("ConversionPMOffset", -1750);
+	factorPMD=set.GetValue("ConversionPMtoDelay", 150);
 	delayBins=static_cast<int>(set.GetValue("DelayBins", 300));
 	delayFrom=set.GetValue("DelayFrom", -10);
 	delayTo=set.GetValue("DelayTo", 20);
@@ -326,26 +332,33 @@ void MyAnalyzer::OpenIntensityData()
 
 		if (method0D_Data==2)
 		{
-			DB.Open(path0D_DataBaseL);
+			DB.Open(pathSQLite);
 			vector<string> fields;
-			fields.push_back("xfel_bl_3_st_4_motor_25/position");
-			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");
+			fields.push_back(delayfield);
+			fields.push_back(intfield);
 			DB.LoadDataL(tagFrom, tagTo, fields);
 			//DB.ShowTable();
 		}
 
 		if (method0D_Data==3)
 		{
-			DB.Connect("192.168.0.115", "uedalab", "xuedalabx", "SACLA2014A"); //memo: 最終的にはpath0D_DataBaseMへ書き換え(kuma)
+			DB.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL); //memo: 最終的にはpath0D_DataBaseMへ書き換え(kuma)
 			vector<string> fields;
-			fields.push_back("xfel_bl_3_st_4_motor_25/position");
-			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");
-			DB.LoadDataM(tagFrom, tagTo, fields);
+			fields.push_back(delayfield);
+			fields.push_back(intfield);
+			if (runMode == 1) 
+			{
+				std::cout << "Run mode" << std::endl;
+				DB.LoadDataM(runNum, fields);
+			}
+			else
+			{	
+				std::cout << "Tag mode" << std::endl;
+				DB.LoadDataM(tagFrom, tagTo, fields);
+			}
 			//DB.ShowTable();
 		}
 	}
-
-
 }
 
 //void MyAnalyzer::Open0D_Data()

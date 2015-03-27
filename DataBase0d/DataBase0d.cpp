@@ -164,6 +164,7 @@ void DataBase0d::LoadDataM(unsigned int firstTag, unsigned int lastTag, vector<s
 		//Load data to internal table
 		table.insert(std::pair<unsigned int, std::vector<double> >(tag, fieldData));
 	}
+	
 	//Close MySQL connection
 	mysql_free_result(res);
 	mysql_close(dataBaseM);

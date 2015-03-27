@@ -133,14 +133,20 @@ private:
 	TString fileName;
 	//File name of 0D data Txt
 	TString zeroDTxtFileName;
-	//Path name of 0D data
-	const char *path0D_DataBaseL;
-	const char *path0D_DataBaseM;
+	//Path name of 0D data for SQLite
+	const char *pathSQLite;
+	//Host / User / Pass / Name of 0D data for MySQL
+	const char *hostMySQL;
+	const char *userMySQL;
+	const char *passMySQL;
+	const char *nameMySQL;
 	//File name of Momentum sum imformation
 	TString MomSumInfoName;
 	TString whichParticles;
 	//reconstruction method (resort parameter)
 	int rekmeth;
+	//Intensity field name
+	std::string intfield;
 	//conversion factor for intensity
 	double factorBM1;//(to uJ)
 	double factorPD; //(to uJ/um^2)
@@ -158,21 +164,26 @@ private:
 	//PM to Delay (2014A)
 	double factorPMD;
 	double factorPMDOffset;
-
+	//Run number
+	int runNum;
+	//Tag number
 	int tagFrom;
 	int tagTo;
-
+	//Delay field name
+	std::string delayfield;
+	//Delay bin
 	int delayBins;
 	double delayFrom;
 	double delayTo;
-
+	//Delay jitter field name
+	std::string jitfield;
 	//Limitation of TheataZ
 	double limitTheataZ;
-
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;
 	int method0D_Data;
+	int runMode;
 	int optShutMode;
 	bool existIntPartition;
 	bool checkingResult;

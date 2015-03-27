@@ -34,6 +34,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 
 	double delay = 0.0;
 	if (intensity.size()) delay = intensity[0];
+	
+	double felIntensity = 0.0;
+	if (intensity.size()) felIntensity = intensity[1];
 
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
@@ -62,6 +65,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 
 	//delay vs Tof
 	hi.fill(hiOff++,"DelayVsTof",ph.TofCor(),delay,"tof [ns]","delay [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+
+	//intensity vs Tof
+	hi.fill(hiOff++,"FELIntensityVsTof",ph.TofCor(),felIntensity,"tof [ns]","FEL Intensity [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,1200,0,1200,Form("%s",p.GetName()));
 
 	//hi.fill(hiOff++,"XPosVsTofFine",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 	//hi.fill(hiOff++,"YPosVsTofFine",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));

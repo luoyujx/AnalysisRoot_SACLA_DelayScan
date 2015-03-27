@@ -172,7 +172,15 @@ void MyAnalyzer::Run()
 		//Analyze Raw waveform//
 		fWf.ExtractWaveform(fOE,fHi,7-1);
 		//analyze the event//
-		Analyze(fWf);
+		if (optShutMode == 0)
+		{
+			Analyze(fWf);
+		}
+		if (optShutMode == 1)
+		{
+			if(DB.GetStatusAndData(fOE.GetEventID(),2).second == 1) Analyze(fWf); //memo UV-on
+			if(DB.GetStatusAndData(fOE.GetEventID(),2).second == 0) Analyze(fWf); //memo UV-off
+		}
 		//increase the counter//
 		fEntryIterator++;
 		//if(fEntryIterator > 1000) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
@@ -206,7 +214,8 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
 	method0D_Data = static_cast<int>(set.GetValue("0D_Data", false)+0.1);
-	path0D_DataBase = set.GetString("0D_DataBase","");
+	path0D_DataBaseL = set.GetString("0D_DataBase","");
+	path0D_DataBaseM = set.GetString("0D_DataBase","");
 	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
 	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
 	existIntPartition=static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
@@ -223,12 +232,13 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	momFactorLowerLimit=set.GetValue("MomFactorLowerLimit", 0.0);
 	momFactorUpperLimit=set.GetValue("MomFactorUpperLimit", 2);
 	angleCondition=set.GetValue("AngleCondition", 0.0);
+	optShutMode = static_cast<int>(set.GetValue("OpticalLaser_OnOff", false)+0.1);
 
 	delayBins=static_cast<int>(set.GetValue("DelayBins", 300));
 	delayFrom=set.GetValue("DelayFrom", -10);
 	delayTo=set.GetValue("DelayTo", 20);
 
-	limitTheataZ=set.GetValue("LimitOfTheataZ", 90);
+	limitTheataZ = set.GetValue("LimitOfTheataZ", 90);
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()
@@ -316,7 +326,7 @@ void MyAnalyzer::OpenIntensityData()
 
 		if (method0D_Data==2)
 		{
-			DB.Open(path0D_DataBase);
+			DB.Open(path0D_DataBaseL);
 			vector<string> fields;
 			fields.push_back("xfel_bl_3_st_4_motor_25/position");
 			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");
@@ -324,6 +334,15 @@ void MyAnalyzer::OpenIntensityData()
 			//DB.ShowTable();
 		}
 
+		if (method0D_Data==3)
+		{
+			DB.Connect("192.168.0.115", "uedalab", "xuedalabx", "sacla2015a"); //memo: ç≈èIìIÇ…ÇÕpath0D_DataBaseMÇ÷èëÇ´ä∑Ç¶(kuma)
+			vector<string> fields;
+			fields.push_back("xfel_bl_3_st_4_motor_25/position");
+			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");
+			DB.LoadDataM(tagFrom, tagTo, fields);
+			//DB.ShowTable();
+		}
 	}
 
 
@@ -608,4 +627,4 @@ void MyAnalyzer::OpenMCPToFRegion()
 	}
 
 	std::cout << "ToF (MCP) region data: "<< mcpTofRegion.size() << " records have been loaded." << std::endl;
-}	
+}

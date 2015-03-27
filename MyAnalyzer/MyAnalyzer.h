@@ -124,7 +124,7 @@ private:
 	//the histograms//
 	MyHistos				 fHi;
 	//covariance calcuration stuff//
-	MyWaveform				fWf;
+	MyWaveform				 fWf;
 	//Canvas for showResult()
 	TCanvas					*canv;
 
@@ -134,7 +134,8 @@ private:
 	//File name of 0D data Txt
 	TString zeroDTxtFileName;
 	//Path name of 0D data
-	const char *path0D_DataBase;
+	const char *path0D_DataBaseL;
+	const char *path0D_DataBaseM;
 	//File name of Momentum sum imformation
 	TString MomSumInfoName;
 	TString whichParticles;
@@ -168,16 +169,15 @@ private:
 	//Limitation of TheataZ
 	double limitTheataZ;
 
-
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;
 	int method0D_Data;
+	int optShutMode;
 	bool existIntPartition;
 	bool checkingResult;
 	bool afterAnalysis;
 	bool selectIntensity;
-
 
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;

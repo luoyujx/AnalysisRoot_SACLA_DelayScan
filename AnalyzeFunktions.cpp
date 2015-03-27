@@ -226,6 +226,29 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
 		}
 
+		if (method0D_Data==3)
+		{
+			if(DB.GetStatusAndData(TagNumber,0).first==0)
+			{
+				//std::cout <<"\r"<<TagNumber<< " is not found!!";
+				missedTagCount++;
+				return;
+			}
+
+			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
+			{
+				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
+			}
+
+			if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
+			{
+				std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
+			}
+
+			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
+		}
+
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity

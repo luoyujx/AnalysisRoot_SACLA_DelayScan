@@ -336,7 +336,7 @@ void MyAnalyzer::OpenIntensityData()
 
 		if (method0D_Data==3)
 		{
-			DB.Connect("192.168.0.115", "uedalab", "xuedalabx", "sacla2015a"); //memo: 最終的にはpath0D_DataBaseMへ書き換え(kuma)
+			DB.Connect("192.168.0.115", "uedalab", "xuedalabx", "SACLA2014A"); //memo: 最終的にはpath0D_DataBaseMへ書き換え(kuma)
 			vector<string> fields;
 			fields.push_back("xfel_bl_3_st_4_motor_25/position");
 			fields.push_back("xfel_bl_3_st_4_pd_user_7_fitting_peak/voltage");

@@ -11,7 +11,6 @@
 #include "TText.h"
 #include "TBox.h"
 
-
 #include "../MyParticle/MyParticleContainer.h"
 #include "../FilesFromLma2Root/MyEvent/MyOriginalEvent/MyOriginalEvent.h"
 #include "../FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEvent.h"
@@ -189,6 +188,7 @@ private:
 	bool checkingResult;
 	bool afterAnalysis;
 	bool selectIntensity;
+	std::string optLaserfield;
 
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;

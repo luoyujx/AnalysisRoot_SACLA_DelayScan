@@ -78,6 +78,7 @@ public:
 	void		 OpenRootFile(const TString &RootFileName);
 	TH1			*getHist(int id)const							{return dynamic_cast<TH1*>(hiarray[id]);};
 	const bool	 IsVerbose()const								{return fVerbose;}
+	void		SetMainDir(TString dir)							{mainDir = dir;}
 
 private:
 	TH1D	 *hist1;		//pointer to a 1d Histogram
@@ -88,6 +89,7 @@ private:
 	TObject **hiarray;		//array Containing the histograms
 	const bool fVerbose;	//a flag that tells wether this should do output
 	TGraph	*graph1;
+	TString	mainDir;
 };
 
 #endif

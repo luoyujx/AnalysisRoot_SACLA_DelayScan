@@ -97,8 +97,9 @@ void MyHistos::FlushRootFile()
 }
 
 //########################ROOT Histograms Stuff################################################################
-TDirectory* getDir(TFile *rootfile, TString dirName)
+TDirectory* getDir(TFile *rootfile, TString mainDir, TString dirName)
 {
+	dirName = mainDir + "/" + dirName;
 	//first find out wether directory exists
 	rootfile->cd("/");
 	TDirectory * direc = rootfile->GetDirectory(dirName.Data());
@@ -167,7 +168,7 @@ TH1* MyHistos::create3d(int id, const char *name,
 	if (hist3) return hist3;
 
 	TDirectory * saveDir = gDirectory;		//save a pointer to the current directory
-	getDir(rootfile,dir)->cd();				//change to directory that this histo need to be created in
+	getDir(rootfile,mainDir,dir)->cd();				//change to directory that this histo need to be created in
 
 	//--create a 3D histogram--//
 	hist3 = new TH3D(name, name, nXbins, xLow, xUp, nYbins, yLow, yUp, nZbins, zLow, zUp);
@@ -256,7 +257,7 @@ TH1* MyHistos::create2d(int id, const char *name,
 	if (hist2 ) return hist2;
 
 	TDirectory * saveDir = gDirectory;		//save a pointer to the current directory
-	getDir(rootfile,dir)->cd();				//change to directory that this histo need to be created in
+	getDir(rootfile,mainDir,dir)->cd();				//change to directory that this histo need to be created in
 
 	//--create a 2D histogram--//
 	hist2 = new TH2D(name, name, nXbins, xLow, xUp, nYbins, yLow, yUp);
@@ -337,7 +338,7 @@ TH1* MyHistos::create1d(int id, const char * name,
 	if (hist1) return hist1;
 
 	TDirectory * saveDir = gDirectory;		//save a pointer to the current directory
-	getDir(rootfile,dir)->cd();				//change to directory that this histo need to be created in
+	getDir(rootfile,mainDir,dir)->cd();				//change to directory that this histo need to be created in
 
 	//--create a 1D histogram--//
 	hist1 = new TH1D(name, name, nXbins, xLow, xUp);
@@ -420,7 +421,8 @@ TH1* MyHistos::create1dVariableBin(int id, const char *name,
 	if (hist1) return hist1;
 
 	TDirectory * saveDir = gDirectory;		//save a pointer to the current directory
-	getDir(rootfile,dir)->cd();				//change to directory that this histo need to be created in
+	
+	getDir(rootfile,mainDir,dir)->cd();				//change to directory that this histo need to be created in
 
 	//--create a 1D histogram--//
 	hist1 = new TH1D(name, name, nXbins,xbins);

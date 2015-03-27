@@ -96,7 +96,6 @@ MyAnalyzer::~MyAnalyzer()
 {
 	if (canv) delete canv;
 }
-
 //___________________________________________________________________________________________________________________________________________________________
 void MyAnalyzer::FileOpen()
 {
@@ -105,7 +104,6 @@ void MyAnalyzer::FileOpen()
 	else 
 		fHi.OpenRootFile(fileName);
 }
-
 //___________________________________________________________________________________________________________________________________________________________
 void MyAnalyzer::Init()
 {
@@ -134,7 +132,6 @@ void MyAnalyzer::Init(MySettings &set)
 	//call Initialize
 	Init();
 }
-
 //________________________This should not be modified___________________________________________________________________________________________________________________________________
 void MyAnalyzer::Run()
 {
@@ -160,7 +157,6 @@ void MyAnalyzer::Run()
 		fOChain.GetEntry(fEntryIterator);
 		fSAChain.GetEntry(fEntryIterator);
 		fSChain.GetEntry(fEntryIterator);
-
 		//check EventID//
 		if (fEntryIterator == 0) firstTAG = fOE.GetEventID();
 		if ((fOE.GetEventID()!=fSAE.GetEventID())||(fOE.GetEventID()!=fSE.GetEventID())) 
@@ -172,17 +168,9 @@ void MyAnalyzer::Run()
 		//Analyze Raw waveform//
 		fWf.ExtractWaveform(fOE,fHi,7-1);
 		//analyze the event//
-		if (optShutMode == 0)
-		{
-			Analyze(fWf);
-		}
-		if (optShutMode == 1)
-		{
-			if(DB.GetStatusAndData(fOE.GetEventID(),2).second == 1) Analyze(fWf); //memo UV-on
-			if(DB.GetStatusAndData(fOE.GetEventID(),2).second == 0) Analyze(fWf); //memo UV-off
-		}
+		Analyze(fWf);
 		//increase the counter//
-		fEntryIterator++;
+		fEntryIterator++;	
 		//if(fEntryIterator > 1000) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
 		//the timer will only process events when it has timed out//
 		if (processTimer.ProcessEvents()) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
@@ -193,17 +181,14 @@ void MyAnalyzer::Run()
 		fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
-
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
 		if (checkingResult) ShowResult();
 	}
-
 	//restart run at this time//
 	if (!realyBreak) runTimer.Start(3000);
 	//std::cout << "leaving run"<<std::endl;
 }
-
 //_____________
 void MyAnalyzer::SetParameter(MySettings &set)
 {
@@ -224,27 +209,27 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
 	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
 	intfield = set.GetString("intensityFieldName","");
-	existIntPartition=static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
-	factorBM1=set.GetValue("ConversionFactorBM1", 10e+9);
-	factorPD=set.GetValue("ConversionFactorPD", 10000);
-	selectIntensity=static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
-	intensityLowerLimit=set.GetValue("IntensityLowerLimit", 0.0);
-	intensityUpperLimit=set.GetValue("IntensityUpperLimit", 100000);
-	checkingResult=static_cast<int>(set.GetValue("CheckResult", false)+0.1);
-	afterAnalysis=static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
-	trendStep=static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
-	momFactorLowerLimit=set.GetValue("MomFactorLowerLimit", 0.0);
-	momFactorUpperLimit=set.GetValue("MomFactorUpperLimit", 2);
-	angleCondition=set.GetValue("AngleCondition", 0.0);
+	existIntPartition = static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
+	factorBM1 = set.GetValue("ConversionFactorBM1", 10e+9);
+	factorPD = set.GetValue("ConversionFactorPD", 10000);
+	selectIntensity = static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
+	intensityLowerLimit = set.GetValue("IntensityLowerLimit", 0.0);
+	intensityUpperLimit =set.GetValue("IntensityUpperLimit", 100000);
+	checkingResult = static_cast<int>(set.GetValue("CheckResult", false)+0.1);
+	afterAnalysis = static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
+	trendStep = static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
+	momFactorLowerLimit = set.GetValue("MomFactorLowerLimit", 0.0);
+	momFactorUpperLimit = set.GetValue("MomFactorUpperLimit", 2);
+	angleCondition = set.GetValue("AngleCondition", 0.0);
 	optShutMode = static_cast<int>(set.GetValue("OpticalLaser_OnOff", false)+0.1);
-	delayfield = set.GetString("delayFieldName","");;
-	factorPMDOffset=set.GetValue("ConversionPMOffset", -1750);
-	factorPMD=set.GetValue("ConversionPMtoDelay", 150);
-	delayBins=static_cast<int>(set.GetValue("DelayBins", 300));
-	delayFrom=set.GetValue("DelayFrom", -10);
-	delayTo=set.GetValue("DelayTo", 20);
-
+	delayfield = set.GetString("delayFieldName","");
+	factorPMDOffset = set.GetValue("ConversionPMOffset", -1750);
+	factorPMD = set.GetValue("ConversionPMtoDelay", 150);
+	delayBins = static_cast<int>(set.GetValue("DelayBins", 300));
+	delayFrom = set.GetValue("DelayFrom", -10);
+	delayTo = set.GetValue("DelayTo", 20);
 	limitTheataZ = set.GetValue("LimitOfTheataZ", 90);
+	optLaserfield = set.GetString("opticalLaserShutterFieldName",""); ; 
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()
@@ -336,6 +321,7 @@ void MyAnalyzer::OpenIntensityData()
 			vector<string> fields;
 			fields.push_back(delayfield);
 			fields.push_back(intfield);
+			fields.push_back(optLaserfield);
 			DB.LoadDataL(tagFrom, tagTo, fields);
 			//DB.ShowTable();
 		}
@@ -346,6 +332,7 @@ void MyAnalyzer::OpenIntensityData()
 			vector<string> fields;
 			fields.push_back(delayfield);
 			fields.push_back(intfield);
+			fields.push_back(optLaserfield);
 			if (runMode == 1) 
 			{
 				std::cout << "Run mode" << std::endl;

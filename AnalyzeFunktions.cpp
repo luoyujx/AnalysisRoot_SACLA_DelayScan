@@ -23,6 +23,7 @@
 #include <TH1.h>
 #include <TGClient.h>
 #include <TStyle.h> 
+#include <TDirectory.h>
 
 //#define XVelocity 0.0003704 //(mm/ns)
 //#define YVelocity -0.00037775
@@ -152,9 +153,7 @@ void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const
 void MyAnalyzer::Analyze(MyWaveform &wf)
 {
 	MyDetektor &rd = fSE.GetDetektor(0);
-
 	int startIdx=10;
-
 	//for Trend Histogram
 	const int skipCounter = static_cast<int>(fEntryIterator/trendStep);
 
@@ -164,6 +163,20 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 	//Get Tag number on this event
 	const unsigned int TagNumber = fOE.GetEventID();
+
+	if (optShutMode == 1)
+	{
+		if(DB.GetStatusAndData(TagNumber,2).second == 1) 
+		{
+			fHi.SetMainDir("OptLaserOn");
+			startIdx=10;
+		}
+		if(DB.GetStatusAndData(TagNumber,2).second == 0) 
+		{
+			fHi.SetMainDir("OptLaserOff");
+			startIdx=1010;
+		}
+	}
 
 	//select tag number
 	//if (TagNumber < 489913416) return;

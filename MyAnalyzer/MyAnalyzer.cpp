@@ -177,7 +177,7 @@ void MyAnalyzer::Run()
 	}
 	if (WasRunningBefore)
 	{
-		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
+		if (afterAnalysis&&(!optShutMode)) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
 		fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
@@ -328,7 +328,7 @@ void MyAnalyzer::OpenIntensityData()
 
 		if (method0D_Data==3)
 		{
-			DB.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL); //memo: ÅI“I‚É‚Ípath0D_DataBaseM‚Ö‘‚«Š·‚¦(kuma)
+			DB.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
 			vector<string> fields;
 			fields.push_back(delayfield);
 			fields.push_back(intfield);

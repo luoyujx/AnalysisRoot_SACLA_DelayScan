@@ -145,8 +145,7 @@ void MyAnalyzer::Run()
 	size_t firstTAG = 0;
 	while(fEntryIterator < fNEntries)
 	{
-		if (fEntryIterator % 1000 == 0)  std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
-
+		if (fEntryIterator % 1000 == 0) std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
 		//Clear the events//
 		fOE.Clear();
 		fSAE.Clear();
@@ -170,7 +169,7 @@ void MyAnalyzer::Run()
 		//analyze the event//
 		Analyze(fWf);
 		//increase the counter//
-		fEntryIterator++;	
+		fEntryIterator++;
 		//if(fEntryIterator > 1000) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}
 		//the timer will only process events when it has timed out//
 		if (processTimer.ProcessEvents()) {std::cout << "user requested break"<<std::endl;realyBreak=true;break;}

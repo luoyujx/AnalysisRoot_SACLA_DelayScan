@@ -156,28 +156,25 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	int startIdx=10;
 	//for Trend Histogram
 	const int skipCounter = static_cast<int>(fEntryIterator/trendStep);
-
+	
 	//clear the containers//
 	fIntensities.clear();
 	fParticles.ClearParticles();
-
 	//Get Tag number on this event
 	const unsigned int TagNumber = fOE.GetEventID();
-
 	if (optShutMode == 1)
 	{
-		if(DB.GetStatusAndData(TagNumber,2).second == 1) 
+		if(static_cast<int>(DB.GetStatusAndData(TagNumber,2).second+0.1) == 1) 
 		{
 			fHi.SetMainDir("OptLaserOn");
 			startIdx=10;
 		}
-		if(DB.GetStatusAndData(TagNumber,2).second == 0) 
+		if(static_cast<int>(DB.GetStatusAndData(TagNumber,2).second+0.1) == 0) 
 		{
 			fHi.SetMainDir("OptLaserOff");
-			startIdx=1010;
+			startIdx=5010;
 		}
 	}
-
 	//select tag number
 	//if (TagNumber < 489913416) return;
 
@@ -207,7 +204,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 			if ((itTagDelay == tagDelay.end())||(itTagInt == tagIntensity.end()))
 			{
-				std::cout <<"\r"<<TagNumber<< " is not found!!";
+				//std::cout <<"\r"<<TagNumber<< " is not found!!";
 				missedTagCount++;
 				return;
 			}
@@ -218,6 +215,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 		if (method0D_Data==2)
 		{
+			
 			if(DB.GetStatusAndData(TagNumber,0).first==0)
 			{
 				//std::cout <<"\r"<<TagNumber<< " is not found!!";
@@ -257,11 +255,9 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			{
 				std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
 			}
-
 			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
 			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
 		}
-
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -301,7 +297,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		startIdx++;
 		fHi.fill(startIdx,"Delay",fIntensities[0],"[arb. unit]",1000,-50,50);
 		startIdx++;
-
 		////-----Trend plot BM1 & PD intensity
 		//fHi.fill(startIdx,"TrendIntensityFEL",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]/skipCounter);
 		//startIdx++;
@@ -313,7 +308,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//startIdx++;
 		//fHi.fill(startIdx,"TrendBeamPosY",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionY);
 		//startIdx++;
-
+		
 		//--skip this shot event if FEL is below 0.1 (FEL is stopped)
 		if (fIntensities[1]< 5) return;
 
@@ -347,7 +342,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;
-
 
 	//Analyze MCP intensity
 
@@ -397,7 +391,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//fHi.fill(startIdx+5,"DelayDependenceXe1pL",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pL);
 	//fHi.fill(startIdx+6,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe2p);
 	//fHi.fill(startIdx+7,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
-
 	startIdx += 10;
 
 	//fHi.fill(startIdx+0,"DelayVsShots_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550);
@@ -412,7 +405,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//	fHi.fill(startIdx+7,"DelayVsMCPSignal",i,fIntensities[0],"tof [ns]","Delay [ps]",3000,0,fOE.GetNbrSamples(), delayBins, delayFrom, delayTo,"",wf.GetWaveform()[i]);
 	//startIdx++;
 
-
 	//---get the raw mcp events called times//
 	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
 	for (size_t i=0; i<sac.GetNbrPeaks();++i)
@@ -421,14 +413,13 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		fHi.fill(startIdx,"Times_MCP",p.GetTime(),"tof [ns]",5000,0,fOE.GetNbrSamples()*fOE.GetSampleInterval()*1e9);
 	}
 	startIdx++;
-
+	
 	if(fSAE.GetChannel(7-1).GetNbrPeaks())
 	{
 		const MyPeak &p_t0 = fSAE.GetChannel(7-1).GetPeak(0);
 		fHi.fill(startIdx,"Times_MCP_first",p_t0.GetTime(),"tof [ns]",10000,0,2000);
 	}
 	startIdx++;
-
 	//-----------------------Set jet speed
 	//for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
 	//{
@@ -466,7 +457,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		fHi.fill(startIdx+6,"XTOF",dh.Tof(),dh.X(),"tof [ns]","x [mm]",4000,0,6000,300,-50,50);
 		fHi.fill(startIdx+7,"YTOF",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",4000,0,6000,300,-50,50);
 
-
 		//-----Particle(0)---Ion---
 		//get the particle from the vector//
 		MyParticle &p = fParticles.GetParticle(0);
@@ -487,8 +477,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
 					fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
 					fHi.fill(startIdx+16,"DelayVsTOFCor",ph.TofCor(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
-					fHi.fill(startIdx+17,"FELIntensityVsTOFCor",ph.TofCor(),fIntensities[1],"tof [ns]","FEL intensity [arb. unit]",1000,0,maxTof, 1000, 0, 1000,"Ion");
-					fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, delayBins/5, -5, delayTo, 60, 0, 600, "Ion");
+					//fHi.fill(startIdx+17,"FELIntensityVsTOFCor",ph.TofCor(),fIntensities[1],"tof [ns]","FEL intensity [arb. unit]",1000,0,maxTof, 1000, 0, 1000,"Ion");
+					//fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, delayBins/5, -5, delayTo, 60, 0, 600, "Ion");
 					//fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, 32, -5, 11, 30, 0, 600, "Ion");
 				}
 
@@ -522,7 +512,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				}
 	}//------------------------------------------------------------------------------------------------------//
 	startIdx += (fParticles.GetNbrOfParticles()*50);
-
 	//fill histograms of hit count
 	int iodineCount = 0;
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
@@ -530,11 +519,17 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
 		fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j+1,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
 		//Iodine rate
-		if ((fParticles.GetParticle(j).GetMass_au()*MyUnitsConv::au2amu() > 120)&&(fParticles.GetParticle(j).GetCharge_au() < 10)) iodineCount += fParticles.GetParticle(j).GetNbrOfParticleHits();
+		if ((fParticles.GetParticle(j).GetMass_au()*MyUnitsConv::au2amu() > 120)&&(fParticles.GetParticle(j).GetCharge_au() < 10))
+		{
+			iodineCount += fParticles.GetParticle(j).GetNbrOfParticleHits();
+		}
 		for (size_t k=0;k<fParticles.GetParticle(j).GetNbrOfParticleHits();++k)
+		{
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
+			fHi.fill(startIdx+2*fParticles.GetNbrOfParticles()+1,"DelayVsNumberOfParticleHits",j,fIntensities[0],"Particle Number","delay [ps]",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1,delayBins,delayFrom,delayTo);
+		}
 	}
-	startIdx += (2*fParticles.GetNbrOfParticles())+1;
+	startIdx += (2*fParticles.GetNbrOfParticles()+2);
 	fHi.fill(startIdx,"IodineHits",iodineCount,"Number of Hits",100,0,100);
 	startIdx++;
 	//now you have found the particles//
@@ -698,7 +693,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 	}
 
-
+	//std::cout << startIdx << std::endl;
 	//---Post-analysis---//
 	////std::cout << molecule[1][1].CoincidenceCount <<":";
 	//if (molecule[4][14].CoincidenceCount > 0)  fillHydrogenHistogram(fParticles.GetParticle(1),fParticles.GetParticle(4),fParticles.GetParticle(14),fHi,startIdx);

@@ -36,7 +36,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	if (intensity.size()) delay = intensity[0];
 	
 	double felIntensity = 0.0;
-	if (intensity.size()) felIntensity = intensity[1];
+	if (intensity.size() > 1) felIntensity = intensity[1];
 
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
@@ -108,13 +108,13 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",800,0,40,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,2000,0,400,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",500,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
-	hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",500,0,500,80,0,800,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,delayBins/5,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
+	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",500,0,500,80,0,800,Form("%s/Energy",p.GetName()));
+	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,delayBins/5,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
 
-	if ((1 < intensity[0])&& (2> intensity[0]))
-	hi.fill(hiOff++,"EnergyVsTOFCor",ph.TofCor(),ph.E(),"TOF [ns]","Energy [eV]",30000,0,30000,500,0,500,Form("%s/Energy",p.GetName()));
-	else hiOff++;
+	//if ((1 < intensity[0])&& (2> intensity[0]))
+	//hi.fill(hiOff++,"EnergyVsTOFCor",ph.TofCor(),ph.E(),"TOF [ns]","Energy [eV]",10000,0,30000,500,0,500,Form("%s/Energy",p.GetName()));
+	//else hiOff++;
 	/*
 	if (ph.ThetaZ() <  10) hi.fill(hiOff++,"EnergyUpto010deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() <  20) hi.fill(hiOff++,"EnergyUpto020deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;

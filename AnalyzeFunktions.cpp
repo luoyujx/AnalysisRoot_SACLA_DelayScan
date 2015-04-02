@@ -279,18 +279,18 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//	fIntensities.push_back(itTagInt->second);
 		////----------------------------------------------------
 
-		for (size_t i=0;i<fIntensities.size();++i)
-		{
-			fHi.fill(startIdx++,Form("Int%d",i),fIntensities[i],Form("Int%d",i),1000,0,1000,"Intensity");
-			for (size_t j=i+1; j<fIntensities.size();++j)
-			{
-				fHi.fill(startIdx++,Form("IntDep(%d)(%d)",i,j),fIntensities[i], fIntensities[j],Form("Int %d",i),Form("Int %d",j),1000,0,1000,1000,0,1000,"Intensity");
-			}
-		}
+		//for (size_t i=0;i<fIntensities.size();++i)
+		//{
+		//	fHi.fill(startIdx++,Form("Int%d",i),fIntensities[i],Form("Int%d",i),1000,0,1000,"Intensity");
+		//	for (size_t j=i+1; j<fIntensities.size();++j)
+		//	{
+		//		fHi.fill(startIdx++,Form("IntDep(%d)(%d)",i,j),fIntensities[i], fIntensities[j],Form("Int %d",i),Form("Int %d",j),1000,0,1000,1000,0,1000,"Intensity");
+		//	}
+		//}
 		//if (fIntensities.size() > 1)
 		//	if ( fIntensities[0]*fIntensities[1]>0)
 		//		fHi.fill(startIdx+1,"IntensityDivide0by1",fIntensities[0]/fIntensities[1],"IntensityDivide0by1",1000,0,5,"Intensity");
-		startIdx+=2;
+		//startIdx+=2;
 
 		////-----------------------------------
 		fHi.fill(startIdx,"IntensityFEL",fIntensities[1],"[arb. unit]",1000,0,1000);
@@ -309,7 +309,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//fHi.fill(startIdx,"TrendBeamPosY",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionY);
 		//startIdx++;
 		
-		//--skip this shot event if FEL is below 0.1 (FEL is stopped)
+		//--skip this shot event if FEL is below 5 (FEL is stopped)
 		if (fIntensities[1]< 5) return;
 
 		if (selectIntensity)
@@ -319,25 +319,25 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			//---skip this shot event if FEL is over the upper limit
 			if (fIntensities[1]>intensityUpperLimit) return;
 		}
-		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[1],"[arb. unit]",1000,0,500);
+		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[1],"[arb. unit]",1000,0,1000);
 		startIdx++;
 
-		if (existIntPartition)
-		{
-			//---for getting power dep
-			if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");
-			startIdx++;
-			int whichRegion = -1;
-			for (size_t k=0; k<intPartition.size()-1; k++)
-			{
-				if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
-				{
-					whichRegion = k;
-					fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
-				}
-			}
-			startIdx += intPartition.size();
-		}
+		//if (existIntPartition)
+		//{
+		//	//---for getting power dep
+		//	if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");
+		//	startIdx++;
+		//	int whichRegion = -1;
+		//	for (size_t k=0; k<intPartition.size()-1; k++)
+		//	{
+		//		if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
+		//		{
+		//			whichRegion = k;
+		//			fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
+		//		}
+		//	}
+		//	startIdx += intPartition.size();
+		//}
 	}
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
@@ -345,7 +345,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 	//Analyze MCP intensity
 
-	fillMCPToFHistograms(fOE, fHi, mcpTofRegion);
+	//fillMCPToFHistograms(fOE, fHi, mcpTofRegion);
 
 	//MCP intensity
 	//Ar1p
@@ -366,7 +366,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//double McpIntensityXe2p = Average(fOE.GetChannel(7-1),4000,4280,true);//Voltage D2:8000
 	//double McpIntensityXe3p = Average(fOE.GetChannel(7-1),3400,3550,true);//Voltage D2:8000
 
-
 	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),14127,17150,true);//Voltage D2:800
 	//const double McpIntensityXe1pH = Average(fOE.GetChannel(7-1),14000,16200,true);//Voltage D2:800<----High energy region
 	//const double McpIntensityXe1pL = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800<----Low energy region
@@ -382,7 +381,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//----------------------------------
 
 	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo);
-	fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,delayBins/5, delayFrom, delayTo,60 ,0 ,600);
+	fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,delayBins, delayFrom, delayTo, 1000 ,0 , 1000);
 	//fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,32 , -5, 11, 30, 0, 600);
 	//fHi.fill(startIdx+1,"DelayDependenceXe1p2D",fIntensities[0], McpIntensityXe1pH,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
 	//fHi.fill(startIdx+2,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2pL,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
@@ -391,12 +390,12 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//fHi.fill(startIdx+5,"DelayDependenceXe1pL",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pL);
 	//fHi.fill(startIdx+6,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe2p);
 	//fHi.fill(startIdx+7,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
-	startIdx += 10;
+	startIdx += 2;
 
 	//fHi.fill(startIdx+0,"DelayVsShots_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550);
-	////fHi.fill(startIdx+1,"DelayDependenceXe1p2D_UltraWide",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
-	////fHi.fill(startIdx+2,"DelayDependenceXe2p2D_UltraWide",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
-	////fHi.fill(startIdx+3,"DelayDependenceXe3p2D_UltraWide",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",500,-50,550,500,0,1000);
+	//fHi.fill(startIdx+1,"DelayDependenceXe1p2D_UltraWide",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
+	//fHi.fill(startIdx+2,"DelayDependenceXe2p2D_UltraWide",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
+	//fHi.fill(startIdx+3,"DelayDependenceXe3p2D_UltraWide",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",500,-50,550,500,0,1000);
 	//fHi.fill(startIdx+4,"DelayDependenceXe1p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe1p);
 	//fHi.fill(startIdx+5,"DelayDependenceXe2p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe2p);
 	//fHi.fill(startIdx+6,"DelayDependenceXe3p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe3p);
@@ -506,18 +505,18 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 									fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo,limitTheataZ);
 								}
 							}
-							//we reserve 100 histograms for one particle//
+							//we reserve 50 histograms for one particle//
 							secondStartIdx +=50;
 							//std::cout <<j<<" "<< secondStartIdx<<std::endl;
 				}
 	}//------------------------------------------------------------------------------------------------------//
-	startIdx += (fParticles.GetNbrOfParticles()*50);
+	startIdx += (fParticles.GetNbrOfParticles()*50+20);
 	//fill histograms of hit count
 	int iodineCount = 0;
-	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion" 
+	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion"  
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
-		fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j+1,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
+		fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
 		//Iodine rate
 		if ((fParticles.GetParticle(j).GetMass_au()*MyUnitsConv::au2amu() > 120)&&(fParticles.GetParticle(j).GetCharge_au() < 10))
 		{
@@ -526,10 +525,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		for (size_t k=0;k<fParticles.GetParticle(j).GetNbrOfParticleHits();++k)
 		{
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
-			fHi.fill(startIdx+2*fParticles.GetNbrOfParticles()+1,"DelayVsNumberOfParticleHits",j,fIntensities[0],"Particle Number","delay [ps]",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1,delayBins,delayFrom,delayTo);
+			fHi.fill(startIdx+2*fParticles.GetNbrOfParticles(),"DelayVsNumberOfParticleHits",j,fIntensities[0],"Particle Number","delay [ps]",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1,delayBins,delayFrom,delayTo);
 		}
 	}
-	startIdx += (2*fParticles.GetNbrOfParticles()+2);
+	startIdx += (2*fParticles.GetNbrOfParticles()+1);
 	fHi.fill(startIdx,"IodineHits",iodineCount,"Number of Hits",100,0,100);
 	startIdx++;
 	//now you have found the particles//
@@ -618,7 +617,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					}
 				}
 			}
-			startIdx += 5 + fParticles.GetNbrOfParticles();
+			startIdx += (5 + fParticles.GetNbrOfParticles());
 	}
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
@@ -652,7 +651,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 						{
 							int tmpIdx = startIdx + (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
 							fillMoleculeHistogram2(ip,jp,fIntensities,fHi,tmpIdx);
-							fillAngleHistogram(ip, jp, fHi, tmpIdx + 25);	
+							fillAngleHistogram(ip, jp, fHi, tmpIdx + 30);	
 						}
 					}
 

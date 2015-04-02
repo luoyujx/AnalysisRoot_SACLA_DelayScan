@@ -41,13 +41,15 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
-	if (ph.ThetaZ() > limitTheataZ ) return;
+	//if (ph.ThetaZ() > limitTheataZ ) return;
 	//if (ph.ThetaZ() > 90 ) return;
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
 	if (intensity.size() && (intPart.size()>1)) hi.fill(hiOff++,Form("Intensity%s",p.GetName()),intensity[0],"Laser Power",intPart.size()-1,&intPart.front(),Form("%s",p.GetName()));
+	else hiOff++;
 	if (intensity.size()) hi.fill(hiOff++,"Delay",delay,"Delay [ps]",delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	else hiOff++;
 
 	//detektor pictures//
 	hi.fill(hiOff++,"Det"			,ph.X()			,ph.Y()			,"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
@@ -67,7 +69,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"DelayVsTof",ph.TofCor(),delay,"tof [ns]","delay [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 
 	//intensity vs Tof
-	hi.fill(hiOff++,"FELIntensityVsTof",ph.TofCor(),felIntensity,"tof [ns]","FEL Intensity [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,1200,0,1200,Form("%s",p.GetName()));
+	//hi.fill(hiOff++,"FELIntensityVsTof",ph.TofCor(),felIntensity,"tof [ns]","FEL Intensity [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,1200,0,1200,Form("%s",p.GetName()));
 
 	//hi.fill(hiOff++,"XPosVsTofFine",ph.TofCor(),ph.XCorRotScl(),"tof [ns]","x [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadX()-p.GetXcor()-p.GetCondRad()*1.3,p.GetCondRadX()-p.GetXcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 	//hi.fill(hiOff++,"YPosVsTofFine",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",static_cast<int>(p.GetCondTofRange()),p.GetCondTofFr()-p.GetT0(),p.GetCondTofTo()-p.GetT0(),300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
@@ -105,9 +107,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	*/
 	
 	//Energy//
-	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",800,0,40,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,2000,0,400,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",500,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",400,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,400,0,400,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",400,0,400,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",500,0,500,80,0,800,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,delayBins/5,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
@@ -125,7 +127,6 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	if (ph.ThetaZ() <  70) hi.fill(hiOff++,"EnergyUpto070deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() <  80) hi.fill(hiOff++,"EnergyUpto080deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() <  90) hi.fill(hiOff++,"EnergyUpto090deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	
 	if (ph.ThetaZ() < 100) hi.fill(hiOff++,"EnergyUpto100deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 110) hi.fill(hiOff++,"EnergyUpto110deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() < 120) hi.fill(hiOff++,"EnergyUpto120deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
@@ -152,7 +153,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"PhiYZvsEnergy",ph.PhiYZ(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
 	hi.fill(hiOff++,"PhiZXvsEnergy",ph.PhiZX(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
 
-	hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,40,Form("%s/Angle",p.GetName()),ph.SinThetaZInv());
+	//hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,40,Form("%s/Angle",p.GetName()),ph.SinThetaZInv());
 	//,ph.SinThetaZInv()
 	//hi.fill(hiOff,"ThetaY_double",ph.ThetaY(),"#theta [deg]",180,0,360,Form("%s/Angle",p.GetName()));
 	//hi.fill(hiOff++,"ThetaY_double",360 - ph.ThetaY(),"#theta [deg]",180,0,360,Form("%s/Angle",p.GetName()));
@@ -892,7 +893,7 @@ void fillAngleHistogram(const MyParticle &p1, const MyParticle &p2, MyHistos &hi
 
 			hi.fill(hiOff+0,Form("Angle%s-%s",p1.GetName(),p2.GetName()),formedAngle,"Formed angle [deg]",180,0,180,"AngularDist",weightPerSin);
 			hi.fill(hiOff+1,Form("Angle%s-%sVsMomRatio",p1.GetName(),p2.GetName()),formedAngle, p2[j].P()/p1[i].P(),"Formed angle [deg]","Energy [eV]",180,0,180,100,0,3,"AngleVsMomRatio",weightPerSin);
-			hi.fill(hiOff+2,Form("Enegy%sVsEnegy%s",p2.GetName(),p1.GetName()),p1[i].E(),p2[j].E(),Form("Energy%s [eV]",p1.GetName()),Form("Energy%s [eV]",p2.GetName()),100,0,300,100,0,300,"KEcorrelation");
+			hi.fill(hiOff+2,Form("Energy%sVsEnergy%s",p2.GetName(),p1.GetName()),p1[i].E(),p2[j].E(),Form("Energy%s [eV]",p1.GetName()),Form("Energy%s [eV]",p2.GetName()),100,0,300,100,0,300,"KEcorrelation");
 		}
 	}
 }

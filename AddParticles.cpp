@@ -17,15 +17,15 @@ void AddCH3I(MyParticleContainer &particles)
 	particles.Add("C2p",2,MyMass::Carbon12(),1,0);//4
 	particles.Add("C1p",1,MyMass::Carbon12(),1,0);//5
 	
-	particles.Add("I15p",15,MyMass::Iodine127(),1,1);
-	particles.Add("I14p",14,MyMass::Iodine127(),1,1);
-	particles.Add("I13p",13,MyMass::Iodine127(),1,1);
-	particles.Add("I12p",12,MyMass::Iodine127(),1,1);
-	particles.Add("I11p",11,MyMass::Iodine127(),1,1);
-	particles.Add("I10p",10,MyMass::Iodine127(),1,1);//7
-	particles.Add("I9p",9,MyMass::Iodine127(),1,1);//8
-	particles.Add("I8p",8,MyMass::Iodine127(),1,1);//9
-	particles.Add("I7p",7,MyMass::Iodine127(),1,1);//10
+	//particles.Add("I15p",15,MyMass::Iodine127(),1,1);
+	//particles.Add("I14p",14,MyMass::Iodine127(),1,1);
+	//particles.Add("I13p",13,MyMass::Iodine127(),1,1);
+	//particles.Add("I12p",12,MyMass::Iodine127(),1,1);
+	//particles.Add("I11p",11,MyMass::Iodine127(),1,1);
+	//particles.Add("I10p",10,MyMass::Iodine127(),1,1);//7
+	//particles.Add("I9p",9,MyMass::Iodine127(),1,1);//8
+	//particles.Add("I8p",8,MyMass::Iodine127(),1,1);//9
+	//particles.Add("I7p",7,MyMass::Iodine127(),1,1);//10
 	particles.Add("I6p",6,MyMass::Iodine127(),1,1);//11
 	particles.Add("I5p",5,MyMass::Iodine127(),1,1);//14
 	particles.Add("I4p",4,MyMass::Iodine127(),1,1);//13

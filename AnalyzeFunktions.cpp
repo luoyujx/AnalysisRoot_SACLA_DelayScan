@@ -164,7 +164,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	const unsigned int TagNumber = fOE.GetEventID();
 	if (optShutMode == 1)
 	{
-		if(static_cast<int>(DB.GetStatusAndData(TagNumber,2).second+0.1) == 1) 
+		if(static_cast<int>(DB.GetStatusAndData(TagNumber,2).second+0.1) != 0) 
 		{
 			fHi.SetMainDir("OptLaserOn");
 			startIdx=10;

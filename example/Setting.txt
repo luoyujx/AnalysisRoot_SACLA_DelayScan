@@ -3,7 +3,7 @@ OutputROOTFile=testForCH3I.root
 #Use GUI for setting (true/false = 1/0)
 UseGUI=0
 #choose the particle sets for analysis (CH3I,IUracil,ArCluster,XeCluster)
-WhichParticles=IUracil
+WhichParticles=CH3I
 #Should be 18 or 21 (resort method)
 ReconstructionMethod=18
 #The way for extracting coincidence (1:Momentum sum 2:gated by particle)
@@ -15,18 +15,18 @@ MomSumInfoFile=gateParameter_PerNorm_EdwinFin.txt
 #choose the methode for 0D Data (0:no data, 1:scan.txt, 2:SQLiteDB, 3:MySQL)
 0D_Data=3
 0D_DataTxtFile=testForCH3I.txt
-pathSQLite=C:\\home\\Data\\SQLite\\SACLA2014A.sqlite
+pathSQLite=C:\\home\\Data\\SQLite\\SACLA2015A.sqlite
 hostMySQL=192.168.0.115
 userMySQL=uedalab
 passMySQL=xuedalabx
-nameMySQL=test
+nameMySQL=sacla2015a
 #choose the TagMode or RunMode(0:Tag, 1:Run)
 runMode=0
-runNumber=023
-TagFrom=488174838
-TagTo=488304838
+runNumber=000
+TagFrom=92152228
+TagTo=92153228
 #Intensity info
-intensityFieldName=Intensity
+intensityFieldName=xfel_bl_3_st_4_bm_1_pd_upper_fitting_peak/voltage
 ConversionFactorBM1=24.486e+9
 ConversionFactorPD=1582
 IntensityPartition=0
@@ -38,18 +38,20 @@ AngleCondition=175
 MomFactorLowerLimit=0
 MomFactorUpperLimit=100
 #Delay info
-delayFieldName=Delay
+delayFieldName=xfel_bl_3_st_4_motor_25/position#opt_delay
 ConversionPMtoDelay=150
 ConversionPMOffset=-1750
 DelayBins=17
 DelayFrom=-5
 DelayTo=12
-jitterFieldName=ttt
+jitterFieldName=Timing_Jitter
+timingValidName=Timing_Valid
+timingMoniterDelayName=xfel_bl_3_st_1_motor_73/position
 #Limitation of TheataZ
 LimitOfTheataZ=180
 #Optical laser mode(0: don't care, 1: divide OptLaser on/off)
-OpticalLaser_OnOff=0
-opticalLaserShutterFieldName=OptShut
+OpticalLaser_OnOff=1
+opticalLaserShutterFieldName=xfel_bl_lh1_shutter_1_open_valid/status
 AfterAnalysis=0
 CheckResult=0
 TrendStep=1000

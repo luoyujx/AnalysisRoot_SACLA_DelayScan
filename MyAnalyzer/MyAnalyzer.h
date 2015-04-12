@@ -176,6 +176,8 @@ private:
 	double delayTo;
 	//Delay jitter field name
 	std::string jitfield;
+	std::string timeValfield;
+	std::string timeMDfield;
 	//Limitation of TheataZ
 	double limitTheataZ;
 	//---Analysis frags
@@ -189,6 +191,7 @@ private:
 	bool afterAnalysis;
 	bool selectIntensity;
 	std::string optLaserfield;
+	
 
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;

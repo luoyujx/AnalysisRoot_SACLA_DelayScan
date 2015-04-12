@@ -246,18 +246,51 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				return;
 			}
 
+			// Delay
 			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
 			{
 				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
+				missedTagCount++;
+				return;
 			}
-
+			
 			if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
 			{
-				std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
+				std::cout <<"Timing_Valid  of "<<TagNumber<< " is NaN " << std::endl;
+				fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);
 			}
-			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
+			
+			if(!DB.GetStatusAndData(TagNumber,1).second)
+			{
+				fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			}
+
+			else
+			{
+				if( _isnan(DB.GetStatusAndData(TagNumber,2).second))
+				{
+					std::cout <<"Timing_Jitter  of "<<TagNumber<< " is NaN " << std::endl;
+				}
+				if( _isnan(DB.GetStatusAndData(TagNumber,3).second))
+				{
+					std::cout <<"xfel_bl_3_st_1_motor_73/position  of "<<TagNumber<< " is NaN " << std::endl;
+				}
+				else
+				{
+					fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD + DB.GetStatusAndData(TagNumber,2).second);
+				}
+			}
 		}
+
+		// FEL intensity
+		if( _isnan(DB.GetStatusAndData(TagNumber,4).second))
+		{
+			std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
+			missedTagCount++;
+			return;
+		}
+		fIntensities.push_back(DB.GetStatusAndData(TagNumber,4).second * factorPD);//[1] PD:
+	}
 
 		////------------------------------------------SACLA 2012A
 		////PhotoDiode intensity
@@ -338,7 +371,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//	}
 		//	startIdx += intPartition.size();
 		//}
-	}
 
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++;

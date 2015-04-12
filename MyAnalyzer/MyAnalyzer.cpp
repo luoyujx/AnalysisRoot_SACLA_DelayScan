@@ -222,6 +222,9 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	angleCondition = set.GetValue("AngleCondition", 0.0);
 	optShutMode = static_cast<int>(set.GetValue("OpticalLaser_OnOff", false)+0.1);
 	delayfield = set.GetString("delayFieldName","");
+	jitfield = set.GetString("jitterFieldName","");;
+	timeValfield = set.GetString("timingValidName","");
+	timeMDfield = set.GetString("timingMoniterDelayName","");
 	factorPMDOffset = set.GetValue("ConversionPMOffset", -1750);
 	factorPMD = set.GetValue("ConversionPMtoDelay", 150);
 	delayBins = static_cast<int>(set.GetValue("DelayBins", 300));
@@ -329,9 +332,12 @@ void MyAnalyzer::OpenIntensityData()
 		{
 			DB.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
 			vector<string> fields;
-			fields.push_back(delayfield);
-			fields.push_back(intfield);
-			fields.push_back(optLaserfield);
+			fields.push_back(delayfield);		//0
+			fields.push_back(timeValfield);		//1
+			fields.push_back(jitfield);			//2
+			fields.push_back(timeMDfield);		//3
+			fields.push_back(intfield);			//4
+			fields.push_back(optLaserfield);	//5
 			if (runMode == 1) 
 			{
 				std::cout << "Run mode" << std::endl;

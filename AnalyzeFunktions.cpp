@@ -164,12 +164,12 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	const unsigned int TagNumber = fOE.GetEventID();
 	if (optShutMode == 1)
 	{
-		if(static_cast<int>(DB.GetStatusAndData(TagNumber,2).second+0.1) != 0) 
+		if(static_cast<int>(DB.GetStatusAndData(TagNumber,5).second+0.1) != 0) 
 		{
 			fHi.SetMainDir("OptLaserOn");
 			startIdx=10;
 		}
-		if(static_cast<int>(DB.GetStatusAndData(TagNumber,2).second+0.1) == 0) 
+		if(static_cast<int>(DB.GetStatusAndData(TagNumber,5).second+0.1) == 0) 
 		{
 			fHi.SetMainDir("OptLaserOff");
 			startIdx=5010;
@@ -239,14 +239,15 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 		if (method0D_Data==3)
 		{
-			if(DB.GetStatusAndData(TagNumber,0).first==0)
-			{
+			//if(DB.GetStatusAndData(TagNumber,0).first==0)
+			//{
 				//std::cout <<"\r"<<TagNumber<< " is not found!!";
-				missedTagCount++;
-				return;
-			}
+				//missedTagCount++;
+				//return;
+			//}
 
 			// Delay
+			/*
 			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
 			{
 				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
@@ -259,12 +260,13 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				std::cout <<"Timing_Valid  of "<<TagNumber<< " is NaN " << std::endl;
 				fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);
 			}
-			
-			if(!DB.GetStatusAndData(TagNumber,1).second)
-			{
+			*/
+			//if(!DB.GetStatusAndData(TagNumber,1).second)
+			//{
 				fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			}
+			//}
 
+			/*
 			else
 			{
 				if( _isnan(DB.GetStatusAndData(TagNumber,2).second))
@@ -280,15 +282,14 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD + DB.GetStatusAndData(TagNumber,2).second);
 				}
 			}
+			*/
 		}
 
 		// FEL intensity
-		if( _isnan(DB.GetStatusAndData(TagNumber,4).second))
-		{
-			std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
-			missedTagCount++;
-			return;
-		}
+		//if( _isnan(DB.GetStatusAndData(TagNumber,4).second))
+		//{
+		//	std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
+		//}
 		fIntensities.push_back(DB.GetStatusAndData(TagNumber,4).second * factorPD);//[1] PD:
 	}
 

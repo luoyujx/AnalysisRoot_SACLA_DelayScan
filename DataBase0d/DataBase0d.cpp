@@ -132,7 +132,7 @@ void DataBase0d::LoadDataM(unsigned int firstTag, unsigned int lastTag, vector<s
 		command << ", `" << fields[i] << "` ";
 	}
 	//command << "from bldata where tag between ";
-	command << "from CH3I where tag between ";
+	command << "from bldata where tag between ";
 	command << firstTag << " and " << lastTag << ";";
 	std::cout << "SQL command: " << command.str() << std::endl;
 	//Query SQL command

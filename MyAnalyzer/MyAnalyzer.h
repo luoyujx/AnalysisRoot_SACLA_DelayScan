@@ -192,7 +192,6 @@ private:
 	bool selectIntensity;
 	std::string optLaserfield;
 	
-
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;
 	//PD data

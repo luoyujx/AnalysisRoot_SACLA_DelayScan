@@ -18,53 +18,53 @@ public:
 	~MyHistos();
 
 	void     fill(int id, const char *name, double fillX, double fillY, double fillZ,
- 			      const char *titleX, const char *titleY, const char *titleZ,
-			      int nXbins, double xLow, double xUp,
-			      int nYbins, double yLow, double yUp,
-			      int nZbins, double zLow, double zUp, const char * dir = "",
-			      double weight=1.);			//fill function for 3d histos
+				  const char *titleX, const char *titleY, const char *titleZ,
+				  int nXbins, double xLow, double xUp,
+				  int nYbins, double yLow, double yUp,
+				  int nZbins, double zLow, double zUp, const char * dir = "",
+				  double weight=1.);			//fill function for 3d histos
 	TH1* create3d(int id, const char *name,
 				  const char *titleX, const char *titleY, const char *titleZ,
-			      int nXbins, double xLow, double xUp,
-			      int nYbins, double yLow, double yUp,
-			      int nZbins, double zLow, double zUp,
+				  int nXbins, double xLow, double xUp,
+				  int nYbins, double yLow, double yUp,
+				  int nZbins, double zLow, double zUp,
 				  const char * dir = "", bool alreadylocked=false);		//create 3d histos
 	void   fill3d(int id, double fillX, double fillY, double fillZ, 
-			      double weight=1);				//fill fast 3d histos
+				  double weight=1);				//fill fast 3d histos
 
 	void     fill(int id, const char * name, double fillX, double fillY, 
-			      const char * titleX, const char * titleY, 
-			      int nXbins, double xLow, double xUp, 
-			      int nYbins, double yLow, double yUp, const char * dir = "",
-			      double weight=1.);			//fill function for 2d histos
+				  const char * titleX, const char * titleY, 
+				  int nXbins, double xLow, double xUp, 
+				  int nYbins, double yLow, double yUp, const char * dir = "",
+				  double weight=1.);			//fill function for 2d histos
 	TH1* create2d(int id, const char *name,
 				  const char *titleX, const char *titleY,
-			      int nXbins, double xLow, double xUp,
-			      int nYbins, double yLow, double yUp,
-			      const char * dir = "", bool alreadylocked=false);		//create 2d histos
+				  int nXbins, double xLow, double xUp,
+				  int nYbins, double yLow, double yUp,
+				  const char * dir = "", bool alreadylocked=false);		//create 2d histos
 	void   fill2d(int id, double fillX, double fillY, 
-			      double weight=1);				//fill fast 2d histos
+				  double weight=1);				//fill fast 2d histos
 
 	void	plot2d(int id, int binX, int binY, double content);//set bin contents
 
 	void     fill(int id, const char * name, double fillX, const char * titleX,
-			      int nXbins, double xLow, double xUp, const char * dir = "",
-			      double weight=1.);			//fill function for 1d histos
+				  int nXbins, double xLow, double xUp, const char * dir = "",
+				  double weight=1.);			//fill function for 1d histos
 	TH1* create1d(int id, const char *name,
 				  const char *titleX,
-			      int nXbins, double xLow, double xUp,
-			      const char * dir = "", bool alreadylocked=false);		//create 1d histos
+				  int nXbins, double xLow, double xUp,
+				  const char * dir = "", bool alreadylocked=false);		//create 1d histos
 	void   fill1d(int id, double fillX, 
-			      double weight=1);				//fill fast 1d histos
+				  double weight=1);				//fill fast 1d histos
 	void	plot1d(int id, int binX, double content);//set bin contents
 	//---Variable bin size Histogram
 	void     fill(int id, const char * name, double fillX, const char * titleX,
-			      Int_t nXbins, const Double_t* xbins, const char * dir = "",
-			      double weight=1.);			//fill function for variable bin size 1d histos
+				  Int_t nXbins, const Double_t* xbins, const char * dir = "",
+				  double weight=1.);			//fill function for variable bin size 1d histos
 	TH1* create1dVariableBin(int id, const char *name,
 				  const char *titleX,
-			      Int_t nXbins, const Double_t* xbins,
-			      const char * dir = "", bool alreadylocked=false);		//create variable bin size 1d histos
+				  Int_t nXbins, const Double_t* xbins,
+				  const char * dir = "", bool alreadylocked=false);		//create variable bin size 1d histos
 	//TGraph* createGraph(int id, const char * name, Int_t nbrPoint,
 	//						const char * dir, bool alreadylocked);
 

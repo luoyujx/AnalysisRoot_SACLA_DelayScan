@@ -143,7 +143,7 @@
     <Link>
       <AdditionalDependencies>libCore.lib;libCint.lib;libTree.lib;libHist.lib;libRIO.lib;libRint.lib;libGui.lib;libGraf.lib;libMatrix.lib;libMathCore.lib;libPhysics.lib;libGpad.lib;sqlite3.lib;libmysql.lib</AdditionalDependencies>
       <OutputFile>$(ProjectDir)\..\Binaries\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;$(MYSQLPATH)\lib;$(ProjectDir)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ROOTSYS)\lib;$(MYSQLPATH)\lib;$(ProjectDir)\..\DataBase0d</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

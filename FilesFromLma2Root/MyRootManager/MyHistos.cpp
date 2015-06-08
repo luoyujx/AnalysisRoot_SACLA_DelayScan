@@ -151,11 +151,11 @@ void MyHistos::fill3d(int id, double fillX, double fillY, double fillZ, double w
 	dynamic_cast<TH3D*>(hiarray[id])->Fill(fillX,fillY,fillZ,weight);
 }
 TH1* MyHistos::create3d(int id, const char *name,
-					    const char *titleX, const char *titleY, const char *titleZ,
-					    int nXbins, double xLow, double xUp,
-					    int nYbins, double yLow, double yUp,
-					    int nZbins, double zLow, double zUp, 
-					    const char * dir, bool alreadylocked)
+						const char *titleX, const char *titleY, const char *titleZ,
+						int nXbins, double xLow, double xUp,
+						int nYbins, double yLow, double yUp,
+						int nZbins, double zLow, double zUp, 
+						const char * dir, bool alreadylocked)
 {
 	//check if Histogram ID exceed the array limit//
 	if (id >= arsize)
@@ -207,7 +207,7 @@ void MyHistos::fill(int id, const char *name, double fillX, double fillY, double
 	if (!hist3)
 	{
 		create3d(id, name,
-			     titleX,titleY,titleZ,
+				 titleX,titleY,titleZ,
 				 nXbins,xLow,xUp,
 				 nYbins,yLow,yUp,
 				 nZbins,zLow,zUp,
@@ -241,10 +241,10 @@ void MyHistos::plot2d(int id, int binX, int binY, double content)
 
 
 TH1* MyHistos::create2d(int id, const char *name,
-				        const char *titleX, const char *titleY, 
-				        int nXbins, double xLow, double xUp, 
-				        int nYbins, double yLow, double yUp, 
-					    const char * dir, bool alreadylocked)
+						const char *titleX, const char *titleY, 
+						int nXbins, double xLow, double xUp, 
+						int nYbins, double yLow, double yUp, 
+						const char * dir, bool alreadylocked)
 {
 	//check if Histogram ID exceed the array limit//
 	if (id >= arsize)
@@ -280,10 +280,10 @@ TH1* MyHistos::create2d(int id, const char *name,
 	return hist2;
 }
 void MyHistos::fill(int id, const char *name, double fillX, double fillY, 
-				    const char *titleX, const char *titleY, 
-				    int nXbins, double xLow, double xUp, 
-				    int nYbins, double yLow, double yUp, const char * dir,
-				    double weight)
+					const char *titleX, const char *titleY, 
+					int nXbins, double xLow, double xUp, 
+					int nYbins, double yLow, double yUp, const char * dir,
+					double weight)
 {
 	hist2 = dynamic_cast<TH2D*>(hiarray[id]);
 
@@ -292,7 +292,7 @@ void MyHistos::fill(int id, const char *name, double fillX, double fillY,
 	if (!hist2)
 	{
 		create2d(id, name,
-			     titleX,titleY,
+				 titleX,titleY,
 				 nXbins,xLow,xUp,
 				 nYbins,yLow,yUp,
 				 dir,true);
@@ -314,7 +314,7 @@ void MyHistos::fill(int id, const char *name, double fillX, double fillY,
 //___________________________________1D____________________________________________________________________
 void MyHistos::fill1d(int id, double fillX,double weight)
 {
- 	dynamic_cast<TH1D*>(hiarray[id])->Fill(fillX,weight);
+	dynamic_cast<TH1D*>(hiarray[id])->Fill(fillX,weight);
 }
 void MyHistos::plot1d(int id, int binX, double content)
 {
@@ -323,9 +323,9 @@ void MyHistos::plot1d(int id, int binX, double content)
 }
 
 TH1* MyHistos::create1d(int id, const char * name,
-					    const char * titleX,
-				        int nXbins, double xLow, double xUp, 
-				        const char * dir, bool alreadylocked)
+						const char * titleX,
+						int nXbins, double xLow, double xUp, 
+						const char * dir, bool alreadylocked)
 {
 	//check if Histogram ID exceed the array limit//
 	if (id >= arsize)
@@ -357,8 +357,8 @@ TH1* MyHistos::create1d(int id, const char * name,
 	return hist1;
 }
 void MyHistos::fill(int id, const char * name, double fillX, const char * titleX,
-				    int nXbins, double xLow, double xUp, const char * dir,
-				    double weight)
+					int nXbins, double xLow, double xUp, const char * dir,
+					double weight)
 {
 	hist1 = dynamic_cast<TH1D*>(hiarray[id]);
 
@@ -366,7 +366,7 @@ void MyHistos::fill(int id, const char * name, double fillX, const char * titleX
 	if (!hist1)
 	{
 		create1d(id, name,
-			     titleX,
+				 titleX,
 				 nXbins,xLow,xUp,
 				 dir,true);
 	}
@@ -384,8 +384,8 @@ void MyHistos::fill(int id, const char * name, double fillX, const char * titleX
 }
 //_____________Variable bin size____________
 void MyHistos::fill(int id, const char * name, double fillX, const char * titleX,
-			      Int_t nXbins, const Double_t* xbins, const char * dir ,
-			      double weight)
+				  Int_t nXbins, const Double_t* xbins, const char * dir ,
+				  double weight)
 {
 	hist1 = dynamic_cast<TH1D*>(hiarray[id]);
 
@@ -393,7 +393,7 @@ void MyHistos::fill(int id, const char * name, double fillX, const char * titleX
 	if (!hist1)
 	{
 		create1dVariableBin(id, name,
-			     titleX,
+				 titleX,
 				 nXbins,xbins,
 				 dir,true);
 	}
@@ -407,8 +407,8 @@ void MyHistos::fill(int id, const char * name, double fillX, const char * titleX
 }
 TH1* MyHistos::create1dVariableBin(int id, const char *name,
 				  const char *titleX,
-			      Int_t nXbins, const Double_t* xbins,
-			      const char * dir , bool alreadylocked)
+				  Int_t nXbins, const Double_t* xbins,
+				  const char * dir , bool alreadylocked)
 {
 	//check if Histogram ID exceed the array limit//
 	if (id >= arsize)

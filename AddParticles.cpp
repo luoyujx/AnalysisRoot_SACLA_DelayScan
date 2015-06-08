@@ -80,8 +80,8 @@ void AddArgon(MyParticleContainer &particles)
 	particles.Add("Ar6P",6,MyMass::Argon40(),0);
 	particles.Add("Ar7P",7,MyMass::Argon40(),0);
 	particles.Add("Ar8P",8,MyMass::Argon40(),0);
-	particles.Add("Ar9P",9,MyMass::Argon40(),0);
-	particles.Add("Ar10P",10,MyMass::Argon40(),0);
+	//particles.Add("Ar9P",9,MyMass::Argon40(),0);
+	//particles.Add("Ar10P",10,MyMass::Argon40(),0);
 }
 void AddXenon(MyParticleContainer &particles)
 {

@@ -41,7 +41,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 
-	//if (ph.ThetaZ() > limitTheataZ ) return;
+	if (ph.ThetaZ() > limitTheataZ ) return;
 	//if (ph.ThetaZ() > 90 ) return;
 
 	//Reconstruction Method for this particle Hit//
@@ -107,16 +107,20 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	*/
 	
 	//Energy//
-	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",400,0,400,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,400,0,400,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",400,0,400,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
-	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",500,0,500,80,0,800,Form("%s/Energy",p.GetName()));
-	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,delayBins/5,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
+	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",500,0,500,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,500,0,500,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",500,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
+	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
 
 	//if ((1 < intensity[0])&& (2> intensity[0]))
 	//hi.fill(hiOff++,"EnergyVsTOFCor",ph.TofCor(),ph.E(),"TOF [ns]","Energy [eV]",10000,0,30000,500,0,500,Form("%s/Energy",p.GetName()));
 	//else hiOff++;
+
+	if (ph.ThetaZ() <  15) hi.fill(hiOff++, "EnergyUpto015deg", ph.E(), "Energy [eV]", 500, 0, 500, Form("%s/Energy", p.GetName())); else hiOff++;
+	//if (ph.ThetaZ() <   5) hi.fill(hiOff++, "EnergyUpto005deg", ph.E(), "Energy [eV]", 150, 0, 150, Form("%s/Energy", p.GetName())); else hiOff++;
+	
 	/*
 	if (ph.ThetaZ() <  10) hi.fill(hiOff++,"EnergyUpto010deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
 	if (ph.ThetaZ() <  20) hi.fill(hiOff++,"EnergyUpto020deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
@@ -1016,7 +1020,7 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	size_t idx = 9000;
 
 	TH1D* delayVsShots = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots"));
-
+	//TH1D* FELIntensityVsShots = dynamic_cast<TH1D*>(gFile->FindObject("IntensitySelectPD"));
 	//TH1D* delayDependenceXe1pH = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pH"));
 	//TH1D* delayDependenceXe1pL = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pL"));
 	//TH1D* delayDependenceXe2p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p"));
@@ -1046,6 +1050,8 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	DivideHisto2Dby1D(delayVsTOF,delayVsShots);
 	TH2D* delayVsTOFCor = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOFCor") );
 	DivideHisto2Dby1D(delayVsTOFCor,delayVsShots);
+	//TH2D* FELintensityVsTOFCor = dynamic_cast<TH2D*>(gFile->GetDirectory("Ion")->FindObject("FELIntensityVsTOFCor"));
+	//DivideHisto2Dby1D(FELintensityVsTOFCor, FELIntensityVsShots);
 	//TH2D* delayVsMCPSignal = dynamic_cast<TH2D*>( gFile->FindObject("DelayVsMCPSignal") );
 	//DivideHisto2Dby1D(delayVsMCPSignal, delayVsShots);
 

@@ -215,57 +215,57 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 
 		if (method0D_Data==2)
 		{
-			
 			if(DB.GetStatusAndData(TagNumber,0).first==0)
 			{
 				//std::cout <<"\r"<<TagNumber<< " is not found!!";
 				missedTagCount++;
 				return;
-			}
-
+			}	
 			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
 			{
 				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
 			}
-
 			if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
 			{
 				std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
 			}
-
 			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
 			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
 		}
-
 		if (method0D_Data==3)
 		{
-			//if(DB.GetStatusAndData(TagNumber,0).first==0)
-			//{
-				//std::cout <<"\r"<<TagNumber<< " is not found!!";
-				//missedTagCount++;
-				//return;
-			//}
-
+			if(DB.GetStatusAndData(TagNumber,0).first==0)
+			{
+				std::cout <<"\r"<<TagNumber<< " is not found!!";
+				missedTagCount++;
+				return;
+			}
 			// Delay
-			/*
 			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
 			{
 				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
 				missedTagCount++;
 				return;
 			}
-			
-			if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
+			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber, 0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			// Intensity
+			if (_isnan(DB.GetStatusAndData(TagNumber, 1).second))
 			{
-				std::cout <<"Timing_Valid  of "<<TagNumber<< " is NaN " << std::endl;
-				fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);
+				std::cout << "Intensity of " << TagNumber << " is NaN " << std::endl;
+				missedTagCount++;
+				return;
 			}
-			*/
+			fIntensities.push_back(DB.GetStatusAndData(TagNumber, 1).second * factorPD);//[1] PD:
+			//if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
+			//{
+			//	std::cout <<"Timing_Valid  of "<<TagNumber<< " is NaN " << std::endl;
+			//	fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);
+			//}
+			
 			//if(!DB.GetStatusAndData(TagNumber,1).second)
 			//{
-				fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
+			//	fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
 			//}
-
 			/*
 			else
 			{
@@ -290,7 +290,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//{
 		//	std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
 		//}
-		fIntensities.push_back(DB.GetStatusAndData(TagNumber,4).second * factorPD);//[1] PD:
+		//fIntensities.push_back(DB.GetStatusAndData(TagNumber,4).second * factorPD);//[1] PD:
 	}
 
 		////------------------------------------------SACLA 2012A
@@ -325,11 +325,16 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//	if ( fIntensities[0]*fIntensities[1]>0)
 		//		fHi.fill(startIdx+1,"IntensityDivide0by1",fIntensities[0]/fIntensities[1],"IntensityDivide0by1",1000,0,5,"Intensity");
 		//startIdx+=2;
+		//
+		fHi.fill(startIdx, "Ch7NumberOfPeaks", fSAE.GetChannel(7 - 1).GetNbrPeaks(), "[cts]", 20000, -1000, 1000);
+		startIdx++;
+		fHi.fill(startIdx, "Ch7Integral", Integral(fOE.GetChannel(7 - 1), 0, 30000, false), "[cts]", 20000, -1000, 1000);
+		startIdx++;
 
 		////-----------------------------------
 		fHi.fill(startIdx,"IntensityFEL",fIntensities[1],"[arb. unit]",1000,0,1000);
 		startIdx++;
-		fHi.fill(startIdx,"Delay",fIntensities[0],"[arb. unit]",1000,-50,50);
+		fHi.fill(startIdx,"Delay",fIntensities[0],"[arb. unit]",10000,-500,500);
 		startIdx++;
 		////-----Trend plot BM1 & PD intensity
 		//fHi.fill(startIdx,"TrendIntensityFEL",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]/skipCounter);
@@ -345,6 +350,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		
 		//--skip this shot event if FEL is below 5 (FEL is stopped)
 		if (fIntensities[1]< 5) return;
+
+		
 
 		if (selectIntensity)
 		{
@@ -412,6 +419,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//----------------------------------
 	//Delay dependence SACLA2014A
 	//----------------------------------
+
+	if (fSAE.GetChannel(7 - 1).GetNbrPeaks() == 0) return;
 
 	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo);
 	fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,delayBins, delayFrom, delayTo, 1000 ,0 , 1000);

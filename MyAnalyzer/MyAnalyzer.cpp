@@ -279,6 +279,7 @@ void MyAnalyzer::ShowResult()
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
 {
+	std::cout << "Method of 0D Data: " << method0D_Data << std::endl;
 	if ((zeroDTxtFileName == "")||(method0D_Data==0)) return;
 	{
 		if (method0D_Data==1)
@@ -323,7 +324,7 @@ void MyAnalyzer::OpenIntensityData()
 			vector<string> fields;
 			fields.push_back(delayfield);
 			fields.push_back(intfield);
-			fields.push_back(optLaserfield);
+			//fields.push_back(optLaserfield);
 			DB.LoadDataL(tagFrom, tagTo, fields);
 			//DB.ShowTable();
 		}
@@ -333,11 +334,11 @@ void MyAnalyzer::OpenIntensityData()
 			DB.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
 			vector<string> fields;
 			fields.push_back(delayfield);		//0
-			fields.push_back(timeValfield);		//1
-			fields.push_back(jitfield);			//2
-			fields.push_back(timeMDfield);		//3
+			//fields.push_back(timeValfield);		//1
+			//fields.push_back(jitfield);			//2
+			//fields.push_back(timeMDfield);		//3
 			fields.push_back(intfield);			//4
-			fields.push_back(optLaserfield);	//5
+			//fields.push_back(optLaserfield);	//5
 			if (runMode == 1) 
 			{
 				std::cout << "Run mode" << std::endl;

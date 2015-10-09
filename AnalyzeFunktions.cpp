@@ -126,6 +126,21 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 		//---SACLA Kr Isotope
 		AddKrIsotope(particles);
 	}
+	else if (whichParticles == "CH2I2")
+	{
+		//---CH2I2 for SACLA2015B and Lab experiment
+		AddCH2I2(particles);
+	}
+	else if (whichParticles == "CH2BrI")
+	{
+		//---CH2BrI for SACLA2015B and Lab experiment
+		AddCH2BrI(particles);
+	}
+	else if (whichParticles == "CH2ClI")
+	{
+		//---CH2ClI for SACLA2015B and Lab experiment
+		AddCH2ClI(particles);
+	}
 	else
 	{
 		std::cout << "can not find particles!!" << std::endl;

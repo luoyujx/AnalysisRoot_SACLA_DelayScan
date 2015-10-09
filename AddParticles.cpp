@@ -238,3 +238,103 @@ void AddKrIsotope(MyParticleContainer &particles)
 	particles.Add("86Kr3P",3,MyMass::Krypton86(),0);
 }
 
+//SACLA 2015B and Lab experiment CH2I2 pump-probe expriment 
+void AddCH2I2(MyParticleContainer &particles)
+{
+	particles.Add("H1p", 1, MyMass::Hydrogen1(), 0, 0); //1
+
+	//particles.Add("C4p", 4, MyMass::Carbon12(), 1, 0);//2
+	//particles.Add("C3p", 3, MyMass::Carbon12(), 1, 0);//3
+	particles.Add("C2p", 2, MyMass::Carbon12(), 1, 0);//2
+	particles.Add("C1p", 1, MyMass::Carbon12(), 1, 0);//3
+
+	//particles.Add("I15p",15,MyMass::Iodine127(),1,0);
+	//particles.Add("I14p",14,MyMass::Iodine127(),1,0);
+	//particles.Add("I13p",13,MyMass::Iodine127(),1,0);
+	//particles.Add("I12p",12,MyMass::Iodine127(),1,0);
+	//particles.Add("I11p",11,MyMass::Iodine127(),1,0);
+	//particles.Add("I10p",10,MyMass::Iodine127(),1,0);//7
+	//particles.Add("I9p",9,MyMass::Iodine127(),1,0);//8
+	//particles.Add("I8p",8,MyMass::Iodine127(),1,0);//9
+	//particles.Add("I7p",7,MyMass::Iodine127(),1,0);//10
+	//particles.Add("I6p", 6, MyMass::Iodine127(), 1, 0);//11
+	//particles.Add("I5p", 5, MyMass::Iodine127(), 1, 0);//14
+	//particles.Add("I4p", 4, MyMass::Iodine127(), 1, 0);//13
+	//particles.Add("I3p", 3, MyMass::Iodine127(), 1, 0);//14
+	particles.Add("I2p", 2, MyMass::Iodine127(), 1, 0);//15
+	particles.Add("I1p", 1, MyMass::Iodine127(), 1, 0);//16
+}
+
+//SACLA 2015B and Lab experiment CH2BrI pump-probe expriment 
+void AddCH2BrI(MyParticleContainer &particles)
+{
+	particles.Add("H1p", 1, MyMass::Hydrogen1(), 0, 0); //1
+
+	//particles.Add("C4p", 4, MyMass::Carbon12(), 1, 0);//2
+	//particles.Add("C3p", 3, MyMass::Carbon12(), 1, 0);//3
+	particles.Add("C2p", 2, MyMass::Carbon12(), 1, 0);//2
+	particles.Add("C1p", 1, MyMass::Carbon12(), 1, 0);//3
+
+	//particles.Add("Br9p",9,MyMass::Bromine(),1,0);//8
+	//particles.Add("Br8p",8,MyMass::Bromine(),1,0);//9
+	//particles.Add("Br7p",7,MyMass::Bromine(),1,0);//10
+	//particles.Add("Br6p", 6, MyMass::Bromine(), 1, 0);//11
+	//particles.Add("Br5p", 5, MyMass::Bromine(), 1, 0);//14
+	//particles.Add("Br4p", 4, MyMass::Bromine(), 1, 0);//13
+	//particles.Add("Br3p", 3, MyMass::Bromine(), 1, 0);//14
+	particles.Add("Br2p", 2, MyMass::Bromine(), 1, 0);//15
+	particles.Add("Br1p", 1, MyMass::Bromine(), 1, 0);//16
+
+	//particles.Add("I15p",15,MyMass::Iodine127(),1,0);
+	//particles.Add("I14p",14,MyMass::Iodine127(),1,0);
+	//particles.Add("I13p",13,MyMass::Iodine127(),1,0);
+	//particles.Add("I12p",12,MyMass::Iodine127(),1,0);
+	//particles.Add("I11p",11,MyMass::Iodine127(),1,0);
+	//particles.Add("I10p",10,MyMass::Iodine127(),1,0);//7
+	//particles.Add("I9p",9,MyMass::Iodine127(),1,0);//8
+	//particles.Add("I8p",8,MyMass::Iodine127(),1,0);//9
+	//particles.Add("I7p",7,MyMass::Iodine127(),1,0);//10
+	//particles.Add("I6p", 6, MyMass::Iodine127(), 1, 0);//11
+	//particles.Add("I5p", 5, MyMass::Iodine127(), 1, 0);//14
+	//particles.Add("I4p", 4, MyMass::Iodine127(), 1, 0);//13
+	//particles.Add("I3p", 3, MyMass::Iodine127(), 1, 0);//14
+	particles.Add("I2p", 2, MyMass::Iodine127(), 1, 0);//15
+	particles.Add("I1p", 1, MyMass::Iodine127(), 1, 0);//16
+}
+
+//SACLA 2015B and Lab experiment CH2ClI pump-probe expriment 
+void AddCH2ClI(MyParticleContainer &particles)
+{
+	particles.Add("H1p", 1, MyMass::Hydrogen1(), 0, 0); //1
+
+	//particles.Add("C4p", 4, MyMass::Carbon12(), 1, 0);//2
+	//particles.Add("C3p", 3, MyMass::Carbon12(), 1, 0);//3
+	particles.Add("C2p", 2, MyMass::Carbon12(), 1, 0);//2
+	particles.Add("C1p", 1, MyMass::Carbon12(), 1, 0);//3
+
+	//particles.Add("Cl9p",9,MyMass::Chlorine(),1,0);//8
+	//particles.Add("Cl8p",8,MyMass::Chlorine(),1,0);//9
+	//particles.Add("Cl7p",7,MyMass::Chlorine(),1,0);//10
+	//particles.Add("Cl6p", 6, MyMass::Chlorine(), 1, 0);//11
+	//particles.Add("Cl5p", 5, MyMass::Chlorine(), 1, 0);//14
+	//particles.Add("Cl4p", 4, MyMass::Chlorine(), 1, 0);//13
+	//particles.Add("Cl3p", 3, MyMass::Chlorine(), 1, 0);//14
+	particles.Add("Cl2p", 2, MyMass::Chlorine(), 1, 0);//15
+	particles.Add("Cl1p", 1, MyMass::Chlorine(), 1, 0);//16
+
+	//particles.Add("I15p",15,MyMass::Iodine127(),1,0);
+	//particles.Add("I14p",14,MyMass::Iodine127(),1,0);
+	//particles.Add("I13p",13,MyMass::Iodine127(),1,0);
+	//particles.Add("I12p",12,MyMass::Iodine127(),1,0);
+	//particles.Add("I11p",11,MyMass::Iodine127(),1,0);
+	//particles.Add("I10p",10,MyMass::Iodine127(),1,0);//7
+	//particles.Add("I9p",9,MyMass::Iodine127(),1,0);//8
+	//particles.Add("I8p",8,MyMass::Iodine127(),1,0);//9
+	//particles.Add("I7p",7,MyMass::Iodine127(),1,0);//10
+	//particles.Add("I6p", 6, MyMass::Iodine127(), 1, 0);//11
+	//particles.Add("I5p", 5, MyMass::Iodine127(), 1, 0);//14
+	//particles.Add("I4p", 4, MyMass::Iodine127(), 1, 0);//13
+	//particles.Add("I3p", 3, MyMass::Iodine127(), 1, 0);//14
+	particles.Add("I2p", 2, MyMass::Iodine127(), 1, 0);//15
+	particles.Add("I1p", 1, MyMass::Iodine127(), 1, 0);//16
+}

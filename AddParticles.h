@@ -15,6 +15,9 @@ void AddXeIsotope(MyParticleContainer &particles);
 void AddKrCluster(MyParticleContainer &particles);
 void AddKrArCluster(MyParticleContainer &particles);
 void AddKrIsotope(MyParticleContainer &particles);
+void AddCH2I2(MyParticleContainer &particles);
+void AddCH2BrI(MyParticleContainer &particles);
+void AddCH2ClI(MyParticleContainer &particles);
 
 namespace MyMass
 {
@@ -44,7 +47,16 @@ namespace MyMass
 	inline const double Oxygen17()		{return 16.999311;}		// 0.048%
 	inline const double Oxygen18()		{return 17.999160;}		// 0.20%
 
-	inline const double Iodine127()		{return 126.904473;}		// 100%
+	inline const double Iodine127()		{return 126.904473;}	// 100%
+
+	inline const double Bromine79()		{return 78.918336;}		// 50.69%
+	inline const double Bromine81()		{return 80.916289;}		// 49.31%
+	inline const double Bromine()		{return 79.904;}		// 100%
+
+	inline const double Chlorine35()	{ return 34.968852; }	// 75.77%
+	inline const double Chlorine37()	{ return 36.965903; }	// 24.23%
+	inline const double Chlorine()		{ return 35.4527; }		// 100%
+
 	inline const double Fluorine19()	{return 18.9984032;}
 	inline const double Carbon12()		{return 12;}
 

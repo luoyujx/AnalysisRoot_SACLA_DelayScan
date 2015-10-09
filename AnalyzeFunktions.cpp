@@ -349,9 +349,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//startIdx++;
 		
 		//--skip this shot event if FEL is below 5 (FEL is stopped)
-		if (fIntensities[1]< 5) return;
-
-		
+		if (!selectIntensity)
+		{
+			if (fIntensities[1] < 5) return;
+		}
 
 		if (selectIntensity)
 		{

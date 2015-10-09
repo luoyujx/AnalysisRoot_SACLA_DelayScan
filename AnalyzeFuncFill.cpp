@@ -109,7 +109,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//Energy//
 	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",500,0,500,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,500,0,500,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",500,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",100,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));

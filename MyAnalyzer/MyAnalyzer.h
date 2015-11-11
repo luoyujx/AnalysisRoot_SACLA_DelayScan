@@ -92,12 +92,12 @@ public:
 	int			GetRekMeth()const			{return rekmeth;}
 	int			GetMolecule()const			{return MoleculeAnalysis;}
 	int			GetCondition()const			{return extraCondition;}
-	TString		GetzeroDTxtFileName()const		{return zeroDTxtFileName;}
 
 private:
 	//the particles//
 	MyParticleContainer		 fParticles;
-	std::vector<double>		 fIntensities;
+	std::vector<double>		 fIntensities;	// [0] Upper PD + Lower PD, [1] Upper PD, [2] Lower PD
+	std::vector<double>		 fDelays;		// [0] EH Delay, [1] Jitter, [2] CorDelay 
 
 	//don't bother with whats below this//
 	//the events from the trees//
@@ -130,25 +130,28 @@ private:
 	//---Parametrs for analysis (defined by setting.txt)
 	//ROOT file name
 	TString fileName;
-	//File name of 0D data Txt
-	TString zeroDTxtFileName;
-	//Path name of 0D data for SQLite
-	const char *pathSQLite;
 	//Host / User / Pass / Name of 0D data for MySQL
 	const char *hostMySQL;
 	const char *userMySQL;
 	const char *passMySQL;
 	const char *nameMySQL;
+	const char *tableBL;
+	const char *tableTM;
 	//File name of Momentum sum imformation
 	TString MomSumInfoName;
 	TString whichParticles;
 	//reconstruction method (resort parameter)
 	int rekmeth;
+	//field names
+	std::string BM1FN; // BM1
+	std::string delayFN; //EH delay stage
+	std::string jitterFN; //Jitter form timing moniter
+	std::string flagTMFN; //Timing moniter(TM) analysis success or not
+	std::string delayTMFN; //delay stage for timing moniter 
 	//Intensity field name
 	std::string intfield;
 	//conversion factor for intensity
-	double factorBM1;//(to uJ)
-	double factorPD; //(to uJ/um^2)
+	double factorBM1; //(to uJ/um^2)
 	//step size for trend histogram
 	int trendStep;
 	//Condition to secelt FEL intensity
@@ -160,38 +163,34 @@ private:
 	double momFactorLowerLimit;
 	double momFactorUpperLimit;
 	double angleCondition;
-	//PM to Delay (2014A)
+	//PM to Delay at EH
 	double factorPMD;
 	double factorPMDOffset;
-	//Run number
-	int runNum;
+	//Pix to Delay for Timing monitor
+	double factorTM;
+	double factorTMOffset;
 	//Tag number
 	int tagFrom;
 	int tagTo;
-	//Delay field name
-	std::string delayfield;
 	//Delay bin
 	int delayBins;
 	double delayFrom;
 	double delayTo;
-	//Delay jitter field name
-	std::string jitfield;
-	std::string timeValfield;
-	std::string timeMDfield;
-	//Limitation of TheataZ
-	double limitTheataZ;
 	//---Analysis frags
 	int MoleculeAnalysis;
 	int extraCondition;
-	int method0D_Data;
-	int runMode;
-	int optShutMode;
+	int delayScan;
 	bool existIntPartition;
 	bool checkingResult;
 	bool afterAnalysis;
 	bool selectIntensity;
-	std::string optLaserfield;
-	
+	// Angle limit
+	double limitOfThetaZ;
+
+	//
+	double lowerDelay;
+	double upperDelay;
+
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;
 	//PD data

@@ -28,7 +28,8 @@
 using namespace std;
 
 //Global object 
-DataBase0d DB;
+DataBase0d DB0d;
+DataBase0d DBTM;
 
 //##################################################################################
 //_____________________________The class Members______________________________________________________________________________________________________________________________
@@ -176,13 +177,13 @@ void MyAnalyzer::Run()
 	}
 	if (WasRunningBefore)
 	{
-		if (afterAnalysis&&(!optShutMode)) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
+		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
 		fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
-		if (checkingResult) ShowResult();
+		//if (checkingResult) ShowResult();
 	}
 	//restart run at this time//
 	if (!realyBreak) runTimer.Start(3000);
@@ -192,46 +193,74 @@ void MyAnalyzer::Run()
 void MyAnalyzer::SetParameter(MySettings &set)
 {
 	//set parameters
-	zeroDTxtFileName = set.GetString("0D_DataTxtFile","Scan.txt");
 	MomSumInfoName = set.GetString("MomSumInfoFile","MomentumInfo.txt");
+	//Should be 18 or 21 (resort method)
 	rekmeth = static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1);
+	//The way for extracting coincidence(1:Momentum sum 2 : gated by particle)
 	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
+	//Investigate proton(0:none 1 : all 2 : only)
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
-	method0D_Data = static_cast<int>(set.GetValue("0D_Data", false)+0.1);
-	pathSQLite = set.GetString("pathSQLite","");
-	hostMySQL = set.GetString("hostMySQL","");
-	userMySQL = set.GetString("userMySQL","");
-	passMySQL = set.GetString("passMySQL","");
-	nameMySQL = set.GetString("nameMySQL","");
-	runMode = static_cast<int>(set.GetValue("runMode", false)+0.1);
-	runNum = static_cast<int>(set.GetValue("runNumber", false)+0.1);
-	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
-	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
-	intfield = set.GetString("intensityFieldName","");
-	existIntPartition = static_cast<int>(set.GetValue("IntensityPartition", false)+0.1);
-	factorBM1 = set.GetValue("ConversionFactorBM1", 10e+9);
-	factorPD = set.GetValue("ConversionFactorPD", 10000);
-	selectIntensity = static_cast<int>(set.GetValue("SelectIntensity", false)+0.1);
-	intensityLowerLimit = set.GetValue("IntensityLowerLimit", 0.0);
-	intensityUpperLimit =set.GetValue("IntensityUpperLimit", 100000);
-	checkingResult = static_cast<int>(set.GetValue("CheckResult", false)+0.1);
-	afterAnalysis = static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
-	trendStep = static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
+	//Information for the gate of momentum sums(only need if Molecule = 1)
+	MomSumInfoName = set.GetString("MomSumInfoFile", "MomentumInfo.txt");
+	//Coincidence condition
+	angleCondition = set.GetValue("AngleCondition", 0.0);
 	momFactorLowerLimit = set.GetValue("MomFactorLowerLimit", 0.0);
 	momFactorUpperLimit = set.GetValue("MomFactorUpperLimit", 2);
-	angleCondition = set.GetValue("AngleCondition", 0.0);
-	optShutMode = static_cast<int>(set.GetValue("OpticalLaser_OnOff", false)+0.1);
-	delayfield = set.GetString("delayFieldName","");
-	jitfield = set.GetString("jitterFieldName","");;
-	timeValfield = set.GetString("timingValidName","");
-	timeMDfield = set.GetString("timingMoniterDelayName","");
-	factorPMDOffset = set.GetValue("ConversionPMOffset", -1750);
+	// delay scan mode (0: no 0d data, 1: use MySQL, 2:with Timing monitor)
+	delayScan = static_cast<int>(set.GetValue("delayScan", false)+0.1);
+	if (delayScan == 0)
+	{
+		std::cout << "Fixed delay. 0D databese is not used." << std::endl;
+		std::cout << "First Tag: " << tagFrom << " Last Tag: " << tagTo << std::endl;
+	}
+	// for delay scan
+	else
+	{
+		// MySQL information
+		hostMySQL = set.GetString("hostMySQL", "");
+		userMySQL = set.GetString("userMySQL", "");
+		passMySQL = set.GetString("passMySQL", "");
+		nameMySQL = set.GetString("nameMySQL", "");
+	}
+	// Table & Field names for 0d Database 
+	tableBL = set.GetString("tableBL", "");
+	BM1FN = set.GetString("BM1FieldName", ""); //0
+	delayFN = set.GetString("delayFieldName", ""); //1
+	// Table & Field names for Timing moniter
+	if (delayScan == 2)
+	{
+		std::cout << "Delay scan with jitter extracted from Timing moniter" << std::endl;
+		tableTM = set.GetString("tableTM", ""); 
+		flagTMFN = set.GetString("timingValidName", ""); //0
+		jitterFN = set.GetString("jitterFieldName", ""); //1			
+		delayTMFN = set.GetString("timingMoniterDelayName", ""); //2
+	}
+	else
+	{
+		std::cout << "Delay scan without jitter extracted from Timing moniter" << std::endl;
+	}
+	//Tag from, Tag to
+	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
+	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
+	//Intensity informaion
+	factorBM1 = set.GetValue("ConversionFactorBM1", 10000);
+	selectIntensity = static_cast<int>(set.GetValue("SelectIntensity", false) + 0.1);
+	intensityLowerLimit = set.GetValue("IntensityLowerLimit", 0.0);
+	intensityUpperLimit = set.GetValue("IntensityUpperLimit", 100000);
+	//Delay informatyion
 	factorPMD = set.GetValue("ConversionPMtoDelay", 150);
-	delayBins = static_cast<int>(set.GetValue("DelayBins", 300));
-	delayFrom = set.GetValue("DelayFrom", -10);
-	delayTo = set.GetValue("DelayTo", 20);
-	limitTheataZ = set.GetValue("LimitOfTheataZ", 90);
-	optLaserfield = set.GetString("opticalLaserShutterFieldName",""); ; 
+	factorPMDOffset = set.GetValue("PMOffset", 0);
+	factorTM = set.GetValue("ConversionPIXtoJitter", 3.8);
+	factorTMOffset = set.GetValue("TimingMoniterOffset", 1200);
+	delayBins = static_cast<int>(set.GetValue("DelayBins", 80));
+	delayFrom = set.GetValue("DelayFrom", -4000);
+	delayTo = set.GetValue("DelayTo", 4000);
+	afterAnalysis = static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
+	trendStep = static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
+	limitOfThetaZ = static_cast<int>(set.GetValue("limitOfThetaZ", 180) + 0.1);
+	//
+	lowerDelay = static_cast<int>(set.GetValue("lowerDelay", -1000) + 0.1);
+	upperDelay = static_cast<int>(set.GetValue("upperDelay", 1000) + 0.1);
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()
@@ -279,118 +308,45 @@ void MyAnalyzer::ShowResult()
 //_____Read Intensity DATA
 void MyAnalyzer::OpenIntensityData()
 {
-	std::cout << "Method of 0D Data: " << method0D_Data << std::endl;
-	if ((zeroDTxtFileName == "")||(method0D_Data==0)) return;
+	std::cout << "Method of 0D Data: " << delayScan << std::endl;
+	if (delayScan == 0)
 	{
-		if (method0D_Data==1)
-		{
-			std::ifstream ifs(zeroDTxtFileName,std::ios::in);
-			if (ifs.fail())
-			{
-				std::cout<<"Can not open "<<zeroDTxtFileName<<std::endl;
-				return;
-			}
+		//std::cout << "Fixed delay. 0D databese is not used." << std::endl;
+		return;
+	}
+	else if (delayScan == 1) // without Jitter from Timing Moniter
+	{
+		std::cout << "Delay scan without jitter extracted from Timing moniter" << std::endl;
+		DB0d.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
+		vector<string> fields0d;
+		fields0d.push_back(BM1FN);		//0
+		fields0d.push_back(delayFN);	//1
+		DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
+		DB0d.CloseMySQL();
+		//DB0d.ShowTable();
+	}
+	else if (delayScan == 2) // with Jitter form Timing Moniter
+	{
+		std::cout << "Delay scan with jitter extracted from Timing moniter" << std::endl;
+		DB0d.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
+		vector<string> fields0d;
+		fields0d.push_back(BM1FN);		//0
+		fields0d.push_back(delayFN);	//1
+		fields0d.push_back(delayTMFN);	//2
+		DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
+		DB0d.CloseMySQL();
 
-			unsigned int uintBuf = 0;
-			double doubleBuf1;
-			double doubleBuf2;
-			char tmp[256];
-			while (!ifs.eof())
-			{
-				//read the data Tag and Intensity (uint/double)
-				ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
-				//go to nextline
-				ifs.getline(tmp,256);
-				if (uintBuf % 2 != 0)
-					std::cout<< "wrong Tag number!! "<< uintBuf;
-				if (!ifs.fail())
-				{
-					//add to map (tagDelay)
-					tagDelay.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
-					tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
-				}
-			}
+		DBTM.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
+		vector<string> fieldsTM;
+		fieldsTM.push_back(flagTMFN);	//0
+		fieldsTM.push_back(jitterFN);	//1
+		DBTM.LoadDataM(tagFrom, tagTo, fieldsTM, tableTM);
+		DBTM.CloseMySQL();
 
-			std::cout << "Intensity data: "<< tagDelay.size() << " records have been loaded." << std::endl;
-			std::map<unsigned int, double>::iterator itbegin = tagDelay.begin();
-			std::map<unsigned int, double>::iterator itend = tagDelay.end();
-			itend--;
-			std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
-		}
-
-		if (method0D_Data==2)
-		{
-			DB.Open(pathSQLite);
-			vector<string> fields;
-			fields.push_back(delayfield);
-			fields.push_back(intfield);
-			//fields.push_back(optLaserfield);
-			DB.LoadDataL(tagFrom, tagTo, fields);
-			//DB.ShowTable();
-		}
-
-		if (method0D_Data==3)
-		{
-			DB.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
-			vector<string> fields;
-			fields.push_back(delayfield);		//0
-			//fields.push_back(timeValfield);		//1
-			//fields.push_back(jitfield);			//2
-			//fields.push_back(timeMDfield);		//3
-			fields.push_back(intfield);			//4
-			//fields.push_back(optLaserfield);	//5
-			if (runMode == 1) 
-			{
-				std::cout << "Run mode" << std::endl;
-				DB.LoadDataM(runNum, fields);
-			}
-			else
-			{	
-				std::cout << "Tag mode" << std::endl;
-				DB.LoadDataM(tagFrom, tagTo, fields);
-			}
-			//DB.ShowTable();
-		}
+		std::cout << "OK" << std::endl;
+		//DBTM.ShowTable();
 	}
 }
-
-//void MyAnalyzer::Open0D_Data()
-//{
-//	if ((zeroDTxtFileName == "")||(method0D_Data==0)) return;
-//	
-//	std::ifstream ifs(zeroDTxtFileName,std::ios::in);
-//	if (ifs.fail()){
-//		std::cout<<"Can not open "<<zeroDTxtFileName<<std::endl;
-//		return;
-//	}
-//
-//	unsigned int uintBuf = 0;
-//	double doubleBuf1;
-//	double doubleBuf2;
-//	char tmp[256];
-//	while (!ifs.eof())
-//	{
-//		//read the data Tag and Intensity (uint/double)
-//		ifs >> uintBuf >> doubleBuf1 >> doubleBuf2;
-//		//go to nextline
-//		ifs.getline(tmp,256);
-//		if (uintBuf % 2 != 0)
-//			std::cout<< "wrong Tag number!! "<< uintBuf;
-//		if (!ifs.fail())
-//		{
-//			//add to map (tagDelay)
-//			tagDelay.insert(pair<unsigned int, double>(uintBuf,doubleBuf1));
-//			tagIntensity.insert(pair<unsigned int, double>(uintBuf,doubleBuf2));
-//		}
-//	}
-//
-//	std::cout << "Intensity data: "<< tagDelay.size() << " records have been loaded." << std::endl;
-//	std::map<unsigned int, double>::iterator itbegin = tagDelay.begin();
-//	std::map<unsigned int, double>::iterator itend = tagDelay.end();
-//	itend--;
-//	std::cout << "Tag number is from " << itbegin->first << " to " << itend->first << ". total records should be " << (itend->first-itbegin->first)/6 +1 << std::endl;
-//}
-
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntPartition()
 {

@@ -1,9 +1,9 @@
 #File name of output root file
-OutputROOTFile=testForCH3I.root
+OutputROOTFile=aq000.root
 #Use GUI for setting (true/false = 1/0)
 UseGUI=0
-#choose the particle sets for analysis (CH3I,IUracil,ArCluster,XeCluster)
-WhichParticles=CH3I
+#choose the particle sets for analysis (CH2I2, XeCluster)
+WhichParticles=XeCluster
 #Should be 18 or 21 (resort method)
 ReconstructionMethod=18
 #The way for extracting coincidence (1:Momentum sum 2:gated by particle)
@@ -12,17 +12,13 @@ Molecule=1
 ExtraCondition=0
 #Information for the gate of momentum sums (only need if Molecule=1)
 MomSumInfoFile=gateParameter_PerNorm_EdwinFin.txt
-#choose the methode for 0D Data (0:no data, 1:scan.txt, 2:SQLiteDB, 3:MySQL)
-0D_Data=3
-0D_DataTxtFile=testForCH3I.txt
-pathSQLite=C:\\home\\Data\\SQLite\\SACLA2015A.sqlite
-hostMySQL=192.168.0.115
-userMySQL=uedalab
+#choose the methode for 0D Data (0:no 0d data, 1:MySQL)
+delayScan=1
+hostMySQL=192.168.0.104
+userMySQL=sacla
 passMySQL=xuedalabx
-nameMySQL=sacla2015a
-#choose the TagMode or RunMode(0:Tag, 1:Run)
-runMode=0
-runNumber=000
+nameMySQL=sacla2015b
+tableMySQL=0dData
 TagFrom=92152228
 TagTo=92153228
 #Intensity info

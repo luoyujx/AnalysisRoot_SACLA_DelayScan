@@ -49,6 +49,7 @@ bool TofPosCondition(const MyDetektorHit &dh);
 
 void DivideHisto2Dby1D(TH2D *h2d, TH1D *h1d);
 
-extern DataBase0d DB;
+extern DataBase0d DB0d;
+extern DataBase0d DBTM;
 
 #endif

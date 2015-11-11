@@ -23,7 +23,7 @@ void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int h
 	}
 }
 //-------------------fill particle Histograms---------------------------------------------------//
-void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::vector<double>& intPart,int delayBins,double delayFrom,double delayTo,double limitTheataZ ) 
+void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, std::vector<double>& delay, MyHistos &hi, int hiOff, std::vector<double>& intPart, int delayBins, double delayFrom, double delayTo, double limitOfThetaZ)
 {	
 	//if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
 	double MomLim = 1000;
@@ -32,23 +32,22 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	const double SliceLim = 20;
 	if (p.GetCharge_au()>8) MomLim = 1200;
 
-	double delay = 0.0;
-	if (intensity.size()) delay = intensity[0];
+	double fdelay = 0.0;
+	if (intensity.size()) fdelay = delay[2];
 	
 	double felIntensity = 0.0;
 	if (intensity.size() > 1) felIntensity = intensity[1];
 
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
-
-	if (ph.ThetaZ() > limitTheataZ ) return;
-	//if (ph.ThetaZ() > 90 ) return;
+	//if (ph.ThetaZ() > 90) return;
+	if (ph.ThetaZ() > limitOfThetaZ) return;
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
 	if (intensity.size() && (intPart.size()>1)) hi.fill(hiOff++,Form("Intensity%s",p.GetName()),intensity[0],"Laser Power",intPart.size()-1,&intPart.front(),Form("%s",p.GetName()));
 	else hiOff++;
-	if (intensity.size()) hi.fill(hiOff++,"Delay",delay,"Delay [ps]",delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	if (intensity.size()) hi.fill(hiOff++,"Delay",fdelay,"Delay [ps]",delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 	else hiOff++;
 
 	//detektor pictures//
@@ -66,7 +65,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"YPosVsTof",ph.TofCor(),ph.YCorRotScl(),"tof [ns]","y [mm]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,300,p.GetCondRadY()-p.GetYcor()-p.GetCondRad()*1.3,p.GetCondRadY()-p.GetYcor()+p.GetCondRad()*1.3,Form("%s/Raw",p.GetName()));
 
 	//delay vs Tof
-	hi.fill(hiOff++,"DelayVsTof",ph.TofCor(),delay,"tof [ns]","delay [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	hi.fill(hiOff++,"DelayVsTof",ph.TofCor(),fdelay,"tof [ns]","delay [fs]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 
 	//intensity vs Tof
 	//hi.fill(hiOff++,"FELIntensityVsTof",ph.TofCor(),felIntensity,"tof [ns]","FEL Intensity [ps]",300,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.3,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.3,1200,0,1200,Form("%s",p.GetName()));
@@ -109,7 +108,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//Energy//
 	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",500,0,500,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,500,0,500,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),delay,"Energy [eV]","delay [ps]",100,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),fdelay,"Energy [eV]","delay [fs]",500,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
@@ -118,7 +117,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//hi.fill(hiOff++,"EnergyVsTOFCor",ph.TofCor(),ph.E(),"TOF [ns]","Energy [eV]",10000,0,30000,500,0,500,Form("%s/Energy",p.GetName()));
 	//else hiOff++;
 
-	if (ph.ThetaZ() <  15) hi.fill(hiOff++, "EnergyUpto015deg", ph.E(), "Energy [eV]", 500, 0, 500, Form("%s/Energy", p.GetName())); else hiOff++;
+	//if (ph.ThetaZ() <  15) hi.fill(hiOff++, "EnergyUpto015deg", ph.E(), "Energy [eV]", 500, 0, 500, Form("%s/Energy", p.GetName())); else hiOff++;
 	//if (ph.ThetaZ() <   5) hi.fill(hiOff++, "EnergyUpto005deg", ph.E(), "Energy [eV]", 150, 0, 150, Form("%s/Energy", p.GetName())); else hiOff++;
 	
 	/*
@@ -1060,7 +1059,7 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	for(size_t i=1; i< particles.size(); i++)
 	{
 		//create a histogram that will take the normalized Data//
-		TH1D* delayVsCountNorm = dynamic_cast<TH1D*>(hi.create1d( (idx+10*i) + 1,"DelayVsCount_Norm","delay [ps]", delayBins,delayFrom,delayTo,Form("%s/Delay",particles[i].GetName())));
+		TH1D* delayVsCountNorm = dynamic_cast<TH1D*>(hi.create1d( (idx+10*i) + 1,"DelayVsCount_Norm","delay [fs]", delayBins,delayFrom,delayTo,Form("%s/Delay",particles[i].GetName())));
 		//TH2D* DealyVsEnergyNorm = dynamic_cast<TH2D*>(hi.create2d( (idx+10*i) + 2,"DealyVsEnergy_Norm","Number of Hits", delayBins,delayFrom,delayTo,Form("%s",particles[i].GetName())));
 		
 		//get histogram

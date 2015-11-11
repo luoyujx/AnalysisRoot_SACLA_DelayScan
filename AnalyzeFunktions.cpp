@@ -156,14 +156,6 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 	//---Test N2 molecule
 	//AddNitrogen(particles);
 }
-//_______SACLA 2012A______________________________________________________________________________
-void TofCorrection(MyDetektorHit &dh, const double alpha, const double k2, const double k4, const double xc, const double t0)
-{
-	const double t = dh.Time()-t0;
-	const double x = dh.X()-xc;
-	dh.SetTof( t - alpha*t*(k2*x*x+k4*x*x*x*x) );
-}
-
 //________Analysis main loop___________________________________________________________________________________________________________________________________________________
 void MyAnalyzer::Analyze(MyWaveform &wf)
 {
@@ -171,349 +163,174 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	int startIdx=10;
 	//for Trend Histogram
 	const int skipCounter = static_cast<int>(fEntryIterator/trendStep);
-	
-	//clear the containers//
+	// clear the containers//
 	fIntensities.clear();
+	fDelays.clear();
 	fParticles.ClearParticles();
 	//Get Tag number on this event
 	const unsigned int TagNumber = fOE.GetEventID();
-	if (optShutMode == 1)
+	// Get XFEL intensity, Delay
+	if (delayScan == 0) // MySQL databse is not used
 	{
-		if(static_cast<int>(DB.GetStatusAndData(TagNumber,5).second+0.1) != 0) 
-		{
-			fHi.SetMainDir("OptLaserOn");
-			startIdx=10;
-		}
-		if(static_cast<int>(DB.GetStatusAndData(TagNumber,5).second+0.1) == 0) 
-		{
-			fHi.SetMainDir("OptLaserOff");
-			startIdx=5010;
-		}
+		fIntensities.push_back(0.); //[0] Upper PD
+		fIntensities.push_back(0.); //[1] Lower PD
+		fIntensities.push_back(0.);	//[2] Upper PD + Lower PD
+		fDelays.push_back(0.);	//[0] EH Delay	
+		fDelays.push_back(0.);	//[1] Jitter 
+		fDelays.push_back(0.);	//[2] Cor. Delay
 	}
-	//select tag number
-	//if (TagNumber < 489913416) return;
-
-	//Position information
-	//std::map<unsigned int, double>::iterator itPosX;//X
-	//std::map<unsigned int, double>::iterator itPosY;//Y
-	//itPosX = beamPosX.find(TagNumber);
-	//itPosY = beamPosY.find(TagNumber);
-	//if ((itPosX == beamPosX.end())||(itPosY == beamPosY.end()))
-	//{
-	//	std::cout <<"\r"<<TagNumber<< " is not found!!";
-	//	missedTagCount++;
-	//	return;
-	//}
-	//const double beamPositionX = itPosX->second;
-	//const double beamPositionY = itPosY->second;
-
-	//Get intensity from loaded data map
-	if ((zeroDTxtFileName != "")&&(method0D_Data!=0))
+	if (delayScan == 1) // without Jitter from Timing moniter
 	{
-		if (method0D_Data==1)
+		// Chack 0D databse
+		if (DB0d.GetStatusAndData(TagNumber, 0).first == 0)
 		{
-			std::map<unsigned int, double>::iterator itTagDelay;//Delay
-			std::map<unsigned int, double>::iterator itTagInt;//PD
-			itTagDelay = tagDelay.find(TagNumber);
-			itTagInt = tagIntensity.find(TagNumber);
-
-			if ((itTagDelay == tagDelay.end())||(itTagInt == tagIntensity.end()))
-			{
-				//std::cout <<"\r"<<TagNumber<< " is not found!!";
-				missedTagCount++;
-				return;
-			}
-
-			fIntensities.push_back((factorPMDOffset - itTagDelay->second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			fIntensities.push_back(itTagInt->second * factorPD);//[1] PD:
+			if (missedTagCount % 100 == 0) std::cout << "\r" << TagNumber << " is not found!!";
+			missedTagCount++;
+			return;
 		}
-
-		if (method0D_Data==2)
+		// Intensity
+		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 0).second)))
 		{
-			if(DB.GetStatusAndData(TagNumber,0).first==0)
-			{
-				//std::cout <<"\r"<<TagNumber<< " is not found!!";
-				missedTagCount++;
-				return;
-			}	
-			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
-			{
-				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
-			}
-			if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
-			{
-				std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
-			}
-			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			fIntensities.push_back(DB.GetStatusAndData(TagNumber,1).second * factorPD);//[1] PD:
+			std::cout << "Intensity of " << TagNumber << " is NaN " << std::endl;
+			missedTagCount++;
+			return;
 		}
-		if (method0D_Data==3)
+		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1); //[0] BM1
+		// Delay
+		if (_isnan(DB0d.GetStatusAndData(TagNumber, 1).second))
 		{
-			if(DB.GetStatusAndData(TagNumber,0).first==0)
-			{
-				std::cout <<"\r"<<TagNumber<< " is not found!!";
-				missedTagCount++;
-				return;
-			}
-			// Delay
-			if( _isnan(DB.GetStatusAndData(TagNumber,0).second))
-			{
-				std::cout <<"Delay of "<<TagNumber<< " is NaN " << std::endl;
-				missedTagCount++;
-				return;
-			}
-			fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber, 0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			// Intensity
-			if (_isnan(DB.GetStatusAndData(TagNumber, 1).second))
-			{
-				std::cout << "Intensity of " << TagNumber << " is NaN " << std::endl;
-				missedTagCount++;
-				return;
-			}
-			fIntensities.push_back(DB.GetStatusAndData(TagNumber, 1).second * factorPD);//[1] PD:
-			//if( _isnan(DB.GetStatusAndData(TagNumber,1).second))
-			//{
-			//	std::cout <<"Timing_Valid  of "<<TagNumber<< " is NaN " << std::endl;
-			//	fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);
-			//}
-			
-			//if(!DB.GetStatusAndData(TagNumber,1).second)
-			//{
-			//	fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD);//[0] Delay	BM1:24486*1000000
-			//}
-			/*
-			else
-			{
-				if( _isnan(DB.GetStatusAndData(TagNumber,2).second))
-				{
-					std::cout <<"Timing_Jitter  of "<<TagNumber<< " is NaN " << std::endl;
-				}
-				if( _isnan(DB.GetStatusAndData(TagNumber,3).second))
-				{
-					std::cout <<"xfel_bl_3_st_1_motor_73/position  of "<<TagNumber<< " is NaN " << std::endl;
-				}
-				else
-				{
-					fIntensities.push_back((factorPMDOffset - DB.GetStatusAndData(TagNumber,0).second) / factorPMD + DB.GetStatusAndData(TagNumber,2).second);
-				}
-			}
-			*/
+			std::cout << "Delay of " << TagNumber << " is NaN " << std::endl;
+			missedTagCount++;
+			return;
 		}
-
-		// FEL intensity
-		//if( _isnan(DB.GetStatusAndData(TagNumber,4).second))
-		//{
-		//	std::cout <<"Intensity of "<< TagNumber << " is NaN " << std::endl;
-		//}
-		//fIntensities.push_back(DB.GetStatusAndData(TagNumber,4).second * factorPD);//[1] PD:
+		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) / factorPMD);	//[0] EH Delay	
+		fDelays.push_back(0.);																			//[1] Jitter 
+		fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay	
 	}
-
-		////------------------------------------------SACLA 2012A
-		////PhotoDiode intensity
-		//if ( itTagInt->first < 156088080 )
-		//	//before changing Al plate
-		//	//fIntensities.push_back((tagIntensity.find(TagNumber)->second)*1000*36.15);
-		//	fIntensities.push_back((tagIntensity.find(TagNumber)->second)/1.926E-5);//5.5keV PD->microJ(weak setting)
-		//else
-		//	fIntensities.push_back((tagIntensity.find(TagNumber)->second)/6.963E-4);//5.5keV PD->microJ
-		//	//fIntensities.push_back((tagIntensity.find(TagNumber)->second)/1.17E-3);//5.0keV PD->microJ
-
-		////FEL is attenuated, set tag region
-		//const unsigned int tagFrom = 167982762;	//att0p4(5.5keV):159612312		Al25micro(5.0keV):167982762
-		//const unsigned int tagTo = 170567544;	//att0p4(5.5keV):161807544		Al25micro(5.0keV):170567544
-		//const double attFactor = 0.381;//5.5keV:0.381  5.5keV:0.52(test)  5.0keV:0.271
-		//if (( tagFrom <= itTagInt->first ) && ( itTagInt->first <= tagTo ))
-		//	fIntensities.push_back(itTagInt->second * attFactor);
-		//else 
-		//	fIntensities.push_back(itTagInt->second);
-		////----------------------------------------------------
-
-		//for (size_t i=0;i<fIntensities.size();++i)
-		//{
-		//	fHi.fill(startIdx++,Form("Int%d",i),fIntensities[i],Form("Int%d",i),1000,0,1000,"Intensity");
-		//	for (size_t j=i+1; j<fIntensities.size();++j)
-		//	{
-		//		fHi.fill(startIdx++,Form("IntDep(%d)(%d)",i,j),fIntensities[i], fIntensities[j],Form("Int %d",i),Form("Int %d",j),1000,0,1000,1000,0,1000,"Intensity");
-		//	}
-		//}
-		//if (fIntensities.size() > 1)
-		//	if ( fIntensities[0]*fIntensities[1]>0)
-		//		fHi.fill(startIdx+1,"IntensityDivide0by1",fIntensities[0]/fIntensities[1],"IntensityDivide0by1",1000,0,5,"Intensity");
-		//startIdx+=2;
+	if (delayScan == 2) // with Jitter from Timing moniter, This mode should be chacked.
+	{
+		// Check 0D database
+		if (DBTM.GetStatusAndData(TagNumber, 0).first == 0)
+		{
+			//if (missedTagCount % 100 == 0) std::cout << "\r" << TagNumber << " is not found!!";
+			//std::cout << TagNumber << " is not found!!" << std::endl;
+			missedTagCount++;
+			return;
+		}
+		// Intensity
+		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 0).second)))
+		{
+			//std::cout << "Intensity of " << TagNumber << " is NaN " << std::endl;
+			missedTagCount++;
+			return;
+		}
+		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1); //[0] BM1
 		//
-		fHi.fill(startIdx, "Ch7NumberOfPeaks", fSAE.GetChannel(7 - 1).GetNbrPeaks(), "[cts]", 20000, -1000, 1000);
-		startIdx++;
-		fHi.fill(startIdx, "Ch7Integral", Integral(fOE.GetChannel(7 - 1), 0, 30000, false), "[cts]", 20000, -1000, 1000);
-		startIdx++;
-
-		////-----------------------------------
-		fHi.fill(startIdx,"IntensityFEL",fIntensities[1],"[arb. unit]",1000,0,1000);
-		startIdx++;
-		fHi.fill(startIdx,"Delay",fIntensities[0],"[arb. unit]",10000,-500,500);
-		startIdx++;
-		////-----Trend plot BM1 & PD intensity
-		//fHi.fill(startIdx,"TrendIntensityFEL",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[1]/skipCounter);
-		//startIdx++;
-		//fHi.fill(startIdx,"TrendDelay",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fIntensities[0]/skipCounter);
-		//startIdx++;
-		//fHi.fill(startIdx,"TrendNumberOfHits",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",rd.GetNbrOfHits()/skipCounter);
-		//startIdx++;
-		//fHi.fill(startIdx,"TrendBeamPosX",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionX);
-		//startIdx++;
-		//fHi.fill(startIdx,"TrendBeamPosY",skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",beamPositionY);
-		//startIdx++;
-		
-		//--skip this shot event if FEL is below 5 (FEL is stopped)
-		if (!selectIntensity)
+		// Delay
+		if (_isnan(DB0d.GetStatusAndData(TagNumber, 1).second))
 		{
-			if (fIntensities[1] < 5) return;
+			//std::cout << "Delay of " << TagNumber << " is NaN " << std::endl;
+			missedTagCount++;
+			return;
 		}
-
-		if (selectIntensity)
+		//
+		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 2).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 0).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 1).second)))
 		{
-			//---skip this shot event if FEL is below the lower limit
-			if (fIntensities[1]<intensityLowerLimit) return;
-			//---skip this shot event if FEL is over the upper limit
-			if (fIntensities[1]>intensityUpperLimit) return;
+			//std::cout << "Jitter of " << TagNumber << " is NaN " << std::endl;
+			missedTagCount++;
+			return;
 		}
-		if (fIntensities.size()) fHi.fill(startIdx,"IntensitySelectPD",fIntensities[1],"[arb. unit]",1000,0,1000);
-		startIdx++;
-
-		//if (existIntPartition)
-		//{
-		//	//---for getting power dep
-		//	if (fIntensities.size() && (intPartition.size()>1)) fHi.fill(startIdx,"IntensityPDForPowDep",fIntensities[0],"[arb. unit]",intPartition.size()-1,&intPartition.front(),"PowerDependence");
-		//	startIdx++;
-		//	int whichRegion = -1;
-		//	for (size_t k=0; k<intPartition.size()-1; k++)
-		//	{
-		//		if ((intPartition[k]<fIntensities[0])&&(fIntensities[0]<intPartition[k+1]))
-		//		{
-		//			whichRegion = k;
-		//			fHi.fill(startIdx+k,Form("Intensity%02d",k),fIntensities[0],"[arb. unit]",1000,0,500,"PowerDependence");
-		//		}
-		//	}
-		//	startIdx += intPartition.size();
-		//}
-
+		if (!DBTM.GetStatusAndData(TagNumber, 0).second)
+		{
+			//std::cout << "Jitter of " << TagNumber << " is not analysed " << std::endl;
+			missedTagCount++;
+			return;
+		}
+		fDelays.push_back((DB0d.GetStatusAndData(TagNumber, 1).second - factorPMDOffset) / factorPMD * 1000); //[0] EH Delay [fs]
+		//
+		if (fDelays[0]<lowerDelay)
+		{
+			//std::cout << "Jitter of " << TagNumber << " is not analysed " << std::endl;
+			missedTagCount++;
+			return;
+		}
+		if (fDelays[0]>upperDelay)
+		{
+			//std::cout << "Jitter of " << TagNumber << " is not analysed " << std::endl;
+			missedTagCount++;
+			return;
+		}
+		fDelays.push_back(factorTM*(DBTM.GetStatusAndData(TagNumber, 1).second - factorTMOffset)); //[1] Jitter 
+		fDelays.push_back(fDelays[0] + fDelays[1]); // Cor. Delay + (factorTMPMDOffset - DB.GetStatusAndData(TagNumber, 5).second) / factorTMPMD);
+	}
+	//
+	////-----------------------------------
+	//// No selected histgrams //// index = 10
+	// XFEL intenisty
+	fHi.fill(startIdx + 1, "DelayVsJitter", fDelays[0], fDelays[1], "Delay [fs]", "Jitter [fs]", delayBins, delayFrom, delayTo, delayBins, delayFrom, delayTo); // Delay vs XFEL intenisty
+	fHi.fill(startIdx + 2, "IntensityXFEL", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // XFEL intensity BM1
+	startIdx += 3; // index = 13
+	//
+	// Delay
+	fHi.fill(startIdx + 0, "Delay(no correction)", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // Delay (inclued jitter)
+	fHi.fill(startIdx + 1, "Jitter", fDelays[1], "[fs]", delayBins, delayFrom, delayTo); // Jitter
+	fHi.fill(startIdx + 2, "Delay", fDelays[2], "[fs]", delayBins, delayFrom, delayTo);  // Delay (no jitter)	
+	startIdx += 3; // index = 16
+	// Trend plot XFEL intensity, Delay, number of hit.
+	fHi.fill(startIdx + 2, "TrendIntensityXFEL", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", fIntensities[0]); // XFEL intensity BM1
+	fHi.fill(startIdx + 3, "TrendDelay(MotorPosition)", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", fDelays[0]);  // Delay (inclued jitter)
+	fHi.fill(startIdx + 4, "TrendJitter", skipCounter, Form("[shots/%d]", trendStep), 100000, 0, 100000, "Trend", fDelays[1]); // Jitter
+	fHi.fill(startIdx + 5, "TrendDelay", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", fDelays[2]);  // Delay (no jitter)	
+	fHi.fill(startIdx + 6, "TrendNumberOfHits", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", rd.GetNbrOfHits()); // number of hits
+	startIdx += 7; // index = 23
+	//	
+	//--skip this shot event if FEL is below 5 (FEL is stBopped)
+	if (!selectIntensity)
+	{
+		if (fIntensities[0] < 5) return;
+	}
+	if (selectIntensity)
+	{
+	//---skip this shot event if FEL is below the lower limit
+		if (fIntensities[0]<intensityLowerLimit) return;
+		//---skip this shot event if FEL is over the upper limit
+		if (fIntensities[0]>intensityUpperLimit) return;
+	}
+	if (fIntensities.size())
+	{
+		fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // selected XFEL intensity
+	}
+	startIdx++;
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
-	startIdx++;
-
-	//Analyze MCP intensity
-
-	//fillMCPToFHistograms(fOE, fHi, mcpTofRegion);
-
-	//MCP intensity
-	//Ar1p
-	//Ar2p
-	//Ar3p
-	//	double McpIntensityAr1p = Average(fOE.GetChannel(7-1),    7000,7560,true);//Voltage D2:4000
-	//	double McpIntensityAr2p = Average(fOE.GetChannel(7-1),    5250,5680,true);//Voltage D2:4000
-	//	double McpIntensityAr3p = Average(fOE.GetChannel(7-1),    4400,4740,true);//Voltage D2:4000 // Ar is not yet
-
-	//Xe1p
-	//Xe2p
-	//Xe3p
-	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),7000,7600,true);//Voltage D2:4000
-	//const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),5250,5680,true);//Voltage D2:4000
-	//const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),4400,4740,true);//Voltage D2:4000
-
-	//double McpIntensityXe1p = Average(fOE.GetChannel(7-1),5200,5800,true);//Voltage D2:8000
-	//double McpIntensityXe2p = Average(fOE.GetChannel(7-1),4000,4280,true);//Voltage D2:8000
-	//double McpIntensityXe3p = Average(fOE.GetChannel(7-1),3400,3550,true);//Voltage D2:8000
-
-	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),14127,17150,true);//Voltage D2:800
-	//const double McpIntensityXe1pH = Average(fOE.GetChannel(7-1),14000,16200,true);//Voltage D2:800<----High energy region
-	//const double McpIntensityXe1pL = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800<----Low energy region
-	//const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),10254,12300,true);//Voltage D2:800
-	//const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),16329,16554,true);//Voltage D2:800
-
-	//Argon D2:800V setting
-	//const double McpIntensityXe1p = Average(fOE.GetChannel(7-1),8600,9600,true);//Voltage D2:800
-	//const double McpIntensityXe2p = Average(fOE.GetChannel(7-1),6450,6900,true);//Voltage D2:800
-	//const double McpIntensityXe3p = Average(fOE.GetChannel(7-1),5400,5600,true);//Voltage D2:800
-	//----------------------------------
-	//Delay dependence SACLA2014A
-	//----------------------------------
-
+	startIdx++; // index = 24
+	//
 	if (fSAE.GetChannel(7 - 1).GetNbrPeaks() == 0) return;
-
-	fHi.fill(startIdx+0,"DelayVsShots",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo);
-	fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,delayBins, delayFrom, delayTo, 1000 ,0 , 1000);
-	//fHi.fill(startIdx+1,"DelayVsXFELintensity",fIntensities[0],fIntensities[1],"Delay [ps]","XFEL intensity [arb .unit]" ,32 , -5, 11, 30, 0, 600);
-	//fHi.fill(startIdx+1,"DelayDependenceXe1p2D",fIntensities[0], McpIntensityXe1pH,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
-	//fHi.fill(startIdx+2,"DelayDependenceXe2p2D",fIntensities[0], McpIntensityXe2pL,"Delay [ps]","MCPintensity",200,-50,50,500,0,500);
-	//fHi.fill(startIdx+3,"DelayDependenceXe3p2D",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",200,-50,50,500,0,1000);
-	//fHi.fill(startIdx+4,"DelayDependenceXe1pH",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pH);
-	//fHi.fill(startIdx+5,"DelayDependenceXe1pL",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe1pL);
-	//fHi.fill(startIdx+6,"DelayDependenceXe2p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe2p);
-	//fHi.fill(startIdx+7,"DelayDependenceXe3p",fIntensities[0],"Delay [ps]", delayBins, delayFrom, delayTo,"",McpIntensityXe3p);
-	startIdx += 2;
-
-	//fHi.fill(startIdx+0,"DelayVsShots_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550);
-	//fHi.fill(startIdx+1,"DelayDependenceXe1p2D_UltraWide",fIntensities[0], McpIntensityXe1p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
-	//fHi.fill(startIdx+2,"DelayDependenceXe2p2D_UltraWide",fIntensities[0], McpIntensityXe2p,"Delay [ps]","MCPintensity",500,-50,550,500,0,500);
-	//fHi.fill(startIdx+3,"DelayDependenceXe3p2D_UltraWide",fIntensities[0], McpIntensityXe3p,"Delay [ps]","MCPintensity",500,-50,550,500,0,1000);
-	//fHi.fill(startIdx+4,"DelayDependenceXe1p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe1p);
-	//fHi.fill(startIdx+5,"DelayDependenceXe2p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe2p);
-	//fHi.fill(startIdx+6,"DelayDependenceXe3p_UltraWide",fIntensities[0],"Delay [ps]",1000,-50,550,"",McpIntensityXe3p);
-
-	//for (size_t i = 0; i < fOE.GetNbrSamples(); i++)
-	//	fHi.fill(startIdx+7,"DelayVsMCPSignal",i,fIntensities[0],"tof [ns]","Delay [ps]",3000,0,fOE.GetNbrSamples(), delayBins, delayFrom, delayTo,"",wf.GetWaveform()[i]);
-	//startIdx++;
-
-	//---get the raw mcp events called times//
-	const MySignalAnalyzedChannel &sac = fSAE.GetChannel(7-1);
-	for (size_t i=0; i<sac.GetNbrPeaks();++i)
-	{
-		const MyPeak &p = sac.GetPeak(i);
-		fHi.fill(startIdx,"Times_MCP",p.GetTime(),"tof [ns]",5000,0,fOE.GetNbrSamples()*fOE.GetSampleInterval()*1e9);
-	}
-	startIdx++;
-	
-	if(fSAE.GetChannel(7-1).GetNbrPeaks())
-	{
-		const MyPeak &p_t0 = fSAE.GetChannel(7-1).GetPeak(0);
-		fHi.fill(startIdx,"Times_MCP_first",p_t0.GetTime(),"tof [ns]",10000,0,2000);
-	}
-	startIdx++;
-	//-----------------------Set jet speed
-	//for (size_t i=0;i<fParticles.GetNbrOfParticles();++i)
-	//{
-	//	MyParticle &p = fParticles.GetParticle(i);
-	//	p.SetXVelocity(XVelocity);
-	//	p.SetYVelocity(YVelocity);
-	//}
-
-	int secondStartIdx=startIdx+20;
+	//
+	//// Delay vs Shots, XFELintensity, NumberOfHits
+	fHi.fill(startIdx + 0, "DelayVsShots", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo); // Delay vs Shots
+	fHi.fill(startIdx + 1, "DelayVsXFELintensity", fDelays[2], fIntensities[2], "Delay [fs]", "XFEL intensity [arb .unit]", delayBins, delayFrom, delayTo, 1000, 0, 1000); // Delay vs XFEL intenisty
+	fHi.fill(startIdx + 2, "DelayVsNumberOfHits", fDelays[2], rd.GetNbrOfHits(), "Delay [fs]", "Number of Hits", delayBins, delayFrom, delayTo, 100, 0, 100); // Delay vs Number of Hits
+	startIdx += 3; // index = 27
+	//
+	int secondStartIdx = startIdx + 20;
 	//go through all resorted detektorhits//
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
 	{
 		MyDetektorHit &dh = rd.GetHit(i);
-
 		//the tof is just the timing of the mcp signal//
 		dh.SetTof(dh.Time());
-
-		////rotate det image
-		//-----------Position correction(SACLA 2012A Spectromertor D" 520V)----------//
-		//const double angle = -8*TMath::DegToRad();
-		//dh.SetXmm(TMath::Cos(angle)*dh.X() + TMath::Sin(angle)*dh.Y());
-		//dh.SetYmm(-TMath::Sin(angle)*dh.X() + TMath::Cos(angle)*dh.Y());
-
 		//detektor & tof for all Hits//
 		const double maxPos	= (rd.GetRunTime()+30)*rd.GetSfU();
 		MyParticle &LastParticle = fParticles.GetParticle(fParticles.GetNbrOfParticles()-1);
-		//const double maxTof = LastParticle.GetCondTofTo() + LastParticle.GetCondTofRange()*0.3;
 		const double maxTof	= fOE.GetNbrSamples()*fOE.GetSampleInterval()*1e9;
-
-		fHi.fill(startIdx+1,"DetAll",dh.X(),dh.Y(),"x [mm]","y [mm]",300,-maxPos,maxPos,300,-maxPos,maxPos);
-		fHi.fill(startIdx+2,"TofAll",dh.Tof(),"tof [ns]",30000,0,maxTof);
-		fHi.fill(startIdx+3,"XPosVsTofAll",dh.Tof(),dh.X(),"tof [ns]","x [mm]",5000,0,maxTof,300,-maxPos,maxPos);
-		fHi.fill(startIdx+4,"YPosVsTofAll",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",5000,0,maxTof,300,-maxPos,maxPos);
-		fHi.fill(startIdx+5,"TOF",dh.Tof(),"tof [ns]",4000,0,6000);
-		fHi.fill(startIdx+6,"XTOF",dh.Tof(),dh.X(),"tof [ns]","x [mm]",4000,0,6000,300,-50,50);
-		fHi.fill(startIdx+7,"YTOF",dh.Tof(),dh.Y(),"tof [ns]","y [mm]",4000,0,6000,300,-50,50);
-
+		//
+		fHi.fill(startIdx + 0, "Det", dh.X(), dh.Y(), "x [mm]", "y [mm]", 300, -maxPos, maxPos, 300, -maxPos, maxPos);
+		fHi.fill(startIdx + 1, "Tof", dh.Tof(), "tof [ns]", 30000, 0, maxTof);
+		fHi.fill(startIdx + 2, "XPosVsTof", dh.Tof(), dh.X(), "tof [ns]", "x [mm]", 30000, 0, maxTof, 300, -maxPos, maxPos);
+		fHi.fill(startIdx + 3, "YPosVsTof", dh.Tof(), dh.Y(), "tof [ns]", "y [mm]", 30000, 0, maxTof, 300, -maxPos, maxPos);
+		fHi.fill(startIdx + 4, "DelayVsTof", dh.Tof(), fDelays[2], "tof [ns]", "Delay [fs]", 5000, 0, maxTof, delayBins, delayFrom, delayTo);
+		fHi.fill(startIdx + 5, "XFELIntensityVsTOF", dh.Tof(), fIntensities[2], "tof [ns]", "XFEL intensity [arb. unit]", 5000, 0, maxTof, 1000, 0, 1000, "Ion");
+		//
 		//-----Particle(0)---Ion---
 		//get the particle from the vector//
 		MyParticle &p = fParticles.GetParticle(0);
@@ -523,30 +340,25 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				if (dh.RekMeth() < rekmeth)//added by motomura
 				{
 					const MyParticleHit &ph = p.AddHit(dh);
-
-					fHi.fill(startIdx+8,"Mass",ph.Mass(),"Mass/q",10000,0,500,"Ion");
-					//fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",20000,p.GetCondTofFr()-p.GetT0()-p.GetCondTofRange()*0.1,p.GetCondTofTo()-p.GetT0()+p.GetCondTofRange()*0.1,"Ion");
-					fHi.fill(startIdx+9,"TofCor",ph.TofCor(),"tof [ns]",10000,0,maxTof,"Ion");
-					fHi.fill(startIdx+10,"Det",ph.X(),ph.Y(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-					fHi.fill(startIdx+11,"Tof",ph.Tof(),"tof [ns]",20000,0,maxTof,"Ion");
-					fHi.fill(startIdx+12,"XPosVsTof",ph.Tof(),ph.X(),"tof [ns]","x [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
-					fHi.fill(startIdx+13,"YPosVsTof",ph.Tof(),ph.Y(),"tof [ns]","y [mm]",5000,p.GetCondTofFr()-p.GetCondTofRange()*0.1,p.GetCondTofTo()+p.GetCondTofRange()*0.1,300,p.GetCondRadX()-p.GetCondRad()*1.1,p.GetCondRadX()+p.GetCondRad()*1.1,"Ion");
-					fHi.fill(startIdx+14,"DetCorScale",ph.XCorRotScl(),ph.YCorRotScl(),"x [mm]","y [mm]",300,p.GetCondRadX()-p.GetCondRad()*1.3,p.GetCondRadX()+p.GetCondRad()*1.3,300,p.GetCondRadY()-p.GetCondRad()*1.3,p.GetCondRadY()+p.GetCondRad()*1.3,"Ion");
-					fHi.fill(startIdx+15,"DelayVsTOF",dh.Tof(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
-					fHi.fill(startIdx+16,"DelayVsTOFCor",ph.TofCor(),fIntensities[0],"tof [ns]","Delay [ps]",1000,0,maxTof, delayBins, delayFrom, delayTo,"Ion");
-					//fHi.fill(startIdx+17,"FELIntensityVsTOFCor",ph.TofCor(),fIntensities[1],"tof [ns]","FEL intensity [arb. unit]",1000,0,maxTof, 1000, 0, 1000,"Ion");
-					//fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, delayBins/5, -5, delayTo, 60, 0, 600, "Ion");
-					//fHi.fill(startIdx+18,"DelayVsXFELintensityVsTOFCor",ph.TofCor(),fIntensities[0],fIntensities[1],"tof [ns]","Delay [ps]","XFEL intensity [arb. unit]",1000,0,maxTof, 32, -5, 11, 30, 0, 600, "Ion");
+					fHi.fill(startIdx + 6, "Mass", ph.Mass(), "Mass/q", 10000, 0, 500, "Ion");
+					fHi.fill(startIdx + 7, "Det", ph.X(), ph.Y(), "x [mm]", "y [mm]", 300, p.GetCondRadX() - p.GetCondRad()*1.3, p.GetCondRadX() + p.GetCondRad()*1.3, 300, p.GetCondRadY() - p.GetCondRad()*1.3, p.GetCondRadY() + p.GetCondRad()*1.3, "Ion");
+					fHi.fill(startIdx + 8, "Tof", ph.Tof(), "tof [ns]", 30000, 0, maxTof, "Ion");
+					fHi.fill(startIdx + 9, "XPosVsTof", ph.Tof(), ph.X(), "tof [ns]", "x [mm]", 10000, p.GetCondTofFr() - p.GetCondTofRange()*0.1, p.GetCondTofTo() + p.GetCondTofRange()*0.1, 300, p.GetCondRadX() - p.GetCondRad()*1.1, p.GetCondRadX() + p.GetCondRad()*1.1, "Ion");
+					fHi.fill(startIdx + 10, "YPosVsTof", ph.Tof(), ph.Y(), "tof [ns]", "y [mm]", 5000, p.GetCondTofFr() - p.GetCondTofRange()*0.1, p.GetCondTofTo() + p.GetCondTofRange()*0.1, 300, p.GetCondRadX() - p.GetCondRad()*1.1, p.GetCondRadX() + p.GetCondRad()*1.1, "Ion");
+					fHi.fill(startIdx + 11, "DelayVsTOF", dh.Tof(), fDelays[2], "tof [ns]", "Delay [ps]", 1000, -p.GetT0(), maxTof - p.GetT0(), delayBins, delayFrom, delayTo, "Ion");
+					//
+					fHi.fill(startIdx + 12, "DetCorScale", ph.XCorRotScl(), ph.YCorRotScl(), "x [mm]", "y [mm]", 300, p.GetCondRadX() - p.GetCondRad()*1.3, p.GetCondRadX() + p.GetCondRad()*1.3, 300, p.GetCondRadY() - p.GetCondRad()*1.3, p.GetCondRadY() + p.GetCondRad()*1.3, "Ion");
+					fHi.fill(startIdx + 13, "TofCor", ph.TofCor(), "tof [ns]", 30000, -p.GetT0(), maxTof - p.GetT0(), "Ion");
+					fHi.fill(startIdx + 14, "XPosVsTofCor", ph.TofCor(), ph.X(), "tof [ns]", "x [mm]", 5000, p.GetCondTofFr() - p.GetCondTofRange()*0.1 - p.GetT0(), p.GetCondTofTo() + p.GetCondTofRange()*0.1 - p.GetT0(), 300, p.GetCondRadX() - p.GetCondRad()*1.1, p.GetCondRadX() + p.GetCondRad()*1.1, "Ion");
+					fHi.fill(startIdx + 15, "YPosVsTofCor", ph.TofCor(), ph.Y(), "tof [ns]", "y [mm]", 5000, p.GetCondTofFr() - p.GetCondTofRange()*0.1 - p.GetT0(), p.GetCondTofTo() + p.GetCondTofRange()*0.1 - p.GetT0(), 300, p.GetCondRadX() - p.GetCondRad()*1.1, p.GetCondRadX() + p.GetCondRad()*1.1, "Ion");
+					fHi.fill(startIdx + 16, "DelayVsTOFCor", ph.TofCor(), fDelays[2], "tof [ns]", "Delay [fs]", 1000, -p.GetT0(), maxTof - p.GetT0(), delayBins, delayFrom, delayTo, "Ion");
 				}
-
-				//-----------Tof correction by position (SACLA 2012A Spectromertor D" 520V)----------//
-				//if (extraCondition) TofCorrection(dh,  1.25, 2.6852e-5, -1.1172e-8, 0., 770);
-
-				secondStartIdx=startIdx+20;
-				//check wether this hit fits the conditions of the particles we created//
-				//if so, the add this hit to the particle and fill the particle histograms//
-				//go through all particles//
-				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+		//
+		secondStartIdx=startIdx+20;
+		//check wether this hit fits the conditions of the particles we created//
+		//if so, the add this hit to the particle and fill the particle histograms//
+		//go through all particles//
+		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
 				{
 					//get the particle from the vector//
 					MyParticle &p = fParticles.GetParticle(j);
@@ -560,7 +372,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 								//Check the angle of phiZX. if ph is out of condition, it delete.
 								if (p.CheckPhiZX(ph))
 								{
-									fillParticleHistograms(p,ph,fIntensities,fHi,secondStartIdx,intPartition,delayBins,delayFrom,delayTo,limitTheataZ);
+									fillParticleHistograms(p, ph, fIntensities, fDelays, fHi, secondStartIdx, intPartition, delayBins, delayFrom, delayTo, limitOfThetaZ);
 								}
 							}
 							//we reserve 50 histograms for one particle//

@@ -23,7 +23,8 @@ void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int h
 	}
 }
 //-------------------fill particle Histograms---------------------------------------------------//
-void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, std::vector<double>& delay, MyHistos &hi, int hiOff, std::vector<double>& intPart, int delayBins, double delayFrom, double delayTo, double limitOfThetaZ)
+void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::vector<double>& intensity, std::vector<double>& delay, MyHistos &hi, int hiOff, std::vector<double>& intPart, int& delayBins, double& delayFrom, double& delayTo, bool& selectThetaZ, double& thetaZLowerLimit, double& thetaZUpperLimit)
+
 {	
 	//if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
 	double MomLim = 1000;
@@ -36,12 +37,16 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	if (intensity.size()) fdelay = delay[2];
 	
 	double felIntensity = 0.0;
-	if (intensity.size() > 1) felIntensity = intensity[1];
+	if (intensity.size() > 1) felIntensity = intensity[0];
 
 	//limit detection angle
 	//if (!((ph.PhiZX() > 40 && ph.PhiZX() < 140) || (ph.PhiZX() > -140 && ph.PhiZX() < -40))) return;
 	//if (ph.ThetaZ() > 90) return;
-	if (ph.ThetaZ() > limitOfThetaZ) return;
+	if (selectThetaZ)
+	{
+		if (ph.ThetaZ()<thetaZLowerLimit) return;
+		if (ph.ThetaZ()>thetaZUpperLimit) return;
+	}
 
 	//Reconstruction Method for this particle Hit//
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));

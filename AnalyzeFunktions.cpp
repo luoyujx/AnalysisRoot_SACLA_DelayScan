@@ -166,9 +166,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	// clear the containers//
 	fIntensities.clear();
 	fDelays.clear();
+	fFlag.clear();
 	fParticles.ClearParticles();
 	//Get Tag number on this event
 	const unsigned int TagNumber = fOE.GetEventID();
+	//if (TagNumber % 2 == 0) return;
 	// Get XFEL intensity, Delay
 	if (delayScan == 0) // MySQL databse is not used
 	{
@@ -203,6 +205,14 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			missedTagCount++;
 			return;
 		}
+		// Optical shutter is open or close
+		fFlag.push_back((DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
+		if (fFlag[0] == 0)
+		{
+			std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
+			missedTagCount++;
+			return;
+		}
 		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) / factorPMD);	//[0] EH Delay	
 		fDelays.push_back(0.);																			//[1] Jitter 
 		fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay	
@@ -224,7 +234,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			missedTagCount++;
 			return;
 		}
-		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1); //[0] BM1
+		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1 * 1000000); //[0] BM1
 		//
 		// Delay
 		if (_isnan(DB0d.GetStatusAndData(TagNumber, 1).second))
@@ -234,7 +244,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			return;
 		}
 		//
-		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 2).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 0).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 1).second)))
+		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 3).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 0).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 1).second)))
 		{
 			//std::cout << "Jitter of " << TagNumber << " is NaN " << std::endl;
 			missedTagCount++;
@@ -248,15 +258,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		fDelays.push_back((DB0d.GetStatusAndData(TagNumber, 1).second - factorPMDOffset) / factorPMD * 1000); //[0] EH Delay [fs]
 		//
-		if (fDelays[0]<lowerDelay)
+		fFlag.push_back((DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
+		//std::cout << "Optical shutter valid status (" << TagNumber << "): "<< fFlag[0] << std::endl;
+		if (fFlag[0] == 0)
 		{
-			//std::cout << "Jitter of " << TagNumber << " is not analysed " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		if (fDelays[0]>upperDelay)
-		{
-			//std::cout << "Jitter of " << TagNumber << " is not analysed " << std::endl;
+			std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
 			missedTagCount++;
 			return;
 		}
@@ -273,18 +279,19 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//
 	// Delay
 	fHi.fill(startIdx + 0, "Delay(no correction)", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // Delay (inclued jitter)
-	fHi.fill(startIdx + 1, "Jitter", fDelays[1], "[fs]", delayBins, delayFrom, delayTo); // Jitter
+	fHi.fill(startIdx + 1, "Jitter", fDelays[1], "[fs]", delayBins*100, delayFrom, delayTo); // Jitter
 	fHi.fill(startIdx + 2, "Delay", fDelays[2], "[fs]", delayBins, delayFrom, delayTo);  // Delay (no jitter)	
 	startIdx += 3; // index = 16
+	int maxTrend = 100000;
 	// Trend plot XFEL intensity, Delay, number of hit.
-	fHi.fill(startIdx + 2, "TrendIntensityXFEL", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", fIntensities[0]); // XFEL intensity BM1
-	fHi.fill(startIdx + 3, "TrendDelay(MotorPosition)", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", fDelays[0]);  // Delay (inclued jitter)
-	fHi.fill(startIdx + 4, "TrendJitter", skipCounter, Form("[shots/%d]", trendStep), 100000, 0, 100000, "Trend", fDelays[1]); // Jitter
-	fHi.fill(startIdx + 5, "TrendDelay", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", fDelays[2]);  // Delay (no jitter)	
-	fHi.fill(startIdx + 6, "TrendNumberOfHits", skipCounter, Form("[shots/%d]", trendStep), 10000, 0, 10000, "Trend", rd.GetNbrOfHits()); // number of hits
+	fHi.fill(startIdx + 2, "TrendIntensityXFEL", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fIntensities[0]); // XFEL intensity BM1
+	fHi.fill(startIdx + 3, "TrendDelay(MotorPosition)", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fDelays[0]);  // Delay (inclued jitter)
+	fHi.fill(startIdx + 4, "TrendJitter", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fDelays[1]); // Jitter
+	fHi.fill(startIdx + 5, "TrendDelay", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fDelays[2]);  // Delay (no jitter)	
+	fHi.fill(startIdx + 6, "TrendNumberOfHits", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", rd.GetNbrOfHits()); // number of hits
 	startIdx += 7; // index = 23
-	//	
-	//--skip this shot event if FEL is below 5 (FEL is stBopped)
+	//---------	
+	//--skip this shot event if FEL is below 5 (FEL is stopped)
 	if (!selectIntensity)
 	{
 		if (fIntensities[0] < 5) return;
@@ -301,6 +308,37 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // selected XFEL intensity
 	}
 	startIdx++;
+	//---------		
+	//---skip this event if Delay (no correction) is below the lower limit or over the upper limit
+	if (selectDelay)
+	{
+		if (fDelays[0]<delayLowerLimit) return;
+		if (fDelays[0]>delayUpperLimit) return;
+	}
+	if (fDelays.size())
+	{
+		fHi.fill(startIdx, "DelaySelected (no correction)", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // selected Delays (no correction)
+	}
+	startIdx++;
+	//---------		
+	//--skip this shot event if Jitter is below the lower limit or over the upper limit
+	if (selectJitter)
+	{
+		if (fDelays[1]<jitterLowerLimit) return;
+		if (fDelays[1]>jitterUpperLimit) return;
+	}
+	if (fDelays.size())
+	{
+		fHi.fill(startIdx, "JitterSelected", fDelays[1], "[fs]", delayBins, delayFrom, delayTo); // selected Jitter
+	}
+	startIdx++;
+	//---------
+	if (fDelays.size())
+	{
+		fHi.fill(startIdx, "DelaySelected", fDelays[2], "[fs]", delayBins, delayFrom, delayTo); // selected Delays
+	}
+	startIdx++;
+	//---------
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++; // index = 24
 	//
@@ -308,7 +346,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//
 	//// Delay vs Shots, XFELintensity, NumberOfHits
 	fHi.fill(startIdx + 0, "DelayVsShots", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo); // Delay vs Shots
-	fHi.fill(startIdx + 1, "DelayVsXFELintensity", fDelays[2], fIntensities[2], "Delay [fs]", "XFEL intensity [arb .unit]", delayBins, delayFrom, delayTo, 1000, 0, 1000); // Delay vs XFEL intenisty
+	fHi.fill(startIdx + 1, "DelayVsXFELintensity", fDelays[2], fIntensities[0], "Delay [fs]", "XFEL intensity [arb .unit]", delayBins, delayFrom, delayTo, 1000, 0, 1000); // Delay vs XFEL intenisty
 	fHi.fill(startIdx + 2, "DelayVsNumberOfHits", fDelays[2], rd.GetNbrOfHits(), "Delay [fs]", "Number of Hits", delayBins, delayFrom, delayTo, 100, 0, 100); // Delay vs Number of Hits
 	startIdx += 3; // index = 27
 	//
@@ -372,7 +410,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 								//Check the angle of phiZX. if ph is out of condition, it delete.
 								if (p.CheckPhiZX(ph))
 								{
-									fillParticleHistograms(p, ph, fIntensities, fDelays, fHi, secondStartIdx, intPartition, delayBins, delayFrom, delayTo, limitOfThetaZ);
+									fillParticleHistograms(p, ph, fIntensities, fDelays, fHi, secondStartIdx, intPartition, delayBins, delayFrom, delayTo, selectThetaZ, thetaZLowerLimit, thetaZUpperLimit);
 								}
 							}
 							//we reserve 50 histograms for one particle//

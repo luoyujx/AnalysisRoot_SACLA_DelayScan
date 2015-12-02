@@ -98,6 +98,8 @@ private:
 	MyParticleContainer		 fParticles;
 	std::vector<double>		 fIntensities;	// [0] Upper PD + Lower PD, [1] Upper PD, [2] Lower PD
 	std::vector<double>		 fDelays;		// [0] EH Delay, [1] Jitter, [2] CorDelay 
+	std::vector<double>		 fFlag;			// [0] Optical shutter
+
 
 	//don't bother with whats below this//
 	//the events from the trees//
@@ -148,15 +150,13 @@ private:
 	std::string jitterFN; //Jitter form timing moniter
 	std::string flagTMFN; //Timing moniter(TM) analysis success or not
 	std::string delayTMFN; //delay stage for timing moniter 
+	std::string optShutFN; //optical laser shutter is open or close
 	//Intensity field name
 	std::string intfield;
 	//conversion factor for intensity
 	double factorBM1; //(to uJ/um^2)
 	//step size for trend histogram
 	int trendStep;
-	//Condition to secelt FEL intensity
-	double intensityLowerLimit;
-	double intensityUpperLimit;
 	//Counter for missed intensity data
 	size_t missedTagCount;
 	//C-I momentums limits
@@ -183,14 +183,25 @@ private:
 	bool existIntPartition;
 	bool checkingResult;
 	bool afterAnalysis;
-	bool selectIntensity;
-	// Angle limit
-	double limitOfThetaZ;
-
 	//
-	double lowerDelay;
-	double upperDelay;
-
+	// Limit of Intensity, Angle, Delay, Jitter
+	// Limit of Intensity
+	bool selectIntensity;
+	double intensityLowerLimit;
+	double intensityUpperLimit;
+	// Limit of Angle
+	bool selectThetaZ;
+	double thetaZLowerLimit;
+	double thetaZUpperLimit;
+	// Limit of Delay
+	bool selectDelay;
+	double delayLowerLimit;
+	double delayUpperLimit;
+	// Limit of Jitter
+	bool selectJitter;
+	double jitterLowerLimit;
+	double jitterUpperLimit;
+	//
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;
 	//PD data
@@ -206,13 +217,10 @@ private:
 	std::vector<std::string>			threeBodyComb;
 	//ToF region of MCP intensity 
 	std::vector<MCPToFRegion>			mcpTofRegion;
-
 	//---Indicate some information on mass and tof spectrum
 	std::vector<TText>					txtMass;
 	std::vector<TText>					txtTof;
 	std::vector<TBox>					boxTof;
-
-	//DataBase0d db;
 };
 
 

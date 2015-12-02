@@ -217,23 +217,25 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	else
 	{
 		// MySQL information
-		hostMySQL = set.GetString("hostMySQL", "");
-		userMySQL = set.GetString("userMySQL", "");
-		passMySQL = set.GetString("passMySQL", "");
-		nameMySQL = set.GetString("nameMySQL", "");
+		hostMySQL = set.GetString("hostMySQL", "192.168.100.4");
+		userMySQL = set.GetString("userMySQL", "sacla");
+		passMySQL = set.GetString("passMySQL", "xuedalabx");
+		nameMySQL = set.GetString("nameMySQL", "sacla2015b");
 	}
 	// Table & Field names for 0d Database 
-	tableBL = set.GetString("tableBL", "");
-	BM1FN = set.GetString("BM1FieldName", ""); //0
-	delayFN = set.GetString("delayFieldName", ""); //1
+	tableBL = set.GetString("tableBL", "bldata");
+	BM1FN = set.GetString("BM1FieldName", "xfel_bl_3_tc_bm_1_pd/charge"); //0
+	delayFN = set.GetString("delayFieldName", "xfel_bl_3_st_4_motor_25/position"); //1
+	// Table & Field names for flag
+	optShutFN = set.GetString("optShutterFieldName", "xfel_bl_3_lh1_shutter_1_open_valid/status"); //0
 	// Table & Field names for Timing moniter
 	if (delayScan == 2)
 	{
 		std::cout << "Delay scan with jitter extracted from Timing moniter" << std::endl;
-		tableTM = set.GetString("tableTM", ""); 
-		flagTMFN = set.GetString("timingValidName", ""); //0
-		jitterFN = set.GetString("jitterFieldName", ""); //1			
-		delayTMFN = set.GetString("timingMoniterDelayName", ""); //2
+		tableTM = set.GetString("tableTM", "timing2"); 
+		flagTMFN = set.GetString("timingValidName", "Timing_Flag"); //0
+		jitterFN = set.GetString("jitterFieldName", "Timing_Jitter1"); //1			
+		delayTMFN = set.GetString("timingMoniterDelayName", "xfel_bl_3_st_1_motor_73/position"); //2
 	}
 	else
 	{
@@ -244,23 +246,36 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
 	//Intensity informaion
 	factorBM1 = set.GetValue("ConversionFactorBM1", 10000);
-	selectIntensity = static_cast<int>(set.GetValue("SelectIntensity", false) + 0.1);
-	intensityLowerLimit = set.GetValue("IntensityLowerLimit", 0.0);
-	intensityUpperLimit = set.GetValue("IntensityUpperLimit", 100000);
+
 	//Delay informatyion
 	factorPMD = set.GetValue("ConversionPMtoDelay", 150);
 	factorPMDOffset = set.GetValue("PMOffset", 0);
 	factorTM = set.GetValue("ConversionPIXtoJitter", 3.8);
 	factorTMOffset = set.GetValue("TimingMoniterOffset", 1200);
+	//
 	delayBins = static_cast<int>(set.GetValue("DelayBins", 80));
 	delayFrom = set.GetValue("DelayFrom", -4000);
 	delayTo = set.GetValue("DelayTo", 4000);
-	afterAnalysis = static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
-	trendStep = static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
-	limitOfThetaZ = static_cast<int>(set.GetValue("limitOfThetaZ", 180) + 0.1);
 	//
-	lowerDelay = static_cast<int>(set.GetValue("lowerDelay", -1000) + 0.1);
-	upperDelay = static_cast<int>(set.GetValue("upperDelay", 1000) + 0.1);
+	afterAnalysis = static_cast<int>(set.GetValue("AfterAnalysis", false)+0.1);
+	//
+	trendStep = static_cast<int>(set.GetValue("TrendStep", 100)+0.1);
+	// Limit of Intensity
+	selectIntensity = static_cast<int>(set.GetValue("SelectIntensity", false) + 0.1);
+	intensityLowerLimit = set.GetValue("IntensityLowerLimit", 0.0);
+	intensityUpperLimit = set.GetValue("IntensityUpperLimit", 100000);
+	// Limit of Angle
+	selectThetaZ = static_cast<int>(set.GetValue("SelectThetaZ", false) + 0.1);
+	thetaZLowerLimit = set.GetValue("ThetaZLowerLimit", 0.0);
+	thetaZUpperLimit = set.GetValue("ThetaZUpperLimit", 180.0);
+	// Limit of Delay
+	selectDelay = static_cast<int>(set.GetValue("SelectDelay", false) + 0.1);
+	delayLowerLimit = set.GetValue("DelayLowerLimit", -100000000);
+	delayUpperLimit = set.GetValue("DelayUpperLimit", 100000000);
+	// Limit of Jitter
+	selectJitter = static_cast<int>(set.GetValue("SelectDelay", false) + 0.1);
+	jitterLowerLimit = set.GetValue("JitterLowerLimit", -100000000);
+	jitterUpperLimit = set.GetValue("JitterUpperLimit", 100000000);
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()
@@ -321,9 +336,11 @@ void MyAnalyzer::OpenIntensityData()
 		vector<string> fields0d;
 		fields0d.push_back(BM1FN);		//0
 		fields0d.push_back(delayFN);	//1
+		fields0d.push_back(optShutFN);	//2
 		DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
 		DB0d.CloseMySQL();
 		//DB0d.ShowTable();
+
 	}
 	else if (delayScan == 2) // with Jitter form Timing Moniter
 	{
@@ -332,7 +349,8 @@ void MyAnalyzer::OpenIntensityData()
 		vector<string> fields0d;
 		fields0d.push_back(BM1FN);		//0
 		fields0d.push_back(delayFN);	//1
-		fields0d.push_back(delayTMFN);	//2
+		fields0d.push_back(optShutFN);	//2
+		fields0d.push_back(delayTMFN);	//3
 		DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
 		DB0d.CloseMySQL();
 
@@ -342,8 +360,6 @@ void MyAnalyzer::OpenIntensityData()
 		fieldsTM.push_back(jitterFN);	//1
 		DBTM.LoadDataM(tagFrom, tagTo, fieldsTM, tableTM);
 		DBTM.CloseMySQL();
-
-		std::cout << "OK" << std::endl;
 		//DBTM.ShowTable();
 	}
 }

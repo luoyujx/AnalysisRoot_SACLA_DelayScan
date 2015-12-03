@@ -208,7 +208,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		// Optical shutter is open or close
 		fFlag.push_back((DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
-		if (fFlag[0] != 0)
+		if (fFlag[0] == 0)
 		{
 			//std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
 			//missedTagCount++;

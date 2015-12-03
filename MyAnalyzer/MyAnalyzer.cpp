@@ -183,7 +183,7 @@ void MyAnalyzer::Run()
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
 		fHi.FlushRootFile();
-		//if (checkingResult) ShowResult();
+		if (false) ShowResult();
 	}
 	//restart run at this time//
 	if (!realyBreak) runTimer.Start(3000);
@@ -273,7 +273,7 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	delayLowerLimit = set.GetValue("DelayLowerLimit", -100000000);
 	delayUpperLimit = set.GetValue("DelayUpperLimit", 100000000);
 	// Limit of Jitter
-	selectJitter = static_cast<int>(set.GetValue("SelectDelay", false) + 0.1);
+	selectJitter = static_cast<int>(set.GetValue("SelectJitter", false) + 0.1);
 	jitterLowerLimit = set.GetValue("JitterLowerLimit", -100000000);
 	jitterUpperLimit = set.GetValue("JitterUpperLimit", 100000000);
 }
@@ -406,7 +406,7 @@ void MyAnalyzer::OpenMomInfoData()
 		std::ofstream ofs("MomentumInfo.txt",std::ios::out);
 		for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
 		{
-			for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+			for (int j=i; j<fParticles.GetNbrOfParticles(); ++j)
 			{
 				if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
 				{

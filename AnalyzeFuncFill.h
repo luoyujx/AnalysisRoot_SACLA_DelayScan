@@ -17,5 +17,6 @@ void fillHydrogenHistogram(const MyParticle &p1, const MyParticle &p2,const MyPa
 void fillAngleHistogram(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff);
 void fill3BodyHistogram(const MyParticle &p1, const MyParticle &p2,const MyParticle &p3, MyHistos &hi, int hiOff);
 void fillMCPToFHistograms(const MyOriginalEvent &oe, MyHistos &hi, std::vector<MCPToFRegion> &mcpTofRegion);
+void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo);
 
 #endif

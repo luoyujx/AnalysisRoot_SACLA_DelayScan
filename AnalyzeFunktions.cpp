@@ -170,7 +170,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fParticles.ClearParticles();
 	//Get Tag number on this event
 	const unsigned int TagNumber = fOE.GetEventID();
-	//if (TagNumber % 2 == 0) return;
+	//Check tag is even (IR + FEL)
+	if (TagNumber % 2 != 0) return;
 	// Get XFEL intensity, Delay
 	if (delayScan == 0) // MySQL databse is not used
 	{
@@ -197,7 +198,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			missedTagCount++;
 			return;
 		}
-		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1); //[0] BM1
+		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1 * 1000000); //[0] BM1
 		// Delay
 		if (_isnan(DB0d.GetStatusAndData(TagNumber, 1).second))
 		{
@@ -207,10 +208,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		// Optical shutter is open or close
 		fFlag.push_back((DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
-		if (fFlag[0] == 0)
+		if (fFlag[0] != 0)
 		{
-			std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
-			missedTagCount++;
+			//std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
+			//missedTagCount++;
 			return;
 		}
 		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) / factorPMD);	//[0] EH Delay	
@@ -291,11 +292,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fHi.fill(startIdx + 6, "TrendNumberOfHits", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", rd.GetNbrOfHits()); // number of hits
 	startIdx += 7; // index = 23
 	//---------	
-	//--skip this shot event if FEL is below 5 (FEL is stopped)
-	if (!selectIntensity)
-	{
-		if (fIntensities[0] < 5) return;
-	}
 	if (selectIntensity)
 	{
 	//---skip this shot event if FEL is below the lower limit
@@ -468,7 +464,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 							||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
 							)
 						{
-							fillMoleculeHistogram(ip,jp,fIntensities,fHi,startIdx, molecule[i][j], intPartition);
+							fillMoleculeHistogramCH2I2(ip, jp, fIntensities, fHi, startIdx, molecule[i][j], fDelays, delayBins, delayFrom, delayTo);
 							startIdx += 120;
 							//for proton
 							//extraCondition is 0:do not run proton routine, 1:run proton routine, 2:select only one hit event 
@@ -626,7 +622,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//		secondStartIdx +=100;
 	//	}
 	//}
-	//if (MoleculeAnalysis == 1) fillPIPICO(fParticles.GetParticle(0),fHi);
+	if (MoleculeAnalysis == 1) fillPIPICO(fParticles.GetParticle(0),fHi);
 
 
 }

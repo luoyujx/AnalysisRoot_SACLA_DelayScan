@@ -96,6 +96,11 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 		//---SACLA Ar atom
 		AddArgon(particles);
 	}
+	else if (whichParticles == "Xenon")
+	{
+		//---SACLA Ar atom
+		AddXenon(particles);
+	}
 	else if(whichParticles=="XeCluster") 
 	{
 		//---SACLA Xe cluster
@@ -126,10 +131,15 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 		//---SACLA Kr Isotope
 		AddKrIsotope(particles);
 	}
-	else if (whichParticles == "CH2I2")
+	else if (whichParticles == "CH2I2-II")
 	{
 		//---CH2I2 for SACLA2015B and Lab experiment
-		AddCH2I2(particles);
+		AddCH2I2_II(particles);
+	}
+	else if (whichParticles == "CH2I2-CI")
+	{
+		//---CH2I2 for SACLA2015B and Lab experiment
+		AddCH2I2_CI(particles);
 	}
 	else if (whichParticles == "CH2BrI")
 	{
@@ -305,11 +315,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	startIdx++;
 	//---------		
-	//---skip this event if Delay (no correction) is below the lower limit or over the upper limit
+	//---skip this event if Delay (Delay1 + Delay2) is below the lower limit or over the upper limit
 	if (selectDelay)
 	{
-		if (fDelays[0]<delayLowerLimit) return;
-		if (fDelays[0]>delayUpperLimit) return;
+		if (fDelays[2]<delayLowerLimit) return;
+		if (fDelays[2]>delayUpperLimit) return;
 	}
 	if (fDelays.size())
 	{

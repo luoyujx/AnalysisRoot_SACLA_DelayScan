@@ -416,9 +416,9 @@ void MyAnalyzer::OpenMomInfoData()
 						)
 
 					{
-						molecule[i][j].momSumWindowX = 100;
-						molecule[i][j].momSumWindowY = 100;
-						molecule[i][j].momSumWindowZ = 100;
+						molecule[i][j].momSumWindowX = 700;
+						molecule[i][j].momSumWindowY = 700;
+						molecule[i][j].momSumWindowZ = 700;
 						molecule[i][j].momSumFactor = 1;
 						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
 						string molName(fParticles.GetParticle(i).GetName());

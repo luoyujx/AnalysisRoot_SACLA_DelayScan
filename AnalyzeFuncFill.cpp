@@ -27,11 +27,11 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 
 {	
 	//if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
-	double MomLim = 1000;
+	double MomLim = 1500;
 	TString pname(p.GetName());
 	if (pname == "H1p") MomLim = 400;
 	const double SliceLim = 20;
-	if (p.GetCharge_au()>8) MomLim = 1200;
+	if (p.GetCharge_au()>8) MomLim = 2000;
 
 	double fdelay = 0.0;
 	if (intensity.size()) fdelay = delay[2];
@@ -172,7 +172,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 //-------------------Fill molecule (2-body coincidence) histogram-----------------------------------------------------------------------------------------------------//
 void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo)
 {
-	double MomLim = 800;
+	double MomLim = 1600;
 	double MomSumRotLim = 1600;
 	double MomScale = mol.momSumFactor;
 	const int Mombins = 150;
@@ -189,7 +189,7 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 	const double pzxSumWidth = mol.momSumWindowZ;//5,6,4,2
 
 	double fdelay = 0.0;
-	if (intensity.size()) fdelay = delay[2];
+	if (delay.size()) fdelay = delay[2];
 
 	for (size_t i = 0; i<p1.GetNbrOfParticleHits(); ++i)
 	{
@@ -209,8 +209,6 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 
 			hi.fill(hiOff + 20, "AngleVsRatio", angleP1P2, ratioP1P2, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
 			hi.fill(hiOff + 21, "AngleVsRatioXY", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
-			hi.fill(hiOff + 22, "Angle", angleP1P2, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
-			hi.fill(hiOff + 23, "DelayVsAngle", angleP1P2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
 			//1st condition
 			//if (angleP1P2 < mol.angleCondition) continue;
 			//if ((ratioP1P2 < mol.momSumFactorLow) || (ratioP1P2 > mol.momSumFactorUp)) continue;
@@ -220,18 +218,18 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 			const double p12SumY = p1[i].Py() / MomScale + p2[j].Py();
 			const double p12SumZ = p1[i].Pz() / MomScale + p2[j].Pz();
 
-			const double pminLength = 5e-22 / 1.992851E-24;
-			const double normXY = (p1[i].Px() / MomScale)*(p1[i].Px() / MomScale) + p2[j].Px()*p2[j].Px() + (p1[i].Py() / MomScale)*(p1[i].Py() / MomScale) + p2[j].Py()*p2[j].Py() + 2 * pminLength*pminLength;
-			const double normYZ = (p1[i].Py() / MomScale)*(p1[i].Py() / MomScale) + p2[j].Py()*p2[j].Py() + (p1[i].Pz() / MomScale)*(p1[i].Pz() / MomScale) + p2[j].Pz()*p2[j].Pz() + 2 * pminLength*pminLength;
-			const double normZX = (p1[i].Pz() / MomScale)*(p1[i].Pz() / MomScale) + p2[j].Pz()*p2[j].Pz() + (p1[i].Px() / MomScale)*(p1[i].Px() / MomScale) + p2[j].Px()*p2[j].Px() + 2 * pminLength*pminLength;
+			//const double pminLength = 5e-22 / 1.992851E-24;
+			//const double normXY = (p1[i].Px() / MomScale)*(p1[i].Px() / MomScale) + p2[j].Px()*p2[j].Px() + (p1[i].Py() / MomScale)*(p1[i].Py() / MomScale) + p2[j].Py()*p2[j].Py() + 2 * pminLength*pminLength;
+			//const double normYZ = (p1[i].Py() / MomScale)*(p1[i].Py() / MomScale) + p2[j].Py()*p2[j].Py() + (p1[i].Pz() / MomScale)*(p1[i].Pz() / MomScale) + p2[j].Pz()*p2[j].Pz() + 2 * pminLength*pminLength;
+			//const double normZX = (p1[i].Pz() / MomScale)*(p1[i].Pz() / MomScale) + p2[j].Pz()*p2[j].Pz() + (p1[i].Px() / MomScale)*(p1[i].Px() / MomScale) + p2[j].Px()*p2[j].Px() + 2 * pminLength*pminLength;
 
-			const double normOfSumRot_XY = (p12SumX*p12SumX + p12SumY*p12SumY) / normXY;
-			const double normOfSumRot_YZ = (p12SumY*p12SumY + p12SumZ*p12SumZ) / normYZ;
-			const double normOfSumRot_ZX = (p12SumZ*p12SumZ + p12SumX*p12SumX) / normZX;
+			//const double normOfSumRot_XY = (p12SumX*p12SumX + p12SumY*p12SumY) / normXY;
+			//const double normOfSumRot_YZ = (p12SumY*p12SumY + p12SumZ*p12SumZ) / normYZ;
+			//const double normOfSumRot_ZX = (p12SumZ*p12SumZ + p12SumX*p12SumX) / normZX;
 
-			hi.fill(hiOff + 25, "NormOfSumRot_ZX", normOfSumRot_ZX, "norm [a.u.]", 100, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_ZX));
-			hi.fill(hiOff + 26, "NormOfSumRot_XY", normOfSumRot_XY, "norm [a.u.]", 100, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_XY));
-			hi.fill(hiOff + 27, "NormOfSumRot_YZ", normOfSumRot_YZ, "norm [a.u.]", 100, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_YZ));
+			//hi.fill(hiOff + 25, "NormOfSumRot_ZX", normOfSumRot_ZX, "norm [a.u.]", 100, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_ZX));
+			//hi.fill(hiOff + 26, "NormOfSumRot_XY", normOfSumRot_XY, "norm [a.u.]", 100, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_XY));
+			//hi.fill(hiOff + 27, "NormOfSumRot_YZ", normOfSumRot_YZ, "norm [a.u.]", 100, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_YZ));
 
 			//calcutrate momentum sum by Edwin's method
 			//MyParticleHit pC(p1[i]);
@@ -272,9 +270,9 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 			const double p12zSumRot_ZX = p1z_ZX / MomScale + p2z_ZX;
 			const double p12xSumRot_ZX = p1x_ZX / MomScale + p2x_ZX;
 
-			//double normOfSumRot_XY = TMath::Sqrt(p12xSumRot_XY*p12xSumRot_XY + p12ySumRot_XY*p12ySumRot_XY);
-			//double normOfSumRot_YZ = TMath::Sqrt(p12ySumRot_YZ*p12ySumRot_YZ + p12zSumRot_YZ*p12zSumRot_YZ);
-			//double normOfSumRot_ZX = TMath::Sqrt(p12zSumRot_ZX*p12zSumRot_ZX + p12xSumRot_ZX*p12xSumRot_ZX);
+			double normOfSumRot_XY = TMath::Sqrt(p12xSumRot_XY*p12xSumRot_XY + p12ySumRot_XY*p12ySumRot_XY);
+			double normOfSumRot_YZ = TMath::Sqrt(p12ySumRot_YZ*p12ySumRot_YZ + p12zSumRot_YZ*p12zSumRot_YZ);
+			double normOfSumRot_ZX = TMath::Sqrt(p12zSumRot_ZX*p12zSumRot_ZX + p12xSumRot_ZX*p12xSumRot_ZX);
 
 			//const double normXY = TMath::Sqrt((p1x_XY/MomScale)*(p1x_XY/MomScale) + p2x_XY*p2x_XY + (p1y_XY/MomScale)*(p1y_XY/MomScale) + p2y_XY*p2y_XY);
 			//const double normYZ = TMath::Sqrt((p1y_YZ/MomScale)*(p1y_YZ/MomScale) + p2y_YZ*p2y_YZ + (p1z_YZ/MomScale)*(p1z_YZ/MomScale) + p2z_YZ*p2z_YZ);
@@ -341,7 +339,7 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 				hi.fill(hiOff + 37, "PzPxSumRotCondXY", p12zSumRot_ZX, p12xSumRot_ZX, "pzxSum [a.u.]", "pzxSum [a.u.]", 200, -MomSumRotLim, MomSumRotLim, 200, -MomSumRotLim, MomSumRotLim, Form("%s/MomSums", Hname.Data()));
 				hi.fill(hiOff + 38, "PyPzSumRotCondXY", p12ySumRot_YZ, p12zSumRot_YZ, "pyzSum [a.u.]", "pyzSum [a.u.]", 200, -MomSumRotLim, MomSumRotLim, 200, -MomSumRotLim, MomSumRotLim, Form("%s/MomSums", Hname.Data()));
 
-				hi.fill(hiOff + 24, "AngleVsRatioXYCondXY", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/MomSums", Hname.Data()));
+				//hi.fill(hiOff + 24, "AngleVsRatioXYCondXY", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/MomSums", Hname.Data()));
 				//hi.fill(hiOff+25,Form("%sXPosVsTofCondXY",p1.GetName()),p1[i].TofCor(),p1[i].XCorRotScl(),"tof [ns]","x [mm]",300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p1.GetXcor()-p1.GetCondRad()*1.3,p1.GetXcor()+p1.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
 				//hi.fill(hiOff+26,Form("%sYPosVsTofCondXY",p1.GetName()),p1[i].TofCor(),p1[i].YCorRotScl(),"tof [ns]","y [mm]",300,p1.GetCondTofFr()-p1.GetT0()-p1.GetCondTofRange()*0.3,p1.GetCondTofTo()-p1.GetT0()+p1.GetCondTofRange()*0.3,300,p1.GetYcor()-p1.GetCondRad()*1.3,p1.GetYcor()+p1.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
 				//hi.fill(hiOff+27,Form("%sXPosVsTofCondXY",p2.GetName()),p2[j].TofCor(),p2[j].XCorRotScl(),"tof [ns]","x [mm]",300,p2.GetCondTofFr()-p2.GetT0()-p2.GetCondTofRange()*0.3,p2.GetCondTofTo()-p2.GetT0()+p2.GetCondTofRange()*0.3,300,p2.GetXcor()-p2.GetCondRad()*1.3,p2.GetXcor()+p2.GetCondRad()*1.3,Form("%s/Raw",Hname.Data()));
@@ -364,19 +362,19 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 				if (normOfSumRot_YZ < pyzSumWidth)
 				{
 					hi.fill(hiOff + 39, "PzPxSumRotCondXY-YZ", p12zSumRot_ZX, p12xSumRot_ZX, "pzxSum [a.u.]", "pzxSum [a.u.]", 200, -MomSumRotLim, MomSumRotLim, 200, -MomSumRotLim, MomSumRotLim, Form("%s/MomSums", Hname.Data()));
-					hi.fill(hiOff + 40, "NormOfSumRot_ZX_Gated", normOfSumRot_ZX, "norm [a.u.]", 1000, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_ZX));
+					//hi.fill(hiOff + 40, "NormOfSumRot_ZX_Gated", normOfSumRot_ZX, "norm [a.u.]", 1000, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_ZX));
 				}
 			if (normOfSumRot_YZ < pyzSumWidth)
 				if (normOfSumRot_ZX < pzxSumWidth)
 				{
 					hi.fill(hiOff + 41, "PxPySumRotCondYZ-ZX", p12xSumRot_XY, p12ySumRot_XY, "pxySum [a.u.]", "pxySum [a.u.]", 200, -MomSumRotLim, MomSumRotLim, 200, -MomSumRotLim, MomSumRotLim, Form("%s/MomSums", Hname.Data()));
-					hi.fill(hiOff + 42, "NormOfSumRot_XY_Gated", normOfSumRot_XY, "norm [a.u.]", 1000, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_XY));
+					//hi.fill(hiOff + 42, "NormOfSumRot_XY_Gated", normOfSumRot_XY, "norm [a.u.]", 1000, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_XY));
 				}
 			if (normOfSumRot_ZX < pzxSumWidth)
 				if (normOfSumRot_XY < pxySumWidth)
 				{
 					hi.fill(hiOff + 43, "PyPzSumRotCondZX-XY", p12ySumRot_YZ, p12zSumRot_YZ, "pyzSum [a.u.]", "pyzSum [a.u.]", 200, -MomSumRotLim, MomSumRotLim, 200, -MomSumRotLim, MomSumRotLim, Form("%s/MomSums", Hname.Data()));
-					hi.fill(hiOff + 45, "NormOfSumRot_YZ_Gated", normOfSumRot_YZ, "norm [a.u.]", 1000, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_YZ));
+					//hi.fill(hiOff + 45, "NormOfSumRot_YZ_Gated", normOfSumRot_YZ, "norm [a.u.]", 1000, 0, 0.001, Form("%s/MomSums", Hname.Data()), 1 / (2 * TMath::Pi()*normOfSumRot_YZ));
 				}
 
 			///////////////////3-plane Momentum sum condition//////////////////////
@@ -412,11 +410,13 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 						hi.fill(hiOff + 15, "RatioPCPerPICondXYZ", ratioP1P2, "Ratio", 200, 0, 2, Form("%s/MomSums", Hname.Data()));
 						hi.fill(hiOff + 16, "RatioXYPCPerPICondXYZ", ratioP1P2XY, "Ratio", 200, 0, 2, Form("%s/MomSums", Hname.Data()));
 						//Formed angle VS Ratio
-						//hi.fill(hiOff + 22, "AngleVsRatioCondXYZ", angleP1P2, ratioP1P2, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/MomSums", Hname.Data()), weightPerSin);
-						//hi.fill(hiOff + 23, "AngleVsRatioXYCondXYZ", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/MomSums", Hname.Data()));
+						hi.fill(hiOff + 24, "AngleVsRatioCondXYZ", angleP1P2, ratioP1P2, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+						//hi.fill(hiOff + 23, "AngleVsRatioXYCondXYZ", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+						hi.fill(hiOff + 22, "AngleCondXYZ", angleP1P2, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+						hi.fill(hiOff + 23, "DelayVsAngleCondXYZ", angleP1P2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
 
 						//Momentum first Ion//
-						continue;
+					
 						int IDX = hiOff + 50;
 						hi.fill(IDX + 0, Form("%sPxPy", p1.GetName()), p1[i].Px(), p1[i].Py(), "px [a.u.]", "py [a.u.]", Mombins, -MomLim, MomLim, Mombins, -MomLim, MomLim, Form("%s/Momenta", Hname.Data()));
 						if (TMath::Abs(p1[i].Pz()) < 30)
@@ -424,7 +424,7 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 							hi.fill(IDX + 1, Form("%sPxPySlice", p1.GetName()), p1[i].Px(), p1[i].Py(), "px [a.u.]", "py [a.u.]", Mombins, -MomLim, MomLim, Mombins, -MomLim, MomLim, Form("%s/Momenta", Hname.Data()));
 						}
 
-						hi.fill(IDX + 3, Form("%sPxPz", p1.GetName()), p1[i].Pz(), p1[i].Px(), "pz [a.u.]", "px [a.u.]", Mombins, -MomLim, MomLim, Mombins, -MomLim, MomLim, Form("%s/Momenta", Hname.Data()));
+						hi.fill(IDX + 3, Form("%sPzPx", p1.GetName()), p1[i].Pz(), p1[i].Px(), "pz [a.u.]", "px [a.u.]", Mombins, -MomLim, MomLim, Mombins, -MomLim, MomLim, Form("%s/Momenta", Hname.Data()));
 						if (TMath::Abs(p1[i].Py()) < 30)
 						{
 							hi.fill(IDX + 4, Form("%sPxPzSlice", p1.GetName()), p1[i].Pz(), p1[i].Px(), "pz [a.u.]", "px [a.u.]", Mombins, -MomLim, MomLim, Mombins, -MomLim, MomLim, Form("%s/Momenta", Hname.Data()));
@@ -439,10 +439,10 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 						hi.fill(IDX + 2, Form("%sMomentumXY", p1.GetName()), TMath::Sqrt(p1[i].Px()*p1[i].Px() + p1[i].Py()*p1[i].Py()), "pXY [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
 						hi.fill(IDX + 5, Form("%sMomentumXZ", p1.GetName()), TMath::Sqrt(p1[i].Px()*p1[i].Px() + p1[i].Pz()*p1[i].Pz()), "pXY [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
 						hi.fill(IDX + 8, Form("%sMomentumYZ", p1.GetName()), TMath::Sqrt(p1[i].Py()*p1[i].Py() + p1[i].Pz()*p1[i].Pz()), "pXY [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
-						hi.fill(IDX + 21, Form("%sMomentumXY_k", p1.GetName()), TMath::Sqrt(p1[i].Px()*p1[i].Px() + p1[i].Py()*p1[i].Py()) / MomScale, "pXY [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
+						//hi.fill(IDX + 21, Form("%sMomentumXY_k", p1.GetName()), TMath::Sqrt(p1[i].Px()*p1[i].Px() + p1[i].Py()*p1[i].Py()) / MomScale, "pXY [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
 
 						hi.fill(IDX + 9, Form("%sTotalMomentum", p1.GetName()), p1[i].P(), "p [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
-						hi.fill(IDX + 22, Form("%sTotalMomentum_k", p1.GetName()), p1[i].P() / MomScale, "p [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
+						//hi.fill(IDX + 22, Form("%sTotalMomentum_k", p1.GetName()), p1[i].P() / MomScale, "p [a.u.]", Mombins, 0, MomLim, Form("%s/Momenta", Hname.Data()));
 						//hi.fill(IDX+2,Form("%sPx",p1.GetName()),p1[i].Px(),"px [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						//hi.fill(IDX+5,Form("%sPy",p1.GetName()),p1[i].Py(),"py [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));
 						//hi.fill(IDX+8,Form("%sPz",p1.GetName()),p1[i].Pz(),"pz [a.u.]",300,-MomLim,MomLim,Form("%s/Momenta",Hname.Data()));

@@ -15,7 +15,8 @@ void AddXeIsotope(MyParticleContainer &particles);
 void AddKrCluster(MyParticleContainer &particles);
 void AddKrArCluster(MyParticleContainer &particles);
 void AddKrIsotope(MyParticleContainer &particles);
-void AddCH2I2(MyParticleContainer &particles);
+void AddCH2I2_II(MyParticleContainer &particles);
+void AddCH2I2_CI(MyParticleContainer &particles);
 void AddCH2BrI(MyParticleContainer &particles);
 void AddCH2ClI(MyParticleContainer &particles);
 

@@ -1,0 +1,67 @@
+#File name of output root file
+OutputROOTFile=AnalysisII_aq50-58_r18.root
+#Use GUI for setting (true/false = 1/0)
+UseGUI=0
+#choose the particle sets for analysis (CH2I2, XeCluster)
+WhichParticles=CH2I2-II
+#Should be 18 or 21 (resort method)
+ReconstructionMethod=18
+#The way for extracting coincidence (1:Momentum sum 2:gated by particle)
+Molecule=1
+#Investigate proton (0:none 1:all 2:only)
+ExtraCondition=0
+#Information for the gate of momentum sums (only need if Molecule=1)
+MomSumInfoFile=MomentumInfo.txt
+#Coincidence condition
+AngleCondition=0
+MomFactorLowerLimit=0
+MomFactorUpperLimit=100
+#choose the methode for 0D Data (0:no 0d data, 1:use MySQL, 2: with Timing monitor)
+delayScan=2
+hostMySQL=192.168.100.4
+userMySQL=sacla
+passMySQL=xuedalabx
+nameMySQL=sacla2015b
+tableBL=bldata
+tableTM=timing2
+TagFrom=479169311
+TagTo=480823372
+#Fields Names
+BM1FieldName=xfel_bl_3_tc_bm_1_pd/charge
+delayFieldName=xfel_bl_3_st_4_motor_25/position
+optShutterFieldName=xfel_bl_3_lh1_shutter_1_open_valid/status
+jitterFieldName=Timing_Jitter1
+timingValidName=Timing_Flag
+timingMoniterDelayName=xfel_bl_3_st_1_motor_73/position
+#Intensity informaion
+ConversionFactorBM1=28639.2
+#opt_delay
+ConversionPMtoDelay=30
+PMOffset=0
+ConversionPIXtoJitter=-2.56037
+TimingMoniterOffset=1026
+DelayBins=100
+DelayFrom=-1000
+DelayTo=1000
+#Other information
+AfterAnalysis=1
+TrendStep=10
+#Limit of Intensity, Angle, Delay, Jitter
+#Intensity
+SelectIntensity=0
+IntensityLowerLimit=500
+IntensityUpperLimit=1000000000000
+#Angle
+SelectThetaZ=0
+ThetaZLowerLimit=0
+ThetaZUpperLimit=90
+#Delay
+SelectDelay=0
+DelayLowerLimit=-1000000
+DelayUpperLimit=1000000
+#Jitter
+SelectJitter=0
+JitterLowerLimit=-1200
+JitterUpperLimit=-600
+#OpticalShutter
+OptShutterOpen=1

@@ -217,8 +217,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			return;
 		}
 		// Optical shutter is open or close
-		fFlag.push_back((DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
-		if (fFlag[0] == 0)
+		fFlag.push_back(static_cast<bool>(DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
+		if (fFlag[0] != optShutterOpen)
 		{
 			//std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
 			//missedTagCount++;
@@ -269,9 +269,9 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		fDelays.push_back((DB0d.GetStatusAndData(TagNumber, 1).second - factorPMDOffset) / factorPMD * 1000); //[0] EH Delay [fs]
 		//
-		fFlag.push_back((DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
+		fFlag.push_back(static_cast<bool>(DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
 		//std::cout << "Optical shutter valid status (" << TagNumber << "): "<< fFlag[0] << std::endl;
-		if (fFlag[0] == 0)
+		if (fFlag[0] != optShutterOpen)
 		{
 			std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
 			missedTagCount++;
@@ -475,31 +475,31 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 							)
 						{
 							fillMoleculeHistogramCH2I2(ip, jp, fIntensities, fHi, startIdx, molecule[i][j], fDelays, delayBins, delayFrom, delayTo);
-							startIdx += 120;
+							startIdx += 115;
 							//for proton
 							//extraCondition is 0:do not run proton routine, 1:run proton routine, 2:select only one hit event 
-							if (extraCondition > 0)
-							{
-								if (molecule[i][j].CoincidenceCount > 0) 
-								{
-									int otherHits = 0;
-									if (extraCondition == 2)
-									{
-										for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
-										{
-											if ( (k!=i)&&(k!=j) ) 
-												otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
-										} 
-									}
-									if (otherHits == 0)
-									{
-										const MyParticle &hp = fParticles.GetParticle(1);
-										//if (hp.GetNbrOfParticleHits() < 4)
-										fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
-									}
-								}
-								startIdx += 65;
-							}
+							//if (extraCondition > 0)
+							//{
+							//	if (molecule[i][j].CoincidenceCount > 0) 
+							//	{
+							//		int otherHits = 0;
+							//		if (extraCondition == 2)
+							//		{
+							//			for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
+							//			{
+							//				if ( (k!=i)&&(k!=j) ) 
+							//					otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
+							//			} 
+							//		}
+							//		if (otherHits == 0)
+							//		{
+							//			const MyParticle &hp = fParticles.GetParticle(1);
+							//			//if (hp.GetNbrOfParticleHits() < 4)
+							//			fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
+							//		}
+							//	}
+							//	startIdx += 65;
+							//}
 						}
 					}
 				}
@@ -535,76 +535,76 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2
-	const int nbrOfHistosInfillMol2 = 27;//
-	secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
-	if (MoleculeAnalysis == 2)
-	{
-		//loop from particle 1 for excepting Ion
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
-		{
-			const MyParticle &ip = fParticles.GetParticle(i);
-			//check whether ip have counts and gatting paticle (I+, I++, ...)
-			if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1 || ip.GetCoinGroup()==2 ))
-			{
-				int hitCounter = 0;
-				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
-				{
-					if ((j != i) && (fParticles.GetParticle(j).GetCoinGroup() == 1))
-						hitCounter += fParticles.GetParticle(j).GetNbrOfParticleHits();
-				}
-				if (!hitCounter)
-				{
-					//fill Ion spectra 
-					fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));
-					//loop to fill the target particles
-					for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
-					{
-						const MyParticle &jp = fParticles.GetParticle(j);
-						//Target particle (C+.N+..O+..CO+..,H+)
-						if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0 || jp.GetCoinGroup()==2))
-						{
-							int tmpIdx = startIdx + (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
-							fillMoleculeHistogram2(ip,jp,fIntensities,fHi,tmpIdx);
-							fillAngleHistogram(ip, jp, fHi, tmpIdx + 30);	
-						}
-					}
+	//const int nbrOfHistosInfillMol2 = 27;//
+	//secondStartIdx = startIdx + (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
+	//if (MoleculeAnalysis == 2)
+	//{
+	//	//loop from particle 1 for excepting Ion
+	//	for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
+	//	{
+	//		const MyParticle &ip = fParticles.GetParticle(i);
+	//		//check whether ip have counts and gatting paticle (I+, I++, ...)
+	//		if ((ip.GetNbrOfParticleHits())&&(ip.GetCoinGroup()==1 || ip.GetCoinGroup()==2 ))
+	//		{
+	//			int hitCounter = 0;
+	//			for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+	//			{
+	//				if ((j != i) && (fParticles.GetParticle(j).GetCoinGroup() == 1))
+	//					hitCounter += fParticles.GetParticle(j).GetNbrOfParticleHits();
+	//			}
+	//			if (!hitCounter)
+	//			{
+	//				//fill Ion spectra 
+	//				fillSpectra(ip,fParticles.GetParticle(0),fHi, secondStartIdx+ (i*10));
+	//				//loop to fill the target particles
+	//				for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+	//				{
+	//					const MyParticle &jp = fParticles.GetParticle(j);
+	//					//Target particle (C+.N+..O+..CO+..,H+)
+	//					if ((jp.GetKindParticle() == 1)&&(jp.GetCoinGroup()==0 || jp.GetCoinGroup()==2))
+	//					{
+	//						int tmpIdx = startIdx + (i+j*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
+	//						fillMoleculeHistogram2(ip,jp,fIntensities,fHi,tmpIdx);
+	//						fillAngleHistogram(ip, jp, fHi, tmpIdx + 30);	
+	//					}
+	//				}
 
-				}			
-			}
-		}
-		//Skip already used ID
-		startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
-		startIdx += fParticles.GetNbrOfParticles()*10;
+	//			}			
+	//		}
+	//	}
+	//	//Skip already used ID
+	//	startIdx += (fParticles.GetNbrOfParticles()+fParticles.GetNbrOfParticles()*fParticles.GetNbrOfParticles())*nbrOfHistosInfillMol2;
+	//	startIdx += fParticles.GetNbrOfParticles()*10;
 
-		//_______________________________//
-		//___3-body angular correration__//
-		//_______________________________//
-		//1st loop from particle 1 for excepting Ion
-		for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
-		{
-			//2nd loop
-			for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
-			{
-				//3rd loop
-				for (size_t k=1;k<fParticles.GetNbrOfParticles();++k)
-				{
-					const MyParticle &ip = fParticles.GetParticle(i);
-					const MyParticle &jp = fParticles.GetParticle(j);
-					const MyParticle &kp = fParticles.GetParticle(k);
-					std::string threeParticlesName = ip.GetName();
-					threeParticlesName += jp.GetName();
-					threeParticlesName += kp.GetName();
-					std::vector<std::string>::iterator it = std::find(threeBodyComb.begin(),threeBodyComb.end(), threeParticlesName);
-					if (it == threeBodyComb.end()) continue;
-					int index = std::distance(threeBodyComb.begin(),it);
-					{
-						int tmpIdx = startIdx + 2*index;
-						fill3BodyHistogram(ip,jp,kp, fHi, tmpIdx);
-					}
-				}
-			}
-		}
-	}
+	//	//_______________________________//
+	//	//___3-body angular correration__//
+	//	//_______________________________//
+	//	//1st loop from particle 1 for excepting Ion
+	//	for (size_t i=1;i<fParticles.GetNbrOfParticles();++i)
+	//	{
+	//		//2nd loop
+	//		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
+	//		{
+	//			//3rd loop
+	//			for (size_t k=1;k<fParticles.GetNbrOfParticles();++k)
+	//			{
+	//				const MyParticle &ip = fParticles.GetParticle(i);
+	//				const MyParticle &jp = fParticles.GetParticle(j);
+	//				const MyParticle &kp = fParticles.GetParticle(k);
+	//				std::string threeParticlesName = ip.GetName();
+	//				threeParticlesName += jp.GetName();
+	//				threeParticlesName += kp.GetName();
+	//				std::vector<std::string>::iterator it = std::find(threeBodyComb.begin(),threeBodyComb.end(), threeParticlesName);
+	//				if (it == threeBodyComb.end()) continue;
+	//				int index = std::distance(threeBodyComb.begin(),it);
+	//				{
+	//					int tmpIdx = startIdx + 2*index;
+	//					fill3BodyHistogram(ip,jp,kp, fHi, tmpIdx);
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	//std::cout << startIdx << std::endl;
 	//---Post-analysis---//

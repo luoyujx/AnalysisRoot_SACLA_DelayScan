@@ -276,6 +276,8 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	selectJitter = static_cast<int>(set.GetValue("SelectJitter", false) + 0.1);
 	jitterLowerLimit = set.GetValue("JitterLowerLimit", -100000000);
 	jitterUpperLimit = set.GetValue("JitterUpperLimit", 100000000);
+
+	optShutterOpen = static_cast<int>(set.GetValue("OptShutterOpen", true) + 0.1);
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()
@@ -399,6 +401,7 @@ void MyAnalyzer::OpenMomInfoData()
 	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
 		molecule[i].resize(fParticles.GetNbrOfParticles());
 
+	std::cout << "Open Momentum Info file:" << MomSumInfoName << std::endl;
 	std::ifstream ifs(MomSumInfoName,std::ios::in);
 	if (ifs.fail())
 	{
@@ -472,7 +475,7 @@ void MyAnalyzer::OpenMomInfoData()
 	std::cout << "MomentumSumInfo: "<< bufMap.size() << " records" <<std::endl;
 	for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
 	{
-		for (int j=i+1; j<fParticles.GetNbrOfParticles(); ++j)
+		for (int j=i; j<fParticles.GetNbrOfParticles(); ++j)
 		{
 			if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
 			{

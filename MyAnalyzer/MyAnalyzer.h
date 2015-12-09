@@ -98,7 +98,7 @@ private:
 	MyParticleContainer		 fParticles;
 	std::vector<double>		 fIntensities;	// [0] Upper PD + Lower PD, [1] Upper PD, [2] Lower PD
 	std::vector<double>		 fDelays;		// [0] EH Delay, [1] Jitter, [2] CorDelay 
-	std::vector<double>		 fFlag;			// [0] Optical shutter
+	std::vector<bool>		 fFlag;			// [0] Optical shutter
 
 
 	//don't bother with whats below this//
@@ -201,6 +201,9 @@ private:
 	bool selectJitter;
 	double jitterLowerLimit;
 	double jitterUpperLimit;
+
+	//optical shtter
+	bool optShutterOpen;
 	//
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;

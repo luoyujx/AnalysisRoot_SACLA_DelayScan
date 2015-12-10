@@ -348,7 +348,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fHi.fill(startIdx,"NumberOfHits",rd.GetNbrOfHits(),"Number of Hits",100,0,100);
 	startIdx++; // index = 24
 	//
-	if (fSAE.GetChannel(7 - 1).GetNbrPeaks() == 0) return;
+	//if (fSAE.GetChannel(7 - 1).GetNbrPeaks() == 0) return;
 	//
 	//// Delay vs Shots, XFELintensity, NumberOfHits
 	fHi.fill(startIdx + 0, "DelayVsShots", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo); // Delay vs Shots

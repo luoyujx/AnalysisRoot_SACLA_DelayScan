@@ -5,7 +5,7 @@
 #include <TRandom3.h>
 
 TRandom3 RandomGene;
-#define TEST_RANDOM2
+//#define TEST_RANDOM2
 //-------------------------------------Fill Ion spectra---------------------------------------------------------------//
 void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff)
 {
@@ -205,14 +205,14 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 			const double angleP1P2XY = calcFormedAngleXY(p1[i], p2[j]);
 			const double ratioP1P2XY = calcMagXY(p1[i]) / calcMagXY(p2[j]);
 
-			hi.fill(hiOff + 17, "Delay", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/Delay", Hname.Data()));
+			hi.fill(hiOff + 17, "Delay", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 			hi.fill(hiOff + 18, "AngleVsRatio", angleP1P2, ratioP1P2, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
 			hi.fill(hiOff + 19, "AngleVsRatioXY", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
 			hi.fill(hiOff + 20, "Angle", angleP1P2, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
-			hi.fill(hiOff + 21, "DelayVsAngle", angleP1P2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/Delay", Hname.Data()), weightPerSin);
+			hi.fill(hiOff + 21, "DelayVsAngle", angleP1P2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
 			//1st condition
-			//if (angleP1P2 < mol.angleCondition) continue;
-			//if ((ratioP1P2 < mol.momSumFactorLow) || (ratioP1P2 > mol.momSumFactorUp)) continue;
+			if (angleP1P2 < mol.angleCondition) continue;
+			if ((ratioP1P2 < mol.momSumFactorLow) || (ratioP1P2 > mol.momSumFactorUp)) continue;
 
 			//Calculate momentum sum condition
 			const double p12SumX = p1[i].Px() / MomScale + p2[j].Px();
@@ -383,7 +383,7 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 						hi.fill(hiOff + 24, "AngleVsRatioCondXYZ", angleP1P2, ratioP1P2, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
 						//hi.fill(hiOff + 23, "AngleVsRatioXYCondXYZ", angleP1P2XY, ratioP1P2XY, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
 						hi.fill(hiOff + 22, "AngleCondXYZ", angleP1P2, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
-						hi.fill(hiOff + 23, "DelayVsAngleCondXYZ", angleP1P2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/Delay", Hname.Data()), weightPerSin);
+						hi.fill(hiOff + 23, "DelayVsAngleCondXYZ", angleP1P2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
 
 						//Momentum first Ion//
 					
@@ -490,9 +490,9 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 						hi.fill(IDX + 29, Form("%sPhiZXvsEnergy", p2.GetName()), p2[j].PhiZX(), p2[j].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 200, 0, 100, Form("%s/Angular", Hname.Data()));
 
 						///////////////////KER//////////////////////////
-						hi.fill(IDX + 30, Form("KER_%s", Hname.Data()), p1[i].E() + p2[j].E(), "KER [eV]", 200, 0, 250, Form("%s/KER", Hname.Data()));
-						hi.fill(IDX + 31, "DelayVsKER", p1[i].E() + p2[j].E(), fdelay, "KER [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/Delay", Hname.Data()));
-						hi.fill(IDX + 32, "Delay_CondXYZ", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/Delay", Hname.Data()));
+						hi.fill(IDX + 30, Form("KESum_%s", Hname.Data()), p1[i].E() + p2[j].E(), "KE [eV]", 200, 0, 250, Form("%s/KESum", Hname.Data()));
+						hi.fill(IDX + 31, "DelayVsKESum", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+						hi.fill(IDX + 32, "DelayCondXYZ", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 						//hi.fill(IDX+31,Form("KER_IperQ_%s",Hname.Data()),
 						//	p2[j].E()*9.447078522/(p1.GetCharge_au()*(p2.GetCharge_au()+3)),
 						//	"KER [eV]",200,0,20,Form("%s/KER",Hname.Data()));

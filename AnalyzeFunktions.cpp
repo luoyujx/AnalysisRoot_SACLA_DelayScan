@@ -13,7 +13,7 @@
 #include "FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEventInfo.h"
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <TTree.h>
 #include <TFile.h>
@@ -279,6 +279,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		fDelays.push_back(factorTM*(DBTM.GetStatusAndData(TagNumber, 1).second - factorTMOffset)); //[1] Jitter 
 		fDelays.push_back(fDelays[0] + fDelays[1]); // Cor. Delay + (factorTMPMDOffset - DB.GetStatusAndData(TagNumber, 5).second) / factorTMPMD);
+		fDelays.push_back(std::fmod(fDelays[0] + fDelays[1] + 10000, 284));
 	}
 	//
 	////-----------------------------------
@@ -352,8 +353,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//
 	//// Delay vs Shots, XFELintensity, NumberOfHits
 	fHi.fill(startIdx + 0, "DelayVsShots", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo); // Delay vs Shots
-	fHi.fill(startIdx + 1, "DelayVsXFELintensity", fDelays[2], fIntensities[0], "Delay [fs]", "XFEL intensity [arb .unit]", delayBins, delayFrom, delayTo, 1000, 0, 1000); // Delay vs XFEL intenisty
-	fHi.fill(startIdx + 2, "DelayVsNumberOfHits", fDelays[2], rd.GetNbrOfHits(), "Delay [fs]", "Number of Hits", delayBins, delayFrom, delayTo, 100, 0, 100); // Delay vs Number of Hits
+	fHi.fill(startIdx + 1, "DelayVsXFELintensity", fIntensities[0], fDelays[2], "Delay [fs]", "XFEL intensity [arb .unit]", 1000, 0, 1000, delayBins, delayFrom, delayTo); // Delay vs XFEL intenisty
+	fHi.fill(startIdx + 2, "DelayVsNumberOfHits", rd.GetNbrOfHits(), fDelays[2], "Delay [fs]", "Number of Hits", 100, 0, 100, delayBins, delayFrom, delayTo); // Delay vs Number of Hits
 	startIdx += 3; // index = 27
 	//
 	int secondStartIdx = startIdx + 20;
@@ -427,6 +428,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	startIdx += (fParticles.GetNbrOfParticles()*50+20);
 	//fill histograms of hit count
 	int iodineCount = 0;
+	double iTotalChage = 0.0;
 	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion"  
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
@@ -435,16 +437,22 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		if ((fParticles.GetParticle(j).GetMass_au()*MyUnitsConv::au2amu() > 120)&&(fParticles.GetParticle(j).GetCharge_au() < 10))
 		{
 			iodineCount += fParticles.GetParticle(j).GetNbrOfParticleHits();
+			for (size_t k = 0; k < fParticles.GetParticle(j).GetNbrOfParticleHits(); ++k)
+			{
+				iTotalChage += fParticles.GetParticle(j).GetCharge_au();
+			}
+
 		}
 		for (size_t k=0;k<fParticles.GetParticle(j).GetNbrOfParticleHits();++k)
 		{
 			fHi.fill(startIdx+fParticles.GetNbrOfParticles(),"NumberOfParticleHits",j,"Particle Number",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1);
-			fHi.fill(startIdx+2*fParticles.GetNbrOfParticles(),"DelayVsNumberOfParticleHits",j,fIntensities[0],"Particle Number","delay [ps]",fParticles.GetNbrOfParticles()+1,0,fParticles.GetNbrOfParticles()+1,delayBins,delayFrom,delayTo);
+			fHi.fill(startIdx + 2 * fParticles.GetNbrOfParticles(), "DelayVsNumberOfParticleHits", j, fDelays[2], "Particle Number", "delay [fs]", fParticles.GetNbrOfParticles() + 1, 0, fParticles.GetNbrOfParticles() + 1, delayBins, delayFrom, delayTo);
 		}
 	}
 	startIdx += (2*fParticles.GetNbrOfParticles()+1);
 	fHi.fill(startIdx,"IodineHits",iodineCount,"Number of Hits",100,0,100);
-	startIdx++;
+	fHi.fill(startIdx + 1, "DelayVsIodineMeanChage", iTotalChage / iodineCount, fDelays[2], "Mean of Charge", "Delay [fs]",  100, 0, 10, delayBins, delayFrom, delayTo);
+	startIdx +=2;
 	//now you have found the particles//
 	//we can look for coincidences//
 	//get coincidence by calcurating aligned momentum-sum

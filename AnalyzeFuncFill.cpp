@@ -2,9 +2,9 @@
 #include "AnalyzeFunktions.h"
 #include "./MyAnalyzer/MyAnalyzer.h"
 #include <TFile.h>
-#include <TRandom3.h>
 
-TRandom3 RandomGene;
+
+//TRandom3 RandomGene;
 //#define TEST_RANDOM2
 //-------------------------------------Fill Ion spectra---------------------------------------------------------------//
 void fillSpectra(const MyParticle &p1, const MyParticle &p2, MyHistos &hi, int hiOff)

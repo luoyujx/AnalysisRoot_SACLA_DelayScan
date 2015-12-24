@@ -24,12 +24,18 @@
 #include <TGClient.h>
 #include <TStyle.h> 
 #include <TDirectory.h>
+#include <TRandom3.h>
 
 //#define XVelocity 0.0003704 //(mm/ns)
 //#define YVelocity -0.00037775
 #define XVelocity 0. //(mm/ns)
 #define YVelocity 0.
 
+
+//#define DELAY_RANDOM
+#ifdef DELAY_RANDOM
+TRandom3 RandomGene;
+#endif
 //_____________________________functions______________________________________________________________________________________________________________________________
 //momentum calculation
 double calcPx(const MyParticle &p, const MyParticleHit &ph)
@@ -226,7 +232,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) / factorPMD);	//[0] EH Delay	
 		fDelays.push_back(0.);																			//[1] Jitter 
-		fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay	
+		//fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay
+		fDelays.push_back(0.);
 	}
 	if (delayScan == 2) // with Jitter from Timing moniter, This mode should be chacked.
 	{
@@ -278,8 +285,15 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			return;
 		}
 		fDelays.push_back(factorTM*(DBTM.GetStatusAndData(TagNumber, 1).second - factorTMOffset)); //[1] Jitter 
+		// Testing random jitter
+#ifdef DELAY_RANDOM
+		fDelays[1] = RandomGene.Gaus(-33.45, 304.8);
+#endif
+		//delay with motor position and jitter
 		fDelays.push_back(fDelays[0] + fDelays[1]); // Cor. Delay + (factorTMPMDOffset - DB.GetStatusAndData(TagNumber, 5).second) / factorTMPMD);
+		//overlaping deley
 		fDelays.push_back(std::fmod(fDelays[0] + fDelays[1] + 10000, 284));
+
 	}
 	//
 	////-----------------------------------
@@ -290,7 +304,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	startIdx += 3; // index = 13
 	//
 	// Delay
-	fHi.fill(startIdx + 0, "Delay(no correction)", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // Delay (inclued jitter)
+	fHi.fill(startIdx + 0, "Delay_MotorPosition", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // Delay (inclued jitter)
 	fHi.fill(startIdx + 1, "Jitter", fDelays[1], "[fs]", delayBins*100, delayFrom, delayTo); // Jitter
 	fHi.fill(startIdx + 2, "Delay", fDelays[2], "[fs]", delayBins, delayFrom, delayTo);  // Delay (no jitter)	
 	startIdx += 3; // index = 16

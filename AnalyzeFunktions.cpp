@@ -147,6 +147,11 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 		//---CH2I2 for SACLA2015B and Lab experiment
 		AddCH2I2_CI(particles);
 	}
+	else if (whichParticles == "CH2I2-CII")
+	{
+		//---CH2I2 for SACLA2015B and Lab experiment
+		AddCH2I2_CII(particles);
+	}
 	else if (whichParticles == "CH2BrI")
 	{
 		//---CH2BrI for SACLA2015B and Lab experiment
@@ -426,6 +431,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					if (p.CheckTofAndPos(dh))
 						//select hit by reconstruction method//
 							if (dh.RekMeth() < rekmeth)
+								//if ((dh.RekMeth() != 8) && (dh.RekMeth() != 11) && (dh.RekMeth() != 12))
 							{
 								const MyParticleHit &ph = p.AddHit(dh);
 								//Check the angle of phiZX. if ph is out of condition, it delete.
@@ -443,10 +449,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//fill histograms of hit count
 	int iodineCount = 0;
 	double iTotalChage = 0.0;
-	for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion"  
+	for (size_t j=0;j<fParticles.GetNbrOfParticles();++j)//particle index j=0 is "ion"  
 	{
 		fHi.fill(startIdx+j,"NumberOfHits",fParticles.GetParticle(j).GetNbrOfParticleHits(),"Number of Hits",100,0,100,Form("%s",fParticles.GetParticle(j).GetName()));
-		fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
+		if (j > 0) fHi.fill(startIdx+fParticles.GetNbrOfParticles()+j,Form("TrendParticleHits%02d", j),skipCounter,Form("[shots/%d]",trendStep),1000,0,1000,"Trend",fParticles.GetParticle(j).GetNbrOfParticleHits());
 		//Iodine rate
 		if ((fParticles.GetParticle(j).GetMass_au()*MyUnitsConv::au2amu() > 120)&&(fParticles.GetParticle(j).GetCharge_au() < 10))
 		{
@@ -463,7 +469,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			fHi.fill(startIdx + 2 * fParticles.GetNbrOfParticles(), "DelayVsNumberOfParticleHits", j, fDelays[2], "Particle Number", "delay [fs]", fParticles.GetNbrOfParticles() + 1, 0, fParticles.GetNbrOfParticles() + 1, delayBins, delayFrom, delayTo);
 		}
 	}
-	startIdx += (2*fParticles.GetNbrOfParticles()+1);
+	startIdx += (2*fParticles.GetNbrOfParticles()+2);
 	fHi.fill(startIdx,"IodineHits",iodineCount,"Number of Hits",100,0,100);
 	fHi.fill(startIdx + 1, "DelayVsIodineMeanChage", iTotalChage / iodineCount, fDelays[2], "Mean of Charge", "Delay [fs]",  100, 0, 10, delayBins, delayFrom, delayTo);
 	startIdx +=2;
@@ -498,30 +504,6 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 						{
 							fillMoleculeHistogramCH2I2(ip, jp, fIntensities, fHi, startIdx, molecule[i][j], fDelays, delayBins, delayFrom, delayTo);
 							startIdx += 115;
-							//for proton
-							//extraCondition is 0:do not run proton routine, 1:run proton routine, 2:select only one hit event 
-							//if (extraCondition > 0)
-							//{
-							//	if (molecule[i][j].CoincidenceCount > 0) 
-							//	{
-							//		int otherHits = 0;
-							//		if (extraCondition == 2)
-							//		{
-							//			for (int k = 2; k < fParticles.GetNbrOfParticles(); k++)
-							//			{
-							//				if ( (k!=i)&&(k!=j) ) 
-							//					otherHits += fParticles.GetParticle(k).GetNbrOfParticleHits();
-							//			} 
-							//		}
-							//		if (otherHits == 0)
-							//		{
-							//			const MyParticle &hp = fParticles.GetParticle(1);
-							//			//if (hp.GetNbrOfParticleHits() < 4)
-							//			fillHydrogenHistogram(hp,ip,jp,fHi,startIdx,molecule[i][j]);
-							//		}
-							//	}
-							//	startIdx += 65;
-							//}
 						}
 					}
 				}
@@ -554,6 +536,36 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				}
 			}
 			startIdx += (5 + fParticles.GetNbrOfParticles());
+	}
+
+
+	//C-I-I 3-body coincidence
+	if (MoleculeAnalysis == 3)
+	{
+		//loop from particle No.1 (except Ion)
+		for (size_t i = 1; i < fParticles.GetNbrOfParticles(); ++i)
+		{
+			//i should be only Carbon (kind of particle 12)
+			const MyParticle &ip = fParticles.GetParticle(i);
+			if (ip.GetKindParticle() != 12) continue;
+			for (size_t j = 1; j < fParticles.GetNbrOfParticles(); ++j)
+			{
+				//j should be only Iodine (kind of particle 13)
+				const MyParticle &jp = fParticles.GetParticle(j);
+				if (jp.GetKindParticle() != 13) continue;
+				//check if ip and jp is molecule
+				for (size_t k = j; k < fParticles.GetNbrOfParticles(); ++k)
+				{
+					const MyParticle &kp = fParticles.GetParticle(k);
+					if (kp.GetKindParticle() != 13) continue;
+					{
+						//std::cout << ip.GetName() << jp.GetName() << kp.GetName() << std::endl;
+						fillMoleculeHistogramCH2I2_3body(ip, jp, kp, fIntensities, fHi, startIdx, /*molecule[i][j],*/ fDelays, delayBins, delayFrom, delayTo);
+						startIdx += 115;
+					}
+				}
+			}
+		}
 	}
 	//---gate by certain particle hits
 	//reserve ID for fillMoleculeHistogram2

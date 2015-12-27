@@ -514,6 +514,71 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 	//std::cout << "\t" << hiOff;
 
 }
+
+
+//-------------------Fill molecule CH2I2(3-body coincidence) histogram-----------------------------------------------------------------------------------------------------//
+void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2, const MyParticle &p3, std::vector<double>& intensity, MyHistos &hi, int hiOff,/* Molecule &mol,*/ std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo)
+{
+	double MomLim = 1600;
+	double MomSumRotLim = 1600;
+//	double MomScale = mol.momSumFactor;
+	const int Mombins = 150;
+
+	TString Hname(p1.GetName());
+	Hname += p2.GetName();
+	Hname += p3.GetName();
+
+	//if (mol.momSumWindowX * mol.momSumWindowY * mol.momSumWindowZ < 1e-20) return;
+	//const double pxSumWidth = mol.momSumWindowX;//10,9,7,5
+	//const double pySumWidth = mol.momSumWindowY;//10,8,5,4
+	//const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
+	//const double pxySumWidth = mol.momSumWindowX;//10,9,7,5
+	//const double pyzSumWidth = mol.momSumWindowY;//10,8,5,4
+	//const double pzxSumWidth = mol.momSumWindowZ;//5,6,4,2
+	//std::cout << Hname << std::endl;
+	double fdelay = 0.0;
+	if (delay.size()) fdelay = delay[2];
+
+
+	for (size_t i = 0; i < p1.GetNbrOfParticleHits(); ++i)
+	{
+		for (size_t j = 0; j < p2.GetNbrOfParticleHits(); ++j)//i=j
+		{
+			for (size_t k = 0; k < p3.GetNbrOfParticleHits(); ++k)//i=j
+			{
+				//skip if we are going to put in the same particlehit, for the case that we want coincidences for the same particle//
+				if ((j >= k) && (p2 == p3)) continue;//i==j
+				//---p1[i]="C" p2[j]="I" p3[k]="I"---//
+				const TVector3 &pvecC = p1[i].Pvec();
+				const TVector3 &pvecI1 = p2[j].Pvec();
+				const TVector3 &pvecI2 = p3[k].Pvec();
+				const TVector3 pvecSumII = pvecI1 + pvecI2;//molecule axis
+				//const TVector3 pvecSumIC = pvecI + pvecC;//3*H+
+				
+				const double angleC_II = pvecC.Angle(pvecSumII) * TMath::RadToDeg();
+				double weightPerSin = 1 / TMath::Sin(angleC_II * TMath::DegToRad());
+				if (weightPerSin > 100) weightPerSin = 100;
+				const double ratioC_II = pvecC.Mag() / pvecSumII.Mag();
+
+
+				hi.fill(hiOff + 17, "Delay", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+				hi.fill(hiOff + 18, "AngleVsRatio", angleC_II, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+				hi.fill(hiOff + 20, "Angle", angleC_II, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+				hi.fill(hiOff + 21, "DelayVsAngle", angleC_II, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
+				//1st condition
+				//if (angleC_II < mol.angleCondition) continue;
+				//if ((ratioC_II < mol.momSumFactorLow) || (ratioC_II > mol.momSumFactorUp)) continue;
+			}
+
+		}
+	}
+}
+
+//-------------------Fill Analog histogram-----------------------------------------------------------------------------------------------------//
+void fillAnalogHistogram(const MyOriginalEvent &oe, MyHistos &hi, const MyParticle &p, double delay, int delayBins, double delayFrom, double delayTo)
+{
+
+}
 //-------------------Fill molecule (2-body coincidence) histogram-----------------------------------------------------------------------------------------------------//
 void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& intPart)
 {

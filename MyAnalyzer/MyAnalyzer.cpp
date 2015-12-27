@@ -22,8 +22,6 @@
 #include "../AnalyzeFuncFill.h"
 #include "../MyMomentaCalculator/MyMomentaCalculator.h"
 
-//#include "../MyCovariance.h"
-//#include "../MyWaveform.h"
 
 using namespace std;
 
@@ -123,7 +121,7 @@ void MyAnalyzer::Init()
 	//Init Raw waveform stuff//
 	fWf.Init(fOE,fHi);
 
-	if (MoleculeAnalysis == 1)OpenMomInfoData();
+	if (MoleculeAnalysis == 1) OpenMomInfoData();
 }
 void MyAnalyzer::Init(MySettings &set)
 {

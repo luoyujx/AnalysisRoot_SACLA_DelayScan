@@ -423,27 +423,27 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		//if so, the add this hit to the particle and fill the particle histograms//
 		//go through all particles//
 		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
-				{
-					//get the particle from the vector//
-					MyParticle &p = fParticles.GetParticle(j);
-					if (p.GetKindParticle() < 0) continue;
-					//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
-					if (p.CheckTofAndPos(dh))
-						//select hit by reconstruction method//
-							if (dh.RekMeth() < rekmeth)
-								//if ((dh.RekMeth() != 8) && (dh.RekMeth() != 11) && (dh.RekMeth() != 12))
+			{
+				//get the particle from the vector//
+				MyParticle &p = fParticles.GetParticle(j);
+				if (p.GetKindParticle() < 0) continue;
+				//if this hit fits both conditions then add the Hit to this Particle and fill the histo for this hit//
+				if (p.CheckTofAndPos(dh))
+					//select hit by reconstruction method//
+						if (dh.RekMeth() < rekmeth)
+							//if ((dh.RekMeth() != 8) && (dh.RekMeth() != 11) && (dh.RekMeth() != 12))
+						{
+							const MyParticleHit &ph = p.AddHit(dh);
+							//Check the angle of phiZX. if ph is out of condition, it delete.
+							if (p.CheckPhiZX(ph))
 							{
-								const MyParticleHit &ph = p.AddHit(dh);
-								//Check the angle of phiZX. if ph is out of condition, it delete.
-								if (p.CheckPhiZX(ph))
-								{
-									fillParticleHistograms(p, ph, fIntensities, fDelays, fHi, secondStartIdx, intPartition, delayBins, delayFrom, delayTo, selectThetaZ, thetaZLowerLimit, thetaZUpperLimit);
-								}
+								fillParticleHistograms(p, ph, fIntensities, fDelays, fHi, secondStartIdx, intPartition, delayBins, delayFrom, delayTo, selectThetaZ, thetaZLowerLimit, thetaZUpperLimit);
 							}
-							//we reserve 50 histograms for one particle//
-							secondStartIdx +=50;
-							//std::cout <<j<<" "<< secondStartIdx<<std::endl;
-				}
+						}
+						//we reserve 50 histograms for one particle//
+						secondStartIdx +=50;
+						//std::cout <<j<<" "<< secondStartIdx<<std::endl;
+			}
 	}//------------------------------------------------------------------------------------------------------//
 	startIdx += (fParticles.GetNbrOfParticles()*50+20);
 	//fill histograms of hit count
@@ -473,6 +473,19 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fHi.fill(startIdx,"IodineHits",iodineCount,"Number of Hits",100,0,100);
 	fHi.fill(startIdx + 1, "DelayVsIodineMeanChage", iTotalChage / iodineCount, fDelays[2], "Mean of Charge", "Delay [fs]",  100, 0, 10, delayBins, delayFrom, delayTo);
 	startIdx +=2;
+
+	//----- Fill analog delay histogram -----//
+	for (size_t i = 1; i<fParticles.GetNbrOfParticles(); ++i)
+	{
+		MyParticle &p = fParticles.GetParticle(i);
+		if (p.GetKindParticle() < 0) continue;
+		long trFrom = static_cast<long>(p.GetCondTofFr());
+		long trTo = static_cast<long>(p.GetCondTofTo());
+		fHi.fill(startIdx + i, "DelayMCPSig", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo, Form("%s/Delay", p.GetName()), fWf.GetAverage(trFrom, trTo, false));
+	}
+	startIdx += fParticles.GetNbrOfParticles();
+
+	//-----2-body coincidence -----//
 	//now you have found the particles//
 	//we can look for coincidences//
 	//get coincidence by calcurating aligned momentum-sum

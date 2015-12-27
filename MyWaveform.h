@@ -32,17 +32,16 @@ public:
 public:
 	const waveform_t &GetWaveform()const				{return waveform;}
 	const waveform_t &GetAveWaveform()const				{return aveWaveform;}
-	const waveform_t &GetRebinWaveform()const			{return rebinWaveform;}
-	const waveform_t &GetAveRebinWaveform()const		{return aveRebinWaveform;}
+	//const waveform_t &GetRebinWaveform()const			{return rebinWaveform;}
+	//const waveform_t &GetAveRebinWaveform()const		{return aveRebinWaveform;}
 
 	int GetArraySize()const						{return arraySize;}
 	int GetRebinSize()const						{return rebin;}
 	int GetTimeRangeFrom()const					{return TimeRangeFrom;}
-
 	long GetEventCount()const					{return eventCounter;}
-	double GetIntensity()const					{return intensity;}
-	double GetAveIntensity()const				{return aveIntensity;}
-	double GetVarIntensity()const				{return varIntensity;}
+
+	double GetIntegral(const long TRfrom, const long TRto, bool absolute);
+	double GetAverage(const long TRfrom, const long TRto, bool absolute);
 
 private:
 
@@ -50,10 +49,6 @@ private:
 	waveform_t aveWaveform;
 	waveform_t rebinWaveform;
 	waveform_t aveRebinWaveform;
-
-	double intensity;
-	double aveIntensity;
-	double varIntensity;
 
 	const int IDOffset;
 	long length;
@@ -73,7 +68,7 @@ class Average : std::binary_function<double,double,double>
 {
 public:
   explicit Average(double alpha)
-    :_alpha(alpha)
+	:_alpha(alpha)
   {}
 
   /** operator.
@@ -85,7 +80,7 @@ public:
    */
   double operator()(double currentValue, double Average_Nm1)
   {
-    return Average_Nm1 + _alpha*(currentValue - Average_Nm1);
+	return Average_Nm1 + _alpha*(currentValue - Average_Nm1);
   }
 
 protected:
@@ -97,12 +92,12 @@ class SqAverage : std::binary_function<double,double,double>
 {
 public:
   explicit SqAverage(double alpha)
-    :_alpha(alpha)
+	:_alpha(alpha)
   {}
 
   double operator()(double currentValue, double Average_Nm1)
   {
-    return Average_Nm1 + _alpha*(currentValue*currentValue - Average_Nm1);
+	return Average_Nm1 + _alpha*(currentValue*currentValue - Average_Nm1);
   }
 
 protected:
@@ -114,12 +109,12 @@ class PreAverage : std::binary_function<double,double,double>
 {
 public:
   explicit PreAverage(double alpha)
-    :_alpha(alpha)
+	:_alpha(alpha)
   {}
 
   float operator()(double currentValue, double Average_Nm1)
   {
-    return Average_Nm1 - _alpha*(currentValue - Average_Nm1);
+	return Average_Nm1 - _alpha*(currentValue - Average_Nm1);
   }
 
 protected:

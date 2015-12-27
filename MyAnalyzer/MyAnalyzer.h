@@ -17,8 +17,8 @@
 #include "../FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEvent.h"
 #include "../FilesFromLma2Root/MyRootManager/MyHistos.h"
 #include "../FilesFromLma2Root/MySettings/MySettings.h"
-
 #include "../MyWaveform.h"
+
 //#include "../SQLiteProcessor/DataBase0d.h"
 //_____Information for calc coincidence_____
 struct Molecule

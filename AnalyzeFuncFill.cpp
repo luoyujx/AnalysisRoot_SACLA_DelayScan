@@ -52,7 +52,7 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"ReconstructionMethod",ph.RekMeth(),"Reconstruction Nbr",60,0,30,Form("%s/Raw",p.GetName()));
 	if (intensity.size() && (intPart.size()>1)) hi.fill(hiOff++,Form("Intensity%s",p.GetName()),intensity[0],"Laser Power",intPart.size()-1,&intPart.front(),Form("%s",p.GetName()));
 	else hiOff++;
-	if (intensity.size()) hi.fill(hiOff++,"Delay",fdelay,"Delay [ps]",delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	if (intensity.size()) hi.fill(hiOff++,"Delay",fdelay,"Delay [fs]",delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 	else hiOff++;
 
 	//detektor pictures//

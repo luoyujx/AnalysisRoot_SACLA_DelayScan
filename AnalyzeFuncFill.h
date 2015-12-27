@@ -19,6 +19,6 @@ void fill3BodyHistogram(const MyParticle &p1, const MyParticle &p2,const MyParti
 void fillMCPToFHistograms(const MyOriginalEvent &oe, MyHistos &hi, std::vector<MCPToFRegion> &mcpTofRegion);
 void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std::vector<double>& intensity, MyHistos &hi, int hiOff, Molecule &mol, std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo);
 void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2, const MyParticle &p3, std::vector<double>& intensity, MyHistos &hi, int hiOff,/* Molecule &mol,*/ std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo);
-void fillAnalogHistogram(const MyOriginalEvent &oe, MyHistos &hi, const MyParticle &p, double delay, int delayBins, double delayFrom, double delayTo);
+//void fillAnalogHistogram(const MyOriginalEvent &oe, MyHistos &hi, const MyParticle &p, double delay, int delayBins, double delayFrom, double delayTo);
 
 #endif

@@ -11,7 +11,9 @@
 #include "FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEventInfo.h"
 #include "FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEventInfo.h"
 
-MyWaveform::MyWaveform():IDOffset(9900), eventCounter(0),aveIntensity(0.),varIntensity(0.)
+void BaseLineCorr(double* data, double* BLdata, double offset, const long ndata, const int aveWindow, const int nAve);
+
+MyWaveform::MyWaveform():IDOffset(9900), eventCounter(0)
 {
 }
 MyWaveform::~MyWaveform()
@@ -40,17 +42,6 @@ void MyWaveform::Init(const MyOriginalEvent &oe, MyHistos &rm)
 	//const short offset = oc.GetBaseline();
 	//const short scale = oc.GetFullScale();
 	//const double range = scale*rebin;
-
-	//rm.create1d(IDOffset+100,"CheckSignalHight96","signal hight (mV*rebin)",200,-range,range,"test");
-	//rm.create1d(IDOffset+101,"CheckSignalHight20","signal hight (mV*rebin)",200,-range,range,"test");
-	//rm.create1d(IDOffset+102,"CheckSignalHight85","signal hight (mV*rebin)",200,-range,range,"test");
-	//rm.create1d(IDOffset+103,"CheckSignalHight48","signal hight (mV*rebin)",200,-range,range,"test");
-	//rm.create1d(IDOffset+110,"CheckSignalOver","ToF",length,0,length,"test");
-
-	//std::cout<<scale<<std::endl;
-	//std::cout<<offset<<std::endl;
-	//std::cout<<vertGain<<std::endl;
-	//std::cout<<range<<std::endl;
 
 }
 void MyWaveform::Clear()
@@ -84,9 +75,9 @@ void MyWaveform::ExtractWaveform(const MyOriginalEvent &oe, MyHistos &rm, int ch
 		}
 	}
 	////-------test-------------------
-	//waveform_t BLData(length);
-	//BaseLineCorr(&waveform[0], &BLData[0],0,length,50,2);
-	//for (size_t i=0; i<length; i++) waveform[i]=waveform[i]-BLData[i];
+	waveform_t BLData(length);
+	BaseLineCorr(&waveform[0], &BLData[0],0,length,50, 1);
+	for (size_t i=0; i<length; i++) waveform[i]=waveform[i]-BLData[i];
 	////-------test-------------------
 
 	//---rebin waveform---//
@@ -121,4 +112,71 @@ void MyWaveform::FillHist(MyHistos &rm)
 }
 
 
+double MyWaveform::GetIntegral(const long TRfrom, const long TRto, bool absolute)
+{
+	double signalSum = 0.0;
+	for (size_t i = TRfrom; i < TRto; i++)
+	{
+		if (absolute) signalSum += TMath::Abs(waveform[i]);
+		else signalSum += waveform[i];
+	}
+	return signalSum;
+}
+
+double MyWaveform::GetAverage(const long TRfrom, const long TRto, bool absolute)
+{
+	//return the Average//
+	return GetIntegral(TRfrom, TRto, absolute) / (TRto - TRfrom);
+}
+
+//################BaseLine Correction (test)#############################
+void BaseLineCorr(double* data, double* BLdata, double offset, const long ndata, const int aveWindow, const int nAve)//positive
+{
+	double temp;
+	int n;
+	double* tempData = new double[ndata];
+
+	for (int i = 0; i<ndata; i++)
+	{
+		temp = 0.;
+		for (int j = i - aveWindow; j <= i + aveWindow; ++j)
+		{
+			if ((j<0) || (j >= ndata)) temp += offset;
+			else temp += data[j];
+		}
+		BLdata[i] = temp / (2 * aveWindow + 1);
+
+		for (int k = 0; k<nAve; ++k)
+		{
+			temp = 0.;
+			n = 0;
+			for (int j = i - aveWindow; j <= i + aveWindow; ++j)
+			{
+				if (((j >= 0) && (j<ndata)) && (BLdata[i]>data[j]))
+				{
+					temp += data[j];
+					n++;
+				}
+			}
+			if (n>0) BLdata[i] = temp / n;
+			else break;
+		}
+	}
+
+	for (int i = 0; i<ndata; i++)
+	{
+		temp = 0.;
+		for (int j = i - aveWindow; j <= i + aveWindow; ++j)
+		{
+			if ((j<0) || (j >= ndata)) temp += offset;
+			else temp += BLdata[j];
+		}
+		tempData[i] = temp / (2 * aveWindow + 1);
+	}
+
+	for (int i = 0; i<ndata; i++)
+		BLdata[i] = tempData[i];
+
+	delete[] tempData;
+}
 

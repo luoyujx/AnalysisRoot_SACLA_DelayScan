@@ -183,6 +183,7 @@ private:
 	bool existIntPartition;
 	bool checkingResult;
 	bool afterAnalysis;
+	bool mcpSigAnalysis;
 	//
 	// Limit of Intensity, Angle, Delay, Jitter
 	// Limit of Intensity
@@ -204,7 +205,7 @@ private:
 
 	//optical shtter
 	bool optShutterOpen;
-	//
+	// 
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;
 	//PD data

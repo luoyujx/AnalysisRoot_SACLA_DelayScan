@@ -237,8 +237,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		}
 		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) / factorPMD);	//[0] EH Delay	
 		fDelays.push_back(0.);																			//[1] Jitter 
-		//fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay
-		fDelays.push_back(0.);
+		if (fFlag[0] == true) fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay
+		else fDelays.push_back(0.);
 	}
 	if (delayScan == 2) // with Jitter from Timing moniter, This mode should be chacked.
 	{
@@ -335,11 +335,11 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	startIdx++;
 	//---------		
-	//---skip this event if Delay (Delay1 + Delay2) is below the lower limit or over the upper limit
+	//---skip this event if Delay (Mortor position) is below the lower limit or over the upper limit
 	if (selectDelay)
 	{
-		if (fDelays[2]<delayLowerLimit) return;
-		if (fDelays[2]>delayUpperLimit) return;
+		if (fDelays[0]<delayLowerLimit) return;
+		if (fDelays[0]>delayUpperLimit) return;
 	}
 	if (fDelays.size())
 	{
@@ -475,15 +475,19 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	startIdx +=2;
 
 	//----- Fill analog delay histogram -----//
-	for (size_t i = 1; i<fParticles.GetNbrOfParticles(); ++i)
+	if (mcpSigAnalysis)
 	{
-		MyParticle &p = fParticles.GetParticle(i);
-		if (p.GetKindParticle() < 0) continue;
-		long trFrom = static_cast<long>(p.GetCondTofFr());
-		long trTo = static_cast<long>(p.GetCondTofTo());
-		fHi.fill(startIdx + i, "DelayMCPSig", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo, Form("%s/Delay", p.GetName()), fWf.GetAverage(trFrom, trTo, false));
+		for (size_t i = 1; i<fParticles.GetNbrOfParticles(); ++i)
+		{
+			MyParticle &p = fParticles.GetParticle(i);
+			if (p.GetKindParticle() < 0) continue;
+			long trFrom = static_cast<long>(p.GetCondTofFr());
+			long trTo = static_cast<long>(p.GetCondTofTo());
+			fHi.fill(startIdx + i, "DelayMCPSig", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo, Form("%s/Delay", p.GetName()), fWf.GetAverage(trFrom, trTo, false));
+			fHi.fill(startIdx + (i + fParticles.GetNbrOfParticles()), "DelayMCPSig2D", fWf.GetAverage(trFrom, trTo, false), fDelays[2], "MCP [arb. unit]", "Delay [fs]", 500, 0, 200, delayBins, delayFrom, delayTo, Form("%s/Delay", p.GetName()));
+		}
 	}
-	startIdx += fParticles.GetNbrOfParticles();
+	startIdx += fParticles.GetNbrOfParticles()*2;
 
 	//-----2-body coincidence -----//
 	//now you have found the particles//

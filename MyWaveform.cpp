@@ -11,7 +11,7 @@
 #include "FilesFromLma2Root/MyEvent/MySortedEvent/MySortedEventInfo.h"
 #include "FilesFromLma2Root/MyEvent/MySignalAnalyzedEvent/MySignalAnalyzedEventInfo.h"
 
-void BaseLineCorr(double* data, double* BLdata, double offset, const long ndata, const int aveWindow, const int nAve);
+void BaseLineCorr(const short* data, double* BLdata, double offset, const long ndata, const int aveWindow, const int nAve);
 
 MyWaveform::MyWaveform():IDOffset(9900), eventCounter(0)
 {
@@ -67,17 +67,19 @@ void MyWaveform::ExtractWaveform(const MyOriginalEvent &oe, MyHistos &rm, int ch
 		data			= static_cast<const short*>(oc.GetDataPointerForPuls(p));
 		const long pulsLength = p.GetLength();
 		const long pulsStartPoint = p.GetIndexToFirstPointOfOriginalWaveform();
+		waveform_t BLData(pulsLength);
+		BaseLineCorr(data, &BLData[0], offset, pulsLength, 50, 1);
 		for (size_t j=0; j<pulsLength;++j)
 		{
-			const double data_mV = (data[j]-offset)*vertGain;
-			waveform[(j+pulsStartPoint)] = data_mV;
+			const double data_mV = (data[j] - BLData[j]) * vertGain;
+			waveform[(j + pulsStartPoint)] = data_mV;
 			//if (data_mV > 1400) rm.fill1d(IDOffset+110,(j+pulsStartPoint));//FAMP max output voltage is 1.5V
 		}
 	}
-	////-------test-------------------
-	waveform_t BLData(length);
-	BaseLineCorr(&waveform[0], &BLData[0],0,length,50, 1);
-	for (size_t i=0; i<length; i++) waveform[i]=waveform[i]-BLData[i];
+	////-------BL Corr-------------------
+	//waveform_t BLData(length);
+	//BaseLineCorr(&waveform[0], &BLData[0],0,length,50, 1);
+	//for (size_t i=0; i<length; i++) waveform[i]=waveform[i]-BLData[i];
 	////-------test-------------------
 
 	//---rebin waveform---//
@@ -114,6 +116,7 @@ void MyWaveform::FillHist(MyHistos &rm)
 
 double MyWaveform::GetIntegral(const long TRfrom, const long TRto, bool absolute)
 {
+
 	double signalSum = 0.0;
 	for (size_t i = TRfrom; i < TRto; i++)
 	{
@@ -130,7 +133,7 @@ double MyWaveform::GetAverage(const long TRfrom, const long TRto, bool absolute)
 }
 
 //################BaseLine Correction (test)#############################
-void BaseLineCorr(double* data, double* BLdata, double offset, const long ndata, const int aveWindow, const int nAve)//positive
+void BaseLineCorr(const short* data, double* BLdata, double offset, const long ndata, const int aveWindow, const int nAve)//positive
 {
 	double temp;
 	int n;

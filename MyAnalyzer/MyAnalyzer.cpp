@@ -164,7 +164,7 @@ void MyAnalyzer::Run()
 			break;
 		}
 		//Analyze Raw waveform//
-		fWf.ExtractWaveform(fOE,fHi,7-1);
+		if (mcpSigAnalysis) fWf.ExtractWaveform(fOE, fHi, 7 - 1);
 		//analyze the event//
 		Analyze(fWf);
 		//increase the counter//
@@ -176,7 +176,7 @@ void MyAnalyzer::Run()
 	if (WasRunningBefore)
 	{
 		if (afterAnalysis) fillHistosAfterAnalyzis(fParticles.GetParticles(),fHi,intPartition.size()-1,delayBins,delayFrom,delayTo);
-		fWf.FillHist(fHi);
+		if (mcpSigAnalysis) fWf.FillHist(fHi);
 		std::cout << "<- Done, now saving Histograms!!!!"<<std::endl;
 		std::cout << "First TAG: "<<firstTAG << " Last Tag: " << fOE.GetEventID()<< std::endl;
 		if (missedTagCount) std::cout << "Can not find "<< missedTagCount << " intensity data." << std::endl;
@@ -276,6 +276,7 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	jitterUpperLimit = set.GetValue("JitterUpperLimit", 100000000);
 
 	optShutterOpen = static_cast<int>(set.GetValue("OptShutterOpen", true) + 0.1);
+	mcpSigAnalysis = static_cast<int>(set.GetValue("McpSigAnalysis", false) + 0.1);
 }
 //__________Show mass &ToF spactrum with Particle name_________________________________________
 void MyAnalyzer::ShowResult()

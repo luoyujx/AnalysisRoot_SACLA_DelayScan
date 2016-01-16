@@ -27,11 +27,14 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 
 {	
 	//if (!(ph.E() > p.GetEnergyFrom() && ph.E() < p.GetEnergyTo())) return;
-	double MomLim = 1500;
-	TString pname(p.GetName());
-	if (pname == "H1p") MomLim = 400;
+	double MomLim = 1000;
 	const double SliceLim = 20;
-	if (p.GetCharge_au()>8) MomLim = 2000;
+	TString pname(p.GetName());
+
+	if (pname == "H1p") MomLim = 200;
+	if (p.GetCharge_au()>2) MomLim = 1500;
+	if (p.GetCharge_au()>5) MomLim = 2000;
+	if (p.GetCharge_au()>7) MomLim = 2500;
 
 	double fdelay = 0.0;
 	if (intensity.size()) fdelay = delay[2];
@@ -112,34 +115,6 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
-
-	//if ((1 < intensity[0])&& (2> intensity[0]))
-	//hi.fill(hiOff++,"EnergyVsTOFCor",ph.TofCor(),ph.E(),"TOF [ns]","Energy [eV]",10000,0,30000,500,0,500,Form("%s/Energy",p.GetName()));
-	//else hiOff++;
-
-	//if (ph.ThetaZ() <  15) hi.fill(hiOff++, "EnergyUpto015deg", ph.E(), "Energy [eV]", 500, 0, 500, Form("%s/Energy", p.GetName())); else hiOff++;
-	//if (ph.ThetaZ() <   5) hi.fill(hiOff++, "EnergyUpto005deg", ph.E(), "Energy [eV]", 150, 0, 150, Form("%s/Energy", p.GetName())); else hiOff++;
-	
-	/*
-	if (ph.ThetaZ() <  10) hi.fill(hiOff++,"EnergyUpto010deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  20) hi.fill(hiOff++,"EnergyUpto020deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  30) hi.fill(hiOff++,"EnergyUpto030deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  40) hi.fill(hiOff++,"EnergyUpto040deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  50) hi.fill(hiOff++,"EnergyUpto050deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  60) hi.fill(hiOff++,"EnergyUpto060deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  70) hi.fill(hiOff++,"EnergyUpto070deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  80) hi.fill(hiOff++,"EnergyUpto080deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() <  90) hi.fill(hiOff++,"EnergyUpto090deg",ph.E(),"Energy [eV]",300,0,150,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 100) hi.fill(hiOff++,"EnergyUpto100deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 110) hi.fill(hiOff++,"EnergyUpto110deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 120) hi.fill(hiOff++,"EnergyUpto120deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 130) hi.fill(hiOff++,"EnergyUpto130deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 140) hi.fill(hiOff++,"EnergyUpto140deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 150) hi.fill(hiOff++,"EnergyUpto150deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 160) hi.fill(hiOff++,"EnergyUpto160deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 170) hi.fill(hiOff++,"EnergyUpto170deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	if (ph.ThetaZ() < 180) hi.fill(hiOff++,"EnergyUpto180deg",ph.E(),"Energy [eV]",500,0,100,Form("%s/Energy",p.GetName()));else hiOff++;
-	*/
 
 	//Angle//
 	hi.fill(hiOff++,"ThetaX",ph.ThetaX(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));
@@ -1429,36 +1404,11 @@ void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos 
 	size_t idx = 8000;
 
 	TH1D* delayVsShots = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots"));
-	//TH1D* FELIntensityVsShots = dynamic_cast<TH1D*>(gFile->FindObject("IntensitySelectPD"));
-	//TH1D* delayDependenceXe1pH = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pH"));
-	//TH1D* delayDependenceXe1pL = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1pL"));
-	//TH1D* delayDependenceXe2p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p"));
-	//TH1D* delayDependenceXe3p = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p"));
-	//TH1D* delayVsShotsUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots_UltraWide"));
-	//TH1D* delayDependenceXe1pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe1p_UltraWide"));
-	//TH1D* delayDependenceXe2pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe2p_UltraWide"));
-	//TH1D* delayDependenceXe3pUW = dynamic_cast<TH1D*>(gFile->FindObject("DelayDependenceXe3p_UltraWide"));
-
-	//TH1D* delayDepXe1pNormH = dynamic_cast<TH1D*>(hi.create1d(idx,"DelayDependenceXe1p_NormH","Delay [ps]",delayBins,delayFrom,delayTo));
-	//TH1D* delayDepXe1pNormL = dynamic_cast<TH1D*>(hi.create1d(idx+1,"DelayDependenceXe1p_NormL","Delay [ps]",delayBins,delayFrom,delayTo));
-	//TH1D* delayDepXe2pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+2,"DelayDependenceXe2p_Norm","Delay [ps]",delayBins,delayFrom,delayTo));
-	//TH1D* delayDepXe3pNorm = dynamic_cast<TH1D*>(hi.create1d(idx+3,"DelayDependenceXe3p_Norm","Delay [ps]",delayBins,delayFrom,delayTo));
-	//TH1D* delayDepXe1pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+3,"DelayDependenceXe1p_NormUW","Delay [ps]",1000,-50,550));
-	//TH1D* delayDepXe2pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+4,"DelayDependenceXe2p_NormUW","Delay [ps]",1000,-50,550));
-	//TH1D* delayDepXe3pNormUW = dynamic_cast<TH1D*>(hi.create1d(idx+5,"DelayDependenceXe3p_NormUW","Delay [ps]",1000,-50,550));
-
-	//delayDepXe1pNormH->Divide(delayDependenceXe1pH, delayVsShots);
-	//delayDepXe1pNormL->Divide(delayDependenceXe1pL, delayVsShots);
-	//delayDepXe2pNorm->Divide(delayDependenceXe2p, delayVsShots);
-	//delayDepXe3pNorm->Divide(delayDependenceXe3p, delayVsShots);
-	//delayDepXe1pNormUW->Divide(delayDependenceXe1pUW, delayVsShotsUW);
-	//delayDepXe2pNormUW->Divide(delayDependenceXe2pUW, delayVsShotsUW);
-	//delayDepXe3pNormUW->Divide(delayDependenceXe3pUW, delayVsShotsUW);
 
 	TH2D* delayVsTOF = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOF") );
 	DivideHisto2Dby1D(delayVsTOF,delayVsShots);
-	TH2D* delayVsTOFCor = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOFCor") );
-	DivideHisto2Dby1D(delayVsTOFCor,delayVsShots);
+	//TH2D* delayVsTOFCor = dynamic_cast<TH2D*>( gFile->GetDirectory("Ion")->FindObject("DelayVsTOFCor") );
+	//DivideHisto2Dby1D(delayVsTOFCor,delayVsShots);
 	//TH2D* FELintensityVsTOFCor = dynamic_cast<TH2D*>(gFile->GetDirectory("Ion")->FindObject("FELIntensityVsTOFCor"));
 	//DivideHisto2Dby1D(FELintensityVsTOFCor, FELIntensityVsShots);
 	//TH2D* delayVsMCPSignal = dynamic_cast<TH2D*>( gFile->FindObject("DelayVsMCPSignal") );

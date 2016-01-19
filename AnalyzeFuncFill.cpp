@@ -2,7 +2,7 @@
 #include "AnalyzeFunktions.h"
 #include "./MyAnalyzer/MyAnalyzer.h"
 #include <TFile.h>
-
+#include <TVector2.h>
 
 //TRandom3 RandomGene;
 //#define TEST_RANDOM2
@@ -511,6 +511,11 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 	//const double pyzSumWidth = mol.momSumWindowY;//10,8,5,4
 	//const double pzxSumWidth = mol.momSumWindowZ;//5,6,4,2
 	//std::cout << Hname << std::endl;
+	double angleCondition = 140;
+	double momSumFactor = 1.0 / 0.725;
+	double momSumFactorLow = 0.4;
+	double momSumFactorUp = 1.2;
+
 	double fdelay = 0.0;
 	if (delay.size()) fdelay = delay[2];
 
@@ -528,21 +533,116 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 				const TVector3 &pvecI1 = p2[j].Pvec();
 				const TVector3 &pvecI2 = p3[k].Pvec();
 				const TVector3 pvecSumII = pvecI1 + pvecI2;//molecule axis
-				//const TVector3 pvecSumIC = pvecI + pvecC;//3*H+
 				
 				const double angleC_II = pvecC.Angle(pvecSumII) * TMath::RadToDeg();
 				double weightPerSin = 1 / TMath::Sin(angleC_II * TMath::DegToRad());
 				if (weightPerSin > 100) weightPerSin = 100;
 				const double ratioC_II = pvecC.Mag() / pvecSumII.Mag();
 
-
-				hi.fill(hiOff + 17, "Delay", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-				hi.fill(hiOff + 18, "AngleVsRatio", angleC_II, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
-				hi.fill(hiOff + 20, "Angle", angleC_II, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
-				hi.fill(hiOff + 21, "DelayVsAngle", angleC_II, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
+				hi.fill(hiOff + 0, "Delay", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+				hi.fill(hiOff + 1, "AngleVsRatio", angleC_II, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+				hi.fill(hiOff + 2, "Angle", angleC_II, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+				hi.fill(hiOff + 3, "DelayVsAngle", angleC_II, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
+				hi.fill(hiOff + 4, "MomRatioCII", ratioC_II, "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
 				//1st condition
-				//if (angleC_II < mol.angleCondition) continue;
-				//if ((ratioC_II < mol.momSumFactorLow) || (ratioC_II > mol.momSumFactorUp)) continue;
+				if (angleC_II < angleCondition) continue;
+				if ((ratioC_II < momSumFactorLow) || (ratioC_II > momSumFactorUp)) continue;
+				int hiOffMom = hiOff + 5;
+				const TVector3 pvecSumCII = momSumFactor * pvecC + pvecSumII;
+				hi.fill(hiOffMom + 0, "PSum", pvecSumCII.Mag(), Form("P_{%s} + P_{%s} + P_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, 0, 800, Form("%s/MomSums", Hname.Data()));
+				hi.fill(hiOffMom + 1, "PxSum", pvecSumCII.X(), Form("Px_{%s} + Px_{%s} + Px_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+				hi.fill(hiOffMom + 2, "PySum", pvecSumCII.Y(), Form("Py_{%s} + Py_{%s} + Py_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+				hi.fill(hiOffMom + 3, "PzSum", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+
+				int hiOffResult = hiOffMom + 4;
+				if (pvecSumCII.Mag() < 150)
+				{
+					const double angleII = pvecI1.Angle(pvecI2)*TMath::RadToDeg();
+					const double angleCI1 = pvecC.Angle(pvecI1)*TMath::RadToDeg();
+					const double angleCI2 = pvecC.Angle(pvecI2)*TMath::RadToDeg();
+
+					hi.fill(hiOffResult + 0, "DelayCondXYZ", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					//Ratio Pc/(Pi1+Pi2)
+					hi.fill(hiOffResult + 1, "MomRatioCIICondXYZ", ratioC_II, "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 2, "MomRatioIICondXYZ", pvecI1.Mag() / pvecI2.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 3, "MomRatioCI1CondXYZ", pvecC.Mag() / pvecI1.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 4, "MomRatioCI2CondXYZ", pvecC.Mag() / pvecI2.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+
+					// Formed angle
+					hi.fill(hiOffResult + 5, "AngleCondXYZ", angleC_II, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 6, "AngleIICondXYZ", angleII, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 7, "AngleCI1CondXYZ", angleCI1, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 8, "AngleCI2CondXYZ", angleCI2, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()));
+
+					//Formed angle VS Ratio
+					hi.fill(hiOffResult + 9, "AngleVsRatioCondXYZ", angleC_II, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
+					hi.fill(hiOffResult + 10, "AngleVsIIvsRatioCIICondXYZ", angleII, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 11, "AngleCI1vsRatioCIICondXYZ", angleCI1, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					hi.fill(hiOffResult + 12, "AngleCI2vsRatioCIICondXYZ", angleCI2, ratioC_II, "angle", "Ratio", 180, 0, 180, 100, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					
+					// delay vs angle
+					hi.fill(hiOffResult + 13, "DelayVsAngleCondXYZ", angleC_II, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
+					hi.fill(hiOffResult + 14, "DelayVsAngleIICondXYZ", angleII, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 15, "DelayVsAngleCI1CondXYZ", angleCI1, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 16, "DelayVsAngleCI2CondXYZ", angleCI2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 17, "DelayVsAngleCICondXYZ", angleCI1, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 17, "DelayVsAngleCICondXYZ", angleCI2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+
+					//Sum of kinetic energy
+					hi.fill(hiOffResult + 20, "DelayVsKESumCII", p1[i].E() + p2[j].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 21, "DelayVsKESumII", p2[j].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 22, "DelayVsKESumCI1", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 23, "DelayVsKESumCI2", p1[i].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 24, "DelayVsKESumCI", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 24, "DelayVsKESumCI", p1[i].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					
+					// KE
+					hi.fill(hiOffResult + 25, "DelayVsKEC", p1[i].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 26, "DelayVsKEI1",p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 27, "DelayVsKEI2",p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+
+					double angleTheta = pvecI1.Angle(pvecI2);
+					double angle3Body = pvecI1.Cross(pvecI2).Dot(pvecC) / (pvecI1.Mag()*pvecI2.Mag()*pvecC.Mag()*TMath::Sin(angleTheta));
+					hi.fill(hiOffResult + 28, Form("3BodyAngleCos-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()), angle3Body, "cos(Phi)", 100, -1, 1, "3BodyAngularCorr");
+					// Newton diagram
+					double I1 = pvecI1.Mag();
+					TVector3 vI1(1, 0, 0);
+					TVector3 vI2(pvecI2.Mag() / I1, 0, 0);
+					TVector3 vC(pvecC.Mag() / I1, 0, 0);
+					vI2.RotateZ(pvecI1.Angle(pvecI2));
+					vC.RotateZ(-pvecI1.Angle(pvecC));
+					//hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()),
+					//	vI1.X(), vI1.Y(), "Normalized Momentum", "Normalized Momentum", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
+					hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()), 
+						vI2.X(), vI2.Y(), "Normalized Momentum", "Normalized Momentum", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
+					hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()),
+						vC.X(), vC.Y(), "Normalized Momentum", "Normalized Momentum", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
+
+
+
+					//double I1 = pvecI1.Mag();
+					//TVector3 pvecI1N = (1.0 / I1) * pvecI1;
+					//TVector3 pvecI2N = (1.0 / I1) * pvecI2;
+					//TVector3 pvecCN = (1.0 / I1) * pvecC;
+					//const TVector3 crossI1I2 = pvecI1.Cross(pvecI2);
+					//const TVector3 zAxis(0, 0, 1);
+					//const TVector3 xAxis(1, 0, 0);
+					//double angleZaxis = crossI1I2.Angle(zAxis);
+					//pvecI1N.Rotate(-angleZaxis, crossI1I2.Cross(zAxis));
+					//pvecI2N.Rotate(-angleZaxis, crossI1I2.Cross(zAxis));
+					//pvecCN.Rotate(-angleZaxis, crossI1I2.Cross(zAxis));
+					//double angleXaxis = pvecI1N.Angle(xAxis);
+					//pvecI1N.RotateZ(-angleXaxis);
+					//pvecI2N.RotateZ(-angleXaxis);
+					//pvecCN.RotateZ(-angleXaxis);
+					//hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()),
+					//	pvecI1N.X(), pvecI1N.Y(), "Momenta", "Momenta", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
+					//hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()), 
+					//	pvecI2N.X(), pvecI2N.Y(), "Momenta", "Momenta", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
+					//hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()),
+					//	pvecCN.X(), pvecCN.Y(), "Momenta", "Momenta", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
+
+				}
 			}
 
 		}
@@ -1401,7 +1501,7 @@ void fillMCPToFHistograms(const MyOriginalEvent &oe, MyHistos &hi, std::vector<M
 void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos &hi,size_t nRegion,int delayBins,double delayFrom,double delayTo )
 {
 	std::cout << std::endl << "Running post analysis." << std::endl;
-	size_t idx = 8000;
+	size_t idx = 9000;
 
 	TH1D* delayVsShots = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots"));
 

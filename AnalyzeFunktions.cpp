@@ -577,7 +577,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 					if (kp.GetKindParticle() != 13) continue;
 					{
 						//std::cout << ip.GetName() << jp.GetName() << kp.GetName() << std::endl;
-						fillMoleculeHistogramCH2I2_3body(ip, jp, kp, fIntensities, fHi, startIdx, /*molecule[i][j],*/ fDelays, delayBins, delayFrom, delayTo);
+						fillMoleculeHistogramCH2I2_3body(ip, jp, kp, fIntensities, fHi, startIdx, molecule3, fDelays, delayBins, delayFrom, delayTo);
 						startIdx += 115;
 					}
 				}

@@ -35,11 +35,8 @@ int main(int argc, char *argv[])
 	std::cout<<"Reconstruction Method : "<<fAn.GetRekMeth()<<std::endl;
 	std::cout<<"Analyze molecule : "<<fAn.GetMolecule()<<std::endl;
 	
-	//fAn.Run();
 	//_sleep(10000);
 	theApp.Run();
-	//theApp.ReturnFromRun();
-	//theApp.Terminate(0);
 	
 	return 0;
 }

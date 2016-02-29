@@ -492,7 +492,7 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 
 
 //-------------------Fill molecule CH2I2(3-body coincidence) histogram-----------------------------------------------------------------------------------------------------//
-void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2, const MyParticle &p3, std::vector<double>& intensity, MyHistos &hi, int hiOff,/* Molecule &mol,*/ std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo)
+void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2, const MyParticle &p3, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::map< std::string, Molecule > molecule3, std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo)
 {
 	double MomLim = 1600;
 	double MomSumRotLim = 1600;
@@ -503,18 +503,20 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 	Hname += p2.GetName();
 	Hname += p3.GetName();
 
-	//if (mol.momSumWindowX * mol.momSumWindowY * mol.momSumWindowZ < 1e-20) return;
-	//const double pxSumWidth = mol.momSumWindowX;//10,9,7,5
-	//const double pySumWidth = mol.momSumWindowY;//10,8,5,4
-	//const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
+	Molecule mol = molecule3[Hname.Data()];
+	if (mol.momSumWindowX * mol.momSumWindowY * mol.momSumWindowZ < 1e-20) return;
+	const double pxSumWidth = mol.momSumWindowX;//10,9,7,5
+	const double pySumWidth = mol.momSumWindowY;//10,8,5,4
+	const double pzSumWidth = mol.momSumWindowZ;//5,6,4,2
 	//const double pxySumWidth = mol.momSumWindowX;//10,9,7,5
 	//const double pyzSumWidth = mol.momSumWindowY;//10,8,5,4
 	//const double pzxSumWidth = mol.momSumWindowZ;//5,6,4,2
 	//std::cout << Hname << std::endl;
-	double angleCondition = 140;
-	double momSumFactor = 1.0 / 0.725;
-	double momSumFactorLow = 0.4;
-	double momSumFactorUp = 1.2;
+	const double angleCondition = mol.angleCondition;
+	const double momSumFactor = 1.0 / mol.momSumFactor;
+	const double momSumFactorLow = mol.momSumFactorLow;
+	const double momSumFactorUp = mol.momSumFactorUp;
+	//std::cout << Hname << momSumFactor << " " << pxSumWidth << ":" << pySumWidth << ":" << pzSumWidth << std::endl;
 
 	double fdelay = 0.0;
 	if (delay.size()) fdelay = delay[2];
@@ -544,18 +546,26 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 				hi.fill(hiOff + 2, "Angle", angleC_II, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()), weightPerSin);
 				hi.fill(hiOff + 3, "DelayVsAngle", angleC_II, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()), weightPerSin);
 				hi.fill(hiOff + 4, "MomRatioCII", ratioC_II, "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+
 				//1st condition
 				if (angleC_II < angleCondition) continue;
 				if ((ratioC_II < momSumFactorLow) || (ratioC_II > momSumFactorUp)) continue;
+
 				int hiOffMom = hiOff + 5;
 				const TVector3 pvecSumCII = momSumFactor * pvecC + pvecSumII;
 				hi.fill(hiOffMom + 0, "PSum", pvecSumCII.Mag(), Form("P_{%s} + P_{%s} + P_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, 0, 800, Form("%s/MomSums", Hname.Data()));
 				hi.fill(hiOffMom + 1, "PxSum", pvecSumCII.X(), Form("Px_{%s} + Px_{%s} + Px_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 				hi.fill(hiOffMom + 2, "PySum", pvecSumCII.Y(), Form("Py_{%s} + Py_{%s} + Py_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 				hi.fill(hiOffMom + 3, "PzSum", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+				if ((pvecSumCII.Y() < pySumWidth) && (pvecSumCII.Z() < pzSumWidth))
+					hi.fill(hiOffMom + 4, "PxSumCondYZ", pvecSumCII.X(), Form("Px_{%s} + Px_{%s} + Px_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Z() < pzSumWidth))
+					hi.fill(hiOffMom + 5, "PySumCondXZ", pvecSumCII.Y(), Form("Py_{%s} + Py_{%s} + Py_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Y() < pySumWidth))
+					hi.fill(hiOffMom + 6, "PzSumCondXY", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 
-				int hiOffResult = hiOffMom + 4;
-				if (pvecSumCII.Mag() < 150)
+				int hiOffResult = hiOffMom + 7;
+				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Y() < pySumWidth) && (pvecSumCII.Z() < pzSumWidth))
 				{
 					const double angleII = pvecI1.Angle(pvecI2)*TMath::RadToDeg();
 					const double angleCI1 = pvecC.Angle(pvecI1)*TMath::RadToDeg();

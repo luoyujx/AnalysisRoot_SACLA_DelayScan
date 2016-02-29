@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+//#include <unordered_map>
 #include <memory>
 #include <TChain.h>
 #include <TSystem.h>
@@ -77,6 +78,7 @@ public:
 	void					OpenIntensityData();
 	void					OpenIntPartition();
 	void					OpenMomInfoData();
+	void					OpenMomInfoData3();
 	void					OpenBeamPositionData();
 	void					Open3BodyCombination();
 	void					OpenMCPToFRegion();
@@ -214,6 +216,10 @@ private:
 	std::vector<double>					intPartition;
 	//various molecule data for coincidence (Momentum information, coincidence count, ...)
 	std::vector< std::vector<Molecule> > molecule;
+
+	//various molecule data for coincidence (Momentum information, coincidence count, ...)
+	std::map< std::string, Molecule > molecule3;
+
 	//Position data
 	std::map<unsigned int, double>		beamPosX;
 	std::map<unsigned int, double>		beamPosY;

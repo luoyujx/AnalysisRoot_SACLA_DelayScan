@@ -122,6 +122,7 @@ void MyAnalyzer::Init()
 	fWf.Init(fOE,fHi);
 
 	if (MoleculeAnalysis == 1) OpenMomInfoData();
+	if (MoleculeAnalysis == 3) OpenMomInfoData3();
 }
 void MyAnalyzer::Init(MySettings &set)
 {
@@ -191,15 +192,15 @@ void MyAnalyzer::Run()
 void MyAnalyzer::SetParameter(MySettings &set)
 {
 	//set parameters
-	MomSumInfoName = set.GetString("MomSumInfoFile","MomentumInfo.txt");
+	//MomSumInfoName = set.GetString("MomSumInfoFile","MomentumInfo3.txt");
 	//Should be 18 or 21 (resort method)
 	rekmeth = static_cast<int>(set.GetValue("ReconstructionMethod", 20)+0.1);
 	//The way for extracting coincidence(1:Momentum sum 2 : gated by particle)
 	MoleculeAnalysis = static_cast<int>(set.GetValue("Molecule", 0)+0.1);
 	//Investigate proton(0:none 1 : all 2 : only)
 	extraCondition = static_cast<int>(set.GetValue("ExtraCondition", false)+0.1);
-	//Information for the gate of momentum sums(only need if Molecule = 1)
-	MomSumInfoName = set.GetString("MomSumInfoFile", "MomentumInfo.txt");
+	//Information for the gate of momentum sums(only need if Molecule = 1 or 3 )
+	MomSumInfoName = set.GetString("MomSumInfoFile", "MomentumInfo3.txt");
 	//Coincidence condition
 	angleCondition = set.GetValue("AngleCondition", 0.0);
 	momFactorLowerLimit = set.GetValue("MomFactorLowerLimit", 0.0);
@@ -391,126 +392,6 @@ void MyAnalyzer::OpenIntPartition()
 	}
 	std::cout << intPartition.size()-1 << " partitions have been set." << std::endl;
 }
-//_____Read Molecule momentumsum DATA
-void MyAnalyzer::OpenMomInfoData()
-{
-	if (MoleculeAnalysis!=1) return;
-	//initialize 2D vector
-	molecule.resize(fParticles.GetNbrOfParticles());
-	for (int i=0; i<fParticles.GetNbrOfParticles(); ++i)
-		molecule[i].resize(fParticles.GetNbrOfParticles());
-
-	std::cout << "Open Momentum Info file:" << MomSumInfoName << std::endl;
-	std::ifstream ifs(MomSumInfoName,std::ios::in);
-	if (ifs.fail())
-	{
-		std::cout<<"Can not open MomentumInfo.txt. Use (Make) default value."<<std::endl;
-		std::ofstream ofs("MomentumInfo.txt",std::ios::out);
-		for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
-		{
-			for (int j=i; j<fParticles.GetNbrOfParticles(); ++j)
-			{
-				if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
-				{
-					if (
-						((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
-						||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
-						)
-
-					{
-						molecule[i][j].momSumWindowX = 700;
-						molecule[i][j].momSumWindowY = 700;
-						molecule[i][j].momSumWindowZ = 700;
-						molecule[i][j].momSumFactor = 1;
-						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
-						string molName(fParticles.GetParticle(i).GetName());
-						molName += fParticles.GetParticle(j).GetName();
-						ofs << molName; 
-						ofs << "\t" << molecule[i][j].momSumWindowX;
-						ofs << "\t" << molecule[i][j].momSumWindowY;
-						ofs << "\t" << molecule[i][j].momSumWindowZ;
-						ofs << "\t" << molecule[i][j].momSumFactor;
-						ofs << "\t" << i;
-						ofs << "\t" << j;
-						ofs << std::endl;
-						std::cout << molName << std::endl;
-					}
-				}
-			}
-		}
-		ofs.close();
-		return;
-	}
-
-	//-----can open MomentumInfo
-	double doubleBuf[6];
-	string strBuf;
-	string tmp;
-	Molecule molBuf;
-	map<string,Molecule> bufMap;
-	//---Load Momentum sum data from "MomentumInfo.txt"
-	while (!ifs.eof())
-	{
-		//read the data (string, double)
-		ifs >> strBuf;
-		if (ifs.eof()) break;
-		for (int i=0; i<4; ++i)
-			ifs >> doubleBuf[i];
-		if (ifs.fail())
-		{
-			std::cout << "MomentumSumInfo: Data read error!" <<std::endl;
-			break;
-		}
-		//--set to buffer structure
-		molBuf.momSumWindowX = doubleBuf[0];
-		molBuf.momSumWindowY = doubleBuf[1];
-		molBuf.momSumWindowZ = doubleBuf[2];
-		molBuf.momSumFactor = doubleBuf[3];
-		//add to Map
-		bufMap.insert(pair<string,Molecule>(strBuf, molBuf));
-		//go to nextline
-		std::getline(ifs, tmp);
-	}
-	std::cout << "MomentumSumInfo: "<< bufMap.size() << " records" <<std::endl;
-	for (int i=1; i<fParticles.GetNbrOfParticles(); ++i)
-	{
-		for (int j=i; j<fParticles.GetNbrOfParticles(); ++j)
-		{
-			if ((fParticles.GetParticle(i).GetKindParticle() == 1)&&(fParticles.GetParticle(j).GetKindParticle() == 1))
-			{
-				if (
-					((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
-					||((fParticles.GetParticle(i).GetCoinGroup()==100)&&(fParticles.GetParticle(j).GetCoinGroup()==100))
-					)
-				{
-					string molName(fParticles.GetParticle(i).GetName());
-					molName += fParticles.GetParticle(j).GetName();
-					map<string,Molecule>::iterator it = bufMap.find(molName);
-					if (it != bufMap.end())
-					{
-						molecule[i][j].momSumWindowX = it->second.momSumWindowX;
-						molecule[i][j].momSumWindowY = it->second.momSumWindowY;
-						molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
-						molecule[i][j].momSumFactor = it->second.momSumFactor;
-						molecule[i][j].angleCondition = angleCondition;
-						molecule[i][j].momSumFactorLow = momFactorLowerLimit;
-						molecule[i][j].momSumFactorUp = momFactorUpperLimit;
-					}
-					else
-					{
-						std::cout << "MomentumSumInfo: Can not find " << molName << " data!!"<< std::endl;
-						std::cout << "MomentumSumInfo: Set window size at 0."<<std::endl;
-
-						molecule[i][j].momSumWindowX = 0;
-						molecule[i][j].momSumWindowY = 0;
-						molecule[i][j].momSumWindowZ = 0;
-						molecule[i][j].momSumFactor = 1;
-					}
-				}
-			}
-		}
-	}
-}
 
 void MyAnalyzer::OpenBeamPositionData()
 {
@@ -607,4 +488,220 @@ void MyAnalyzer::OpenMCPToFRegion()
 	}
 
 	std::cout << "ToF (MCP) region data: "<< mcpTofRegion.size() << " records have been loaded." << std::endl;
+}
+
+//_____Read Molecule momentumsum DATA 3-body
+void MyAnalyzer::OpenMomInfoData3()
+{
+	if (MoleculeAnalysis != 3) return;
+	std::cout << "Open Momentum Info (3-body) file:" << MomSumInfoName << std::endl;
+	std::ifstream ifs(MomSumInfoName, std::ios::in);
+	if (ifs.fail())
+	{
+		std::cout << "Can not open MomentumInfo3.txt. Use (Make) default value." << std::endl;
+		std::ofstream ofs("MomentumInfo3.txt", std::ios::out);
+		// ----- Loop for 3 body coincidence -----//
+		for (size_t i = 1; i < fParticles.GetNbrOfParticles(); ++i)
+		{
+			//i should be only Carbon (kind of particle 12)
+			const MyParticle &ip = fParticles.GetParticle(i);
+			if (ip.GetKindParticle() != 12) continue;
+			for (size_t j = 1; j < fParticles.GetNbrOfParticles(); ++j)
+			{
+				//j should be only Iodine (kind of particle 13)
+				const MyParticle &jp = fParticles.GetParticle(j);
+				if (jp.GetKindParticle() != 13) continue;
+				//check if ip and jp is molecule
+				for (size_t k = j; k < fParticles.GetNbrOfParticles(); ++k)
+				{
+					const MyParticle &kp = fParticles.GetParticle(k);
+					if (kp.GetKindParticle() != 13) continue;
+					{
+						std::string molName(ip.GetName());
+						molName += jp.GetName();
+						molName += kp.GetName();
+
+						Molecule mol;
+						mol.momSumWindowX = 150;
+						mol.momSumWindowY = 150;
+						mol.momSumWindowZ = 150;
+						mol.momSumFactor = 0.75;
+						mol.angleCondition = angleCondition;
+						mol.momSumFactorLow = momFactorLowerLimit;
+						mol.momSumFactorUp = momFactorUpperLimit;
+
+						molecule3.insert(pair<string, Molecule>(molName, mol));
+						// output text file
+						ofs << molName;
+						ofs << "\t" << mol.momSumWindowX;
+						ofs << "\t" << mol.momSumWindowY;
+						ofs << "\t" << mol.momSumWindowZ;
+						ofs << "\t" << mol.momSumFactor;
+						ofs << "\t" << i;
+						ofs << "\t" << j;
+						ofs << "\t" << k;
+						ofs << std::endl;
+						std::cout << molName << std::endl;
+					}
+				}
+			}
+		}
+		ofs.close();
+		return;
+	}
+
+	//-----can open MomentumInfo
+	double doubleBuf[6];
+	string strBuf;
+	string tmp;
+	Molecule molBuf;
+	//map<string, Molecule> bufMap;
+	//---Load Momentum sum data from "MomentumInfo.txt"
+	while (!ifs.eof())
+	{
+		//read the data (string, double)
+		ifs >> strBuf;
+		if (ifs.eof()) break;
+		for (int i = 0; i<4; ++i)
+			ifs >> doubleBuf[i];
+		if (ifs.fail())
+		{
+			std::cout << "MomentumSumInfo: Data read error!" << std::endl;
+			break;
+		}
+		//--set to buffer structure
+		molBuf.momSumWindowX = doubleBuf[0];
+		molBuf.momSumWindowY = doubleBuf[1];
+		molBuf.momSumWindowZ = doubleBuf[2];
+		molBuf.momSumFactor = doubleBuf[3];
+		molBuf.angleCondition = angleCondition;
+		molBuf.momSumFactorLow = momFactorLowerLimit;
+		molBuf.momSumFactorUp = momFactorUpperLimit;
+		//add to Map
+		molecule3.insert(pair<string, Molecule>(strBuf, molBuf));
+		//go to nextline
+		std::getline(ifs, tmp);
+	}
+	std::cout << "MomentumSumInfo: " << molecule3.size() << " records" << std::endl;
+}
+
+//_____Read Molecule momentumsum DATA 2-body
+void MyAnalyzer::OpenMomInfoData()
+{
+	if (MoleculeAnalysis != 1) return;
+	//initialize 2D vector
+	molecule.resize(fParticles.GetNbrOfParticles());
+	for (int i = 0; i<fParticles.GetNbrOfParticles(); ++i)
+		molecule[i].resize(fParticles.GetNbrOfParticles());
+
+	std::cout << "Open Momentum Info file:" << MomSumInfoName << std::endl;
+	std::ifstream ifs(MomSumInfoName, std::ios::in);
+	if (ifs.fail())
+	{
+		std::cout << "Can not open MomentumInfo.txt. Use (Make) default value." << std::endl;
+		std::ofstream ofs("MomentumInfo.txt", std::ios::out);
+		for (int i = 1; i<fParticles.GetNbrOfParticles(); ++i)
+		{
+			for (int j = i; j<fParticles.GetNbrOfParticles(); ++j)
+			{
+				if ((fParticles.GetParticle(i).GetKindParticle() == 1) && (fParticles.GetParticle(j).GetKindParticle() == 1))
+				{
+					if (
+						((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
+						|| ((fParticles.GetParticle(i).GetCoinGroup() == 100) && (fParticles.GetParticle(j).GetCoinGroup() == 100))
+						)
+
+					{
+						molecule[i][j].momSumWindowX = 700;
+						molecule[i][j].momSumWindowY = 700;
+						molecule[i][j].momSumWindowZ = 700;
+						molecule[i][j].momSumFactor = 1;
+						//std::cout<<molecule[i].size() << ":" << molecule[i][j].momSumWindowX<<std::endl;
+						string molName(fParticles.GetParticle(i).GetName());
+						molName += fParticles.GetParticle(j).GetName();
+						ofs << molName;
+						ofs << "\t" << molecule[i][j].momSumWindowX;
+						ofs << "\t" << molecule[i][j].momSumWindowY;
+						ofs << "\t" << molecule[i][j].momSumWindowZ;
+						ofs << "\t" << molecule[i][j].momSumFactor;
+						ofs << "\t" << i;
+						ofs << "\t" << j;
+						ofs << std::endl;
+						std::cout << molName << std::endl;
+					}
+				}
+			}
+		}
+		ofs.close();
+		return;
+	}
+
+	//-----can open MomentumInfo
+	double doubleBuf[6];
+	string strBuf;
+	string tmp;
+	Molecule molBuf;
+	map<string, Molecule> bufMap;
+	//---Load Momentum sum data from "MomentumInfo.txt"
+	while (!ifs.eof())
+	{
+		//read the data (string, double)
+		ifs >> strBuf;
+		if (ifs.eof()) break;
+		for (int i = 0; i<4; ++i)
+			ifs >> doubleBuf[i];
+		if (ifs.fail())
+		{
+			std::cout << "MomentumSumInfo: Data read error!" << std::endl;
+			break;
+		}
+		//--set to buffer structure
+		molBuf.momSumWindowX = doubleBuf[0];
+		molBuf.momSumWindowY = doubleBuf[1];
+		molBuf.momSumWindowZ = doubleBuf[2];
+		molBuf.momSumFactor = doubleBuf[3];
+		//add to Map
+		bufMap.insert(pair<string, Molecule>(strBuf, molBuf));
+		//go to nextline
+		std::getline(ifs, tmp);
+	}
+	std::cout << "MomentumSumInfo: " << bufMap.size() << " records" << std::endl;
+	for (int i = 1; i<fParticles.GetNbrOfParticles(); ++i)
+	{
+		for (int j = i; j<fParticles.GetNbrOfParticles(); ++j)
+		{
+			if ((fParticles.GetParticle(i).GetKindParticle() == 1) && (fParticles.GetParticle(j).GetKindParticle() == 1))
+			{
+				if (
+					((fParticles.GetParticle(i).GetCoinGroup() != fParticles.GetParticle(j).GetCoinGroup()))
+					|| ((fParticles.GetParticle(i).GetCoinGroup() == 100) && (fParticles.GetParticle(j).GetCoinGroup() == 100))
+					)
+				{
+					string molName(fParticles.GetParticle(i).GetName());
+					molName += fParticles.GetParticle(j).GetName();
+					map<string, Molecule>::iterator it = bufMap.find(molName);
+					if (it != bufMap.end())
+					{
+						molecule[i][j].momSumWindowX = it->second.momSumWindowX;
+						molecule[i][j].momSumWindowY = it->second.momSumWindowY;
+						molecule[i][j].momSumWindowZ = it->second.momSumWindowZ;
+						molecule[i][j].momSumFactor = it->second.momSumFactor;
+						molecule[i][j].angleCondition = angleCondition;
+						molecule[i][j].momSumFactorLow = momFactorLowerLimit;
+						molecule[i][j].momSumFactorUp = momFactorUpperLimit;
+					}
+					else
+					{
+						std::cout << "MomentumSumInfo: Can not find " << molName << " data!!" << std::endl;
+						std::cout << "MomentumSumInfo: Set window size at 0." << std::endl;
+
+						molecule[i][j].momSumWindowX = 0;
+						molecule[i][j].momSumWindowY = 0;
+						molecule[i][j].momSumWindowZ = 0;
+						molecule[i][j].momSumFactor = 1;
+					}
+				}
+			}
+		}
+	}
 }

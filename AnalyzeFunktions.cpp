@@ -152,6 +152,11 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 		//---CH2I2 for SACLA2015B and Lab experiment
 		AddCH2I2_CII(particles);
 	}
+	else if (whichParticles == "CH2I2-CII34")
+	{
+		//---CH2I2 for SACLA2015B and Lab experiment
+		AddCH2I2_CII34(particles);
+	}
 	else if (whichParticles == "CH2BrI")
 	{
 		//---CH2BrI for SACLA2015B and Lab experiment

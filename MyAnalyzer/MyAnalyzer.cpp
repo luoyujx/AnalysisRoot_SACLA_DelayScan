@@ -498,8 +498,8 @@ void MyAnalyzer::OpenMomInfoData3()
 	std::ifstream ifs(MomSumInfoName, std::ios::in);
 	if (ifs.fail())
 	{
-		std::cout << "Can not open MomentumInfo3.txt. Use (Make) default value." << std::endl;
-		std::ofstream ofs("MomentumInfo3.txt", std::ios::out);
+		std::cout << "Can not open "<< MomSumInfoName <<" Use (Make) default value." << std::endl;
+		std::ofstream ofs(MomSumInfoName, std::ios::out);
 		// ----- Loop for 3 body coincidence -----//
 		for (size_t i = 1; i < fParticles.GetNbrOfParticles(); ++i)
 		{

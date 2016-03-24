@@ -18,6 +18,7 @@ void AddKrIsotope(MyParticleContainer &particles);
 void AddCH2I2_II(MyParticleContainer &particles);
 void AddCH2I2_CI(MyParticleContainer &particles);
 void AddCH2I2_CII(MyParticleContainer &particles);
+void AddCH2I2_CII34(MyParticleContainer &particles);
 void AddCH2BrI(MyParticleContainer &particles);
 void AddCH2ClI(MyParticleContainer &particles);
 

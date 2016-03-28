@@ -340,7 +340,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	startIdx++;
 	//---------		
-	//---skip this event if Delay (Mortor position) is below the lower limit or over the upper limit
+	//---skip this event if Mortor position is below the lower limit or over the upper limit
 	if (selectDelay)
 	{
 		if (fDelays[0]<delayLowerLimit) return;
@@ -348,7 +348,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	if (fDelays.size())
 	{
-		fHi.fill(startIdx, "DelaySelected (no correction)", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // selected Delays (no correction)
+		fHi.fill(startIdx, "Motor position (no correction)", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // selected Delays (no correction)
 	}
 	startIdx++;
 	//---------		
@@ -364,6 +364,12 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	startIdx++;
 	//---------
+	//---skip this event if Calibrated Delay is below the lower limit or over the upper limit
+	if (selectDelay)
+	{
+		if (fDelays[2]<delayLowerLimit) return;
+		if (fDelays[2]>delayUpperLimit) return;
+	}
 	if (fDelays.size())
 	{
 		fHi.fill(startIdx, "DelaySelected", fDelays[2], "[fs]", delayBins, delayFrom, delayTo); // selected Delays

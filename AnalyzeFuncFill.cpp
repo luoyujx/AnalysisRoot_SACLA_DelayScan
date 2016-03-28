@@ -628,9 +628,13 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					hi.fill(hiOffResult + 29, Form("NewtonDia-%s-%s-%s", p1.GetName(), p2.GetName(), p3.GetName()),
 						vC.X(), vC.Y(), "Normalized Momentum", "Normalized Momentum", 200, -1.5, 1.5, 200, -1.5, 1.5, "NewtonDaiagram");
 
-					hi.fill(hiOffResult + 30, "KE_C", p1[i].E(), "KE [eV]", 200, 0, 200, Form("%s/KE", Hname.Data()));
-					hi.fill(hiOffResult + 31, "KE_I1", p2[j].E(), "KE [eV]", 200, 0, 200, Form("%s/KE", Hname.Data()));
-					hi.fill(hiOffResult + 32, "KE_I2", p3[k].E(), "KE [eV]", 200, 0, 200, Form("%s/KE", Hname.Data()));
+					hi.fill(hiOffResult + 30, "KE_C", p1[i].E(), "KE [eV]", 300, 0, 300, Form("%s/KE", Hname.Data()));
+					hi.fill(hiOffResult + 31, "KE_I1", p2[j].E(), "KE [eV]", 300, 0, 300, Form("%s/KE", Hname.Data()));
+					hi.fill(hiOffResult + 32, "KE_I2", p3[k].E(), "KE [eV]", 300, 0, 300, Form("%s/KE", Hname.Data()));
+
+					hi.fill(hiOffResult + 33, "Momentum_C", p1[i].P(), "Momentum [a.u.]", 1500, 0, 1500, Form("%s/Momentum", Hname.Data()));
+					hi.fill(hiOffResult + 34, "Momentum_I1", p2[j].P(), "Momentum [a.u.]", 2500, 0, 2500, Form("%s/Momentum", Hname.Data()));
+					hi.fill(hiOffResult + 35, "Momentum_I2", p3[k].P(), "Momentum [a.u.]", 2500, 0, 2500, Form("%s/Momentum", Hname.Data()));
 
 					//double I1 = pvecI1.Mag();
 					//TVector3 pvecI1N = (1.0 / I1) * pvecI1;

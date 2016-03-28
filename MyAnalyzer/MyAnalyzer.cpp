@@ -267,14 +267,18 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	selectThetaZ = static_cast<int>(set.GetValue("SelectThetaZ", false) + 0.1);
 	thetaZLowerLimit = set.GetValue("ThetaZLowerLimit", 0.0);
 	thetaZUpperLimit = set.GetValue("ThetaZUpperLimit", 180.0);
-	// Limit of Delay
-	selectDelay = static_cast<int>(set.GetValue("SelectDelay", false) + 0.1);
-	delayLowerLimit = set.GetValue("DelayLowerLimit", -100000000);
-	delayUpperLimit = set.GetValue("DelayUpperLimit", 100000000);
+	// Limit of Motor Position
+	selectDelay = static_cast<int>(set.GetValue("SelectMotPosition", false) + 0.1);
+	delayLowerLimit = set.GetValue("MotPositionLowerLimit", -100000000);
+	delayUpperLimit = set.GetValue("MotPositionUpperLimit", 100000000);
 	// Limit of Jitter
 	selectJitter = static_cast<int>(set.GetValue("SelectJitter", false) + 0.1);
 	jitterLowerLimit = set.GetValue("JitterLowerLimit", -100000000);
 	jitterUpperLimit = set.GetValue("JitterUpperLimit", 100000000);
+	// Limit of Delay
+	selectDelay = static_cast<int>(set.GetValue("SelectDelay", false) + 0.1);
+	delayLowerLimit = set.GetValue("DelayLowerLimit", -100000000);
+	delayUpperLimit = set.GetValue("DelayUpperLimit", 100000000);
 
 	optShutterOpen = static_cast<int>(set.GetValue("OptShutterOpen", true) + 0.1);
 	mcpSigAnalysis = static_cast<int>(set.GetValue("McpSigAnalysis", false) + 0.1);

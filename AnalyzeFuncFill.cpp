@@ -636,6 +636,19 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					hi.fill(hiOffResult + 34, "Momentum_I1", p2[j].P(), "Momentum [a.u.]", 2500, 0, 2500, Form("%s/Momentum", Hname.Data()));
 					hi.fill(hiOffResult + 35, "Momentum_I2", p3[k].P(), "Momentum [a.u.]", 2500, 0, 2500, Form("%s/Momentum", Hname.Data()));
 
+					hi.fill(hiOffResult + 36, "ThetaZ_I1", p2[j].ThetaZ(), "ThetaZ_I1 [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 37, "ThetaZ_I1VsAngleII", p2[j].ThetaZ(), angleII,  "ThetaZ_I1 [deg]", "Angle_II [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 38, "ThetaZ_I1VsKE_I1", p2[j].ThetaZ(), p2[j].E(), "ThetaZ_I1 [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
+
+					hi.fill(hiOffResult + 39, "ThetaZ_I2", p3[k].ThetaZ(), "ThetaZ_I2 [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 40, "ThetaZ_I2VsAngleI2", p3[k].ThetaZ(), angleII, "ThetaZ_I2 [deg]", "Angle_II [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 41, "ThetaZ_I2VsKE_I2", p3[k].ThetaZ(), p3[k].E(), "ThetaZ_I2 [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
+
+					hi.fill(hiOffResult + 42, "ThetaZ_C", p1[i].ThetaZ(), "ThetaZ_C [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 43, "ThetaZ_CVsAngleCI1", p1[i].ThetaZ(), angleCI1, "ThetaZ_C [deg]", "Angle_CI1 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 44, "ThetaZ_CVsAngleCI2", p1[i].ThetaZ(), angleCI2, "ThetaZ_C [deg]", "Angle_CI2 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 45, "ThetaZ_I2VsKE_C", p1[i].ThetaZ(), p1[i].E(), "ThetaZ_C [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
+
 					//double I1 = pvecI1.Mag();
 					//TVector3 pvecI1N = (1.0 / I1) * pvecI1;
 					//TVector3 pvecI2N = (1.0 / I1) * pvecI2;
@@ -725,7 +738,7 @@ void fillMoleculeHistogram(const MyParticle &p1, const MyParticle &p2, std::vect
 			if (angleP1P2 < mol.angleCondition) continue;
 			if ((ratioP1P2 < mol.momSumFactorLow) || (ratioP1P2 > mol.momSumFactorUp)) continue;
 
-			//Calculate momentum sum condirion (divide by norm)
+			//Calculate momentum sum condition (divide by norm)
 			const double p12SumX = p1[i].Px()/MomScale + p2[j].Px();
 			const double p12SumY = p1[i].Py()/MomScale + p2[j].Py();
 			const double p12SumZ = p1[i].Pz()/MomScale + p2[j].Pz();

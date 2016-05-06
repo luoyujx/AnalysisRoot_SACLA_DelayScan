@@ -530,6 +530,10 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 			{
 				//skip if we are going to put in the same particlehit, for the case that we want coincidences for the same particle//
 				if ((j >= k) && (p2 == p3)) continue;//i==j
+
+				//skip for limiting detection angle upper than 120 deg in same charge Iodine particle case//
+				//if ((p2[j].ThetaZ() < 120) && (p2 == p3)) continue;
+				
 				//---p1[i]="C" p2[j]="I" p3[k]="I"---//
 				const TVector3 &pvecC = p1[i].Pvec();
 				const TVector3 &pvecI1 = p2[j].Pvec();
@@ -565,6 +569,7 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					hi.fill(hiOffMom + 6, "PzSumCondXY", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 
 				int hiOffResult = hiOffMom + 7;
+				//Momentum Filter TT
 				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Y() < pySumWidth) && (pvecSumCII.Z() < pzSumWidth))
 				{
 					const double angleII = pvecI1.Angle(pvecI2)*TMath::RadToDeg();

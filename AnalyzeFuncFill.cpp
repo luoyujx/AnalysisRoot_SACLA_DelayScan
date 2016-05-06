@@ -492,7 +492,7 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 
 
 //-------------------Fill molecule CH2I2(3-body coincidence) histogram-----------------------------------------------------------------------------------------------------//
-void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2, const MyParticle &p3, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::map< std::string, Molecule > molecule3, std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo)
+void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2, const MyParticle &p3, std::vector<double>& intensity, MyHistos &hi, int hiOff, std::map< std::string, Molecule > molecule3, std::vector<double>& delay, int& delayBins, double& delayFrom, double& delayTo, size_t numOfProton)
 {
 	double MomLim = 1600;
 	double MomSumRotLim = 1600;
@@ -648,6 +648,8 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					hi.fill(hiOffResult + 43, "ThetaZ_CVsAngleCI1", p1[i].ThetaZ(), angleCI1, "ThetaZ_C [deg]", "Angle_CI1 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
 					hi.fill(hiOffResult + 44, "ThetaZ_CVsAngleCI2", p1[i].ThetaZ(), angleCI2, "ThetaZ_C [deg]", "Angle_CI2 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
 					hi.fill(hiOffResult + 45, "ThetaZ_I2VsKE_C", p1[i].ThetaZ(), p1[i].E(), "ThetaZ_C [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
+
+					hi.fill(hiOffResult + 46, "NumOfProton", numOfProton, "Number", 10, 0, 10, Form("%s/Proton", Hname.Data()));//H2
 
 					//double I1 = pvecI1.Mag();
 					//TVector3 pvecI1N = (1.0 / I1) * pvecI1;

@@ -145,7 +145,7 @@ void MyAnalyzer::Run()
 	size_t firstTAG = 0;
 	while(fEntryIterator < fNEntries)
 	{
-		if (fEntryIterator % 1000 == 0) std::cout << "\r" << "Entry Number :"<< std::setw(7) << std::setfill(' ') << fEntryIterator;
+		if (fEntryIterator % 1000 == 0) std::cout << "\r" << "Entry Number :" << std::setw(7) << std::setfill(' ') << fEntryIterator << "  Tag:" << fOE.GetEventID();
 		//Clear the events//
 		fOE.Clear();
 		fSAE.Clear();

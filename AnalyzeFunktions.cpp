@@ -198,6 +198,10 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	const unsigned int TagNumber = fOE.GetEventID();
 	//Check tag is even (IR + FEL)
 	if (TagNumber % 2 != 0) return;
+
+	//if (TagNumber % 2 != 1) return;   //for Dataset 2 NIR only
+	
+	//std::cout << TagNumber << std::endl;
 	// Get XFEL intensity, Delay
 	if (delayScan == 0) // MySQL databse is not used
 	{

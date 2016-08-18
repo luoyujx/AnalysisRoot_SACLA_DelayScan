@@ -656,6 +656,8 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 
 					hi.fill(hiOffResult + 46, "NumOfProton", numOfProton, "Number", 10, 0, 10, Form("%s/Proton", Hname.Data()));//H2
 
+					hi.fill(hiOffResult + 47, "KE_Sum", p1[i].E() + p2[j].E() + p3[k].P(), "KE [eV]", 300, 0, 300, Form("%s/KE", Hname.Data()));//20160818 added
+
 					//double I1 = pvecI1.Mag();
 					//TVector3 pvecI1N = (1.0 / I1) * pvecI1;
 					//TVector3 pvecI2N = (1.0 / I1) * pvecI2;

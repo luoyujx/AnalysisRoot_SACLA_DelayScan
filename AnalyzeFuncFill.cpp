@@ -561,16 +561,16 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 				hi.fill(hiOffMom + 1, "PxSum", pvecSumCII.X(), Form("Px_{%s} + Px_{%s} + Px_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 				hi.fill(hiOffMom + 2, "PySum", pvecSumCII.Y(), Form("Py_{%s} + Py_{%s} + Py_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 				hi.fill(hiOffMom + 3, "PzSum", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
-				if ((pvecSumCII.Y() < pySumWidth) && (pvecSumCII.Z() < pzSumWidth))
+				if ((TMath::Abs(pvecSumCII.Y()) < pySumWidth) && (TMath::Abs(pvecSumCII.Z()) < pzSumWidth))
 					hi.fill(hiOffMom + 4, "PxSumCondYZ", pvecSumCII.X(), Form("Px_{%s} + Px_{%s} + Px_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
-				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Z() < pzSumWidth))
+				if ((TMath::Abs(pvecSumCII.X()) < pxSumWidth) && ((pvecSumCII.Z()) < pzSumWidth))
 					hi.fill(hiOffMom + 5, "PySumCondXZ", pvecSumCII.Y(), Form("Py_{%s} + Py_{%s} + Py_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
-				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Y() < pySumWidth))
+				if ((TMath::Abs(pvecSumCII.X()) < pxSumWidth) && (TMath::Abs(pvecSumCII.Y()) < pySumWidth))
 					hi.fill(hiOffMom + 6, "PzSumCondXY", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 
 				int hiOffResult = hiOffMom + 7;
 				//Momentum Filter TT
-				if ((pvecSumCII.X() < pxSumWidth) && (pvecSumCII.Y() < pySumWidth) && (pvecSumCII.Z() < pzSumWidth))
+				if ((TMath::Abs(pvecSumCII.X()) < pxSumWidth) && (TMath::Abs(pvecSumCII.Y()) < pySumWidth) && (TMath::Abs(pvecSumCII.Z()) < pzSumWidth))
 				{
 					const double angleII = pvecI1.Angle(pvecI2)*TMath::RadToDeg();
 					const double angleCI1 = pvecC.Angle(pvecI1)*TMath::RadToDeg();
@@ -579,10 +579,10 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 
 					hi.fill(hiOffResult + 0, "DelayCondXYZ", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 					//Ratio Pc/(Pi1+Pi2)
-					hi.fill(hiOffResult + 1, "MomRatioCIICondXYZ", ratioC_II, "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
-					hi.fill(hiOffResult + 2, "MomRatioIICondXYZ", pvecI1.Mag() / pvecI2.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
-					hi.fill(hiOffResult + 3, "MomRatioCI1CondXYZ", pvecC.Mag() / pvecI1.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
-					hi.fill(hiOffResult + 4, "MomRatioCI2CondXYZ", pvecC.Mag() / pvecI2.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					//hi.fill(hiOffResult + 1, "MomRatioCIICondXYZ", ratioC_II, "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					//hi.fill(hiOffResult + 2, "MomRatioIICondXYZ", pvecI1.Mag() / pvecI2.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					//hi.fill(hiOffResult + 3, "MomRatioCI1CondXYZ", pvecC.Mag() / pvecI1.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
+					//hi.fill(hiOffResult + 4, "MomRatioCI2CondXYZ", pvecC.Mag() / pvecI2.Mag(), "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
 
 					// Formed angle
 					hi.fill(hiOffResult + 5, "AngleCondXYZ", angleC_II, "angle", 180, 0, 180, Form("%s/FormedAngle", Hname.Data()));
@@ -649,16 +649,33 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					hi.fill(hiOffResult + 39, "ThetaZ_I2", p3[k].ThetaZ(), "ThetaZ_I2 [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
 					hi.fill(hiOffResult + 40, "ThetaZ_I2VsAngleI2", p3[k].ThetaZ(), angleII, "ThetaZ_I2 [deg]", "Angle_II [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
 					hi.fill(hiOffResult + 41, "ThetaZ_I2VsKE_I2", p3[k].ThetaZ(), p3[k].E(), "ThetaZ_I2 [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 42, "ThetaZ_I12", p2[j].ThetaZ(), "ThetaZ [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					hi.fill(hiOffResult + 42, "ThetaZ_I12", p3[k].ThetaZ(), "ThetaZ [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
 
-					hi.fill(hiOffResult + 42, "ThetaZ_C", p1[i].ThetaZ(), "ThetaZ_C [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
-					hi.fill(hiOffResult + 43, "ThetaZ_CVsAngleCI1", p1[i].ThetaZ(), angleCI1, "ThetaZ_C [deg]", "Angle_CI1 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
-					hi.fill(hiOffResult + 44, "ThetaZ_CVsAngleCI2", p1[i].ThetaZ(), angleCI2, "ThetaZ_C [deg]", "Angle_CI2 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
-					hi.fill(hiOffResult + 45, "ThetaZ_I2VsKE_C", p1[i].ThetaZ(), p1[i].E(), "ThetaZ_C [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
+					//hi.fill(hiOffResult + 42, "ThetaZ_C", p1[i].ThetaZ(), "ThetaZ_C [deg]", 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					//hi.fill(hiOffResult + 43, "ThetaZ_CVsAngleCI1", p1[i].ThetaZ(), angleCI1, "ThetaZ_C [deg]", "Angle_CI1 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					//hi.fill(hiOffResult + 44, "ThetaZ_CVsAngleCI2", p1[i].ThetaZ(), angleCI2, "ThetaZ_C [deg]", "Angle_CI2 [deg]", 180, 0, 180, 180, 0, 180, Form("%s/Angle", Hname.Data()));
+					//hi.fill(hiOffResult + 45, "ThetaZ_I2VsKE_C", p1[i].ThetaZ(), p1[i].E(), "ThetaZ_C [deg]", "KE [eV]", 180, 0, 180, 300, 0, 300, Form("%s/Angle", Hname.Data()));
 
-					hi.fill(hiOffResult + 46, "NumOfProton", numOfProton, "Number", 10, 0, 10, Form("%s/Proton", Hname.Data()));//H2
+					//hi.fill(hiOffResult + 46, "NumOfProton", numOfProton, "Number", 10, 0, 10, Form("%s/Proton", Hname.Data()));//H2
 
-					hi.fill(hiOffResult + 47, "KE_Sum", p1[i].E() + p2[j].E() + p3[k].P(), "KE [eV]", 300, 0, 300, Form("%s/KE", Hname.Data()));//20160818 added
-					hi.fill(hiOffResult + 48, "Momentum_Sum", pvecSumAll.Mag(), "Momentum [a.u.]", 300, 0, 5000, Form("%s/Momentum", Hname.Data()));
+					hi.fill(hiOffResult + 43, "KE_Sum", p1[i].E() + p2[j].E() + p3[k].E(), "KE [eV]", 400, 0, 400, Form("%s/KE", Hname.Data()));//20160818 added
+					hi.fill(hiOffResult + 44, "Momentum_Sum", pvecSumAll.Mag(), "Momentum [a.u.]", 300, 0, 300, Form("%s/Momentum", Hname.Data()));
+					
+					hi.fill(hiOffResult + 45, "TOF_difference", p2[j].TofCor()- p3[k].TofCor(), "TOF1-TOF2 [ns]", 100, -50, 50, Form("%s/TOFDeadtime", Hname.Data()));
+					
+					hi.fill(hiOffResult + 46, "TOF1", p2[j].TofCor(), "Tof [ns]", 300, p2.GetCondTofFr() - p2.GetT0() - p2.GetCondTofRange()*0.3, p2.GetCondTofTo() - p2.GetT0() + p2.GetCondTofRange()*0.3, Form("%s/Raw", Hname.Data()));
+					hi.fill(hiOffResult + 47, "TOF2", p3[k].TofCor(), "Tof [ns]", 300, p3.GetCondTofFr() - p3.GetT0() - p3.GetCondTofRange()*0.3, p3.GetCondTofTo() - p3.GetT0() + p3.GetCondTofRange()*0.3, Form("%s/Raw", Hname.Data()));
+					
+					if (p2 == p3)
+					{
+						hi.fill(hiOffResult + 48, "TOF12", p2[j].TofCor(), "Tof [ns]", 300, p2.GetCondTofFr() - p2.GetT0() - p2.GetCondTofRange()*0.3, p2.GetCondTofTo() - p2.GetT0() + p2.GetCondTofRange()*0.3, Form("%s/Raw", Hname.Data()));
+						hi.fill(hiOffResult + 48, "TOF12", p3[k].TofCor(), "Tof [ns]", 300, p3.GetCondTofFr() - p3.GetT0() - p3.GetCondTofRange()*0.3, p3.GetCondTofTo() - p3.GetT0() + p3.GetCondTofRange()*0.3, Form("%s/Raw", Hname.Data()));
+					}
+
+					hi.fill(hiOffResult + 1, "PxSumCondXYZ", pvecSumCII.X(), Form("Px_{%s} + Px_{%s} + Px_{%s} [a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+					hi.fill(hiOffResult + 2, "PySumCondXYZ", pvecSumCII.Y(), Form("Py_{%s} + Py_{%s} + Py_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
+					hi.fill(hiOffResult + 3, "PzSumCondXYZ", pvecSumCII.Z(), Form("Pz_{%s} + Pz_{%s} + Pz_{%s}[a.u]", p1.GetName(), p2.GetName(), p3.GetName()), 200, -400, 400, Form("%s/MomSums", Hname.Data()));
 
 					//double I1 = pvecI1.Mag();
 					//TVector3 pvecI1N = (1.0 / I1) * pvecI1;
@@ -1541,7 +1558,7 @@ void fillMCPToFHistograms(const MyOriginalEvent &oe, MyHistos &hi, std::vector<M
 void fillHistosAfterAnalyzis(const std::vector<MyParticle> &particles, MyHistos &hi,size_t nRegion,int delayBins,double delayFrom,double delayTo )
 {
 	std::cout << std::endl << "Running post analysis." << std::endl;
-	size_t idx = 9000;
+	size_t idx = 9100;
 
 	TH1D* delayVsShots = dynamic_cast<TH1D*>(gFile->FindObject("DelayVsShots"));
 

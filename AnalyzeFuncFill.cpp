@@ -109,9 +109,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++, "DelayVsMomentum", ph.P(), fdelay, "p [a.u.]", "delay [fs]", 300, 0, MomLim, delayBins, delayFrom, delayTo, Form("%s/Delay", p.GetName()));
 	
 	//Energy//
-	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",500,0,500,Form("%s/Energy",p.GetName()));
+	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",800,0,800,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,500,0,500,Form("%s/Energy",p.GetName()));
-	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),fdelay,"Energy [eV]","delay [fs]",500,0,500,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
+	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),fdelay,"Energy [eV]","delay [fs]",800,0,800,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
 	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
@@ -124,12 +124,12 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"PhiYZ",ph.PhiYZ(),"#phi [deg]",360,-180,180,Form("%s/Angle",p.GetName()));
 	hi.fill(hiOff++,"PhiZX",ph.PhiZX(),"#phi [deg]",360,-180,180,Form("%s/Angle",p.GetName()));
 
-	hi.fill(hiOff++,"ThetaZvsEnergy",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,200,Form("%s/Angle",p.GetName()));
-	hi.fill(hiOff++,"ThetaXvsEnergy",ph.ThetaX(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,200,Form("%s/Angle",p.GetName()));
-	hi.fill(hiOff++,"ThetaYvsEnergy",ph.ThetaY(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,200,Form("%s/Angle",p.GetName()));
-	hi.fill(hiOff++,"PhiXYvsEnergy",ph.PhiXY(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
-	hi.fill(hiOff++,"PhiYZvsEnergy",ph.PhiYZ(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
-	hi.fill(hiOff++,"PhiZXvsEnergy",ph.PhiZX(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,200,0,200,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"ThetaZvsEnergy",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,800,0,800,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"ThetaXvsEnergy",ph.ThetaX(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,800,0,800,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"ThetaYvsEnergy",ph.ThetaY(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,800,0,800,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"PhiXYvsEnergy",ph.PhiXY(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,800,0,800,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"PhiYZvsEnergy",ph.PhiYZ(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,800,0,800,Form("%s/Angle",p.GetName()));
+	hi.fill(hiOff++,"PhiZXvsEnergy",ph.PhiZX(),ph.E(),"#phi [deg]","Energy [eV]",360,-180,180,800,0,800,Form("%s/Angle",p.GetName()));
 
 	//hi.fill(hiOff++,"ThetaZvsEnergyNormSinThetaZ",ph.ThetaZ(),ph.E(),"#theta [deg]","Energy [eV]",180,0,180,200,0,40,Form("%s/Angle",p.GetName()),ph.SinThetaZInv());
 	//,ph.SinThetaZInv()
@@ -405,12 +405,12 @@ void fillMoleculeHistogramCH2I2(const MyParticle &p1, const MyParticle &p2, std:
 						//hi.fill(IDX+21,Form("%sThetaX",p1.GetName()),p1[i].ThetaX(),"#theta [deg]",36,0,180,Form("%s/Angular",Hname.Data()));
 						//hi.fill(IDX+22,Form("%sThetaY",p1.GetName()),p1[i].ThetaY(),"#theta [deg]",36,0,180,Form("%s/Angular",Hname.Data()));
 						//hi.fill(IDX+23,Form("%sThetaZ",p1.GetName()),p1[i].ThetaZ(),"#theta [deg]",36,0,180,Form("%s/Angular",Hname.Data()));
-						hi.fill(IDX + 24, Form("%sThetaYvsEnergy", p1.GetName()), p1[i].ThetaY(), p1[i].E(), "#theta [deg]", "Energy [eV]", 180, 0, 180, 200, 0, 200, Form("%s/Angular", Hname.Data()));
-						hi.fill(IDX + 25, Form("%sThetaXvsEnergy", p1.GetName()), p1[i].ThetaX(), p1[i].E(), "#theta [deg]", "Energy [eV]", 180, 0, 180, 200, 0, 200, Form("%s/Angular", Hname.Data()));
-						hi.fill(IDX + 26, Form("%sThetaZvsEnergy", p1.GetName()), p1[i].ThetaZ(), p1[i].E(), "#theta [deg]", "Energy [eV]", 180, 0, 180, 200, 0, 200, Form("%s/Angular", Hname.Data()));
-						hi.fill(IDX + 27, Form("%sPhiXYvsEnergy", p1.GetName()), p1[i].PhiXY(), p1[i].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 200, 0, 200, Form("%s/Angular", Hname.Data()));
-						hi.fill(IDX + 28, Form("%sPhiYZvsEnergy", p1.GetName()), p1[i].PhiYZ(), p1[i].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 200, 0, 200, Form("%s/Angular", Hname.Data()));
-						hi.fill(IDX + 29, Form("%sPhiZXvsEnergy", p1.GetName()), p1[i].PhiZX(), p1[i].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 200, 0, 200, Form("%s/Angular", Hname.Data()));
+						hi.fill(IDX + 24, Form("%sThetaYvsEnergy", p1.GetName()), p1[i].ThetaY(), p1[i].E(), "#theta [deg]", "Energy [eV]", 180, 0, 180, 800, 0, 800, Form("%s/Angular", Hname.Data()));
+						hi.fill(IDX + 25, Form("%sThetaXvsEnergy", p1.GetName()), p1[i].ThetaX(), p1[i].E(), "#theta [deg]", "Energy [eV]", 180, 0, 180, 800, 0, 800, Form("%s/Angular", Hname.Data()));
+						hi.fill(IDX + 26, Form("%sThetaZvsEnergy", p1.GetName()), p1[i].ThetaZ(), p1[i].E(), "#theta [deg]", "Energy [eV]", 180, 0, 180, 800, 0, 800, Form("%s/Angular", Hname.Data()));
+						hi.fill(IDX + 27, Form("%sPhiXYvsEnergy", p1.GetName()), p1[i].PhiXY(), p1[i].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 800, 0, 800, Form("%s/Angular", Hname.Data()));
+						hi.fill(IDX + 28, Form("%sPhiYZvsEnergy", p1.GetName()), p1[i].PhiYZ(), p1[i].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 800, 0, 800, Form("%s/Angular", Hname.Data()));
+						hi.fill(IDX + 29, Form("%sPhiZXvsEnergy", p1.GetName()), p1[i].PhiZX(), p1[i].E(), "#phi [deg]", "Energy [eV]", 180, -180, 180, 800, 0, 800, Form("%s/Angular", Hname.Data()));
 
 						//Momentum second Ion//
 						IDX = (p1 != p2) ? IDX + 30 : IDX;
@@ -577,6 +577,18 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					const double angleCI2 = pvecC.Angle(pvecI2)*TMath::RadToDeg();
 					const TVector3 pvecSumAll = pvecC + pvecI1 + pvecI2;
 
+					//Coincidence Tof//
+					hi.fill(1, "TOF_Coincidence", p1[i].Tof(), "Tof [ns]", 30000, 0, 10000);
+					hi.fill(1, "TOF_Coincidence", p2[j].Tof(), "Tof [ns]", 30000, 0, 10000);
+					hi.fill(1, "TOF_Coincidence", p3[k].Tof(), "Tof [ns]", 30000, 0, 10000);
+					hi.fill(2, "XTOF_Coincidence", p1[i].Tof(), p1[i].X(), "tof [ns]", "x [mm]", 10000, 0, 10000, 300, -50, 50);
+					hi.fill(2, "XTOF_Coincidence", p2[j].Tof(), p2[j].X(), "tof [ns]", "x [mm]", 10000, 0, 10000, 300, -50, 50);
+					hi.fill(2, "XTOF_Coincidence", p3[k].Tof(), p3[k].X(), "tof [ns]", "x [mm]", 10000, 0, 10000, 300, -50, 50);
+					hi.fill(3, "YTOF_Coincidence", p1[i].Tof(), p1[i].Y(), "tof [ns]", "y [mm]", 10000, 0, 10000, 300, -50, 50);
+					hi.fill(3, "YTOF_Coincidence", p2[j].Tof(), p2[j].Y(), "tof [ns]", "y [mm]", 10000, 0, 10000, 300, -50, 50);
+					hi.fill(3, "YTOF_Coincidence", p3[k].Tof(), p3[k].Y(), "tof [ns]", "y [mm]", 10000, 0, 10000, 300, -50, 50);
+					hi.fill(4, "PIPICO_CondXYZ", p1[i].Tof(), p2[j].Tof(), "tof [ns]", "tof [ns]", 3000, 1000, 3500, 3000, 1000, 3500);
+
 					hi.fill(hiOffResult + 0, "DelayCondXYZ", fdelay, "delay [fs]", delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 					//Ratio Pc/(Pi1+Pi2)
 					//hi.fill(hiOffResult + 1, "MomRatioCIICondXYZ", ratioC_II, "Ratio", 200, 0, 2, Form("%s/FormedAngle", Hname.Data()));
@@ -605,17 +617,17 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 					hi.fill(hiOffResult + 17, "DelayVsAngleCICondXYZ", angleCI2, fdelay, "angle", "delay [fs]", 180, 0, 180, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 
 					//Sum of kinetic energy
-					hi.fill(hiOffResult + 20, "DelayVsKESumCII", p1[i].E() + p2[j].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 21, "DelayVsKESumII", p2[j].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 22, "DelayVsKESumCI1", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 23, "DelayVsKESumCI2", p1[i].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 24, "DelayVsKESumCI", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 24, "DelayVsKESumCI", p1[i].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 20, "DelayVsKESumCII", p1[i].E() + p2[j].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 21, "DelayVsKESumII", p2[j].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 22, "DelayVsKESumCI1", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 23, "DelayVsKESumCI2", p1[i].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 24, "DelayVsKESumCI", p1[i].E() + p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 24, "DelayVsKESumCI", p1[i].E() + p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 					
 					// KE
-					hi.fill(hiOffResult + 25, "DelayVsKEC", p1[i].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 26, "DelayVsKEI1",p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
-					hi.fill(hiOffResult + 27, "DelayVsKEI2",p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 200, 0, 250, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 25, "DelayVsKEC", p1[i].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 26, "DelayVsKEI1",p2[j].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
+					hi.fill(hiOffResult + 27, "DelayVsKEI2",p3[k].E(), fdelay, "KE [eV]", "delay [fs]", 300, 0, 300, delayBins, delayFrom, delayTo, Form("%s/DelayDep", Hname.Data()));
 
 					double angleTheta = pvecI1.Angle(pvecI2);
 					double angle3Body = pvecI1.Cross(pvecI2).Dot(pvecC) / (pvecI1.Mag()*pvecI2.Mag()*pvecC.Mag()*TMath::Sin(angleTheta));
@@ -659,7 +671,7 @@ void fillMoleculeHistogramCH2I2_3body(const MyParticle &p1, const MyParticle &p2
 
 					//hi.fill(hiOffResult + 46, "NumOfProton", numOfProton, "Number", 10, 0, 10, Form("%s/Proton", Hname.Data()));//H2
 
-					hi.fill(hiOffResult + 43, "KE_Sum", p1[i].E() + p2[j].E() + p3[k].E(), "KE [eV]", 400, 0, 400, Form("%s/KE", Hname.Data()));//20160818 added
+					hi.fill(hiOffResult + 43, "KE_Sum", p1[i].E() + p2[j].E() + p3[k].E(), "KE [eV]", 1000, 0, 1000, Form("%s/KE", Hname.Data()));//20160818 added
 					hi.fill(hiOffResult + 44, "Momentum_Sum", pvecSumAll.Mag(), "Momentum [a.u.]", 300, 0, 300, Form("%s/Momentum", Hname.Data()));
 					
 					hi.fill(hiOffResult + 45, "TOF_difference", p2[j].TofCor()- p3[k].TofCor(), "TOF1-TOF2 [ns]", 100, -50, 50, Form("%s/TOFDeadtime", Hname.Data()));

@@ -189,7 +189,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	int startIdx=10;
 	//for Trend Histogram
 	const int skipCounter = static_cast<int>(fEntryIterator/trendStep);
-	// clear the containers//
+	//clear the containers//
 	fIntensities.clear();
 	fDelays.clear();
 	fFlag.clear();
@@ -318,7 +318,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	startIdx += 3; // index = 13
 	//
 	// Delay
-	fHi.fill(startIdx + 0, "Delay_MotorPosition", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // Delay (inclued jitter)
+	fHi.fill(startIdx + 0, "Delay_MotorPosition", fDelays[0], "[fs]", delayBins, delayFrom, delayTo); // Delay (include jitter)
 	fHi.fill(startIdx + 1, "Jitter", fDelays[1], "[fs]", delayBins*100, delayFrom, delayTo); // Jitter
 	fHi.fill(startIdx + 2, "Delay", fDelays[2], "[fs]", delayBins, delayFrom, delayTo);  // Delay (no jitter)	
 	startIdx += 3; // index = 16
@@ -392,7 +392,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	startIdx += 3; // index = 27
 	//
 	int secondStartIdx = startIdx + 20;
-	//go through all resorted detektorhits//
+	//go through all resorted detektorhits// ここから検出したヒットの解析
 	for (size_t i=0; i<rd.GetNbrOfHits();++i)
 	{
 		MyDetektorHit &dh = rd.GetHit(i);
@@ -434,7 +434,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 				}
 		//
 		secondStartIdx=startIdx+20;
-		//check wether this hit fits the conditions of the particles we created//
+		//check wether this hit fits the conditions of the particles we created// 検出した全てのヒットについて設定した解析対象のイオンに該当するか選別
 		//if so, the add this hit to the particle and fill the particle histograms//
 		//go through all particles//
 		for (size_t j=1;j<fParticles.GetNbrOfParticles();++j)
@@ -531,7 +531,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 						//
 						if (
 							((ip.GetCoinGroup() != jp.GetCoinGroup()))
-							||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100))
+							||((ip.GetCoinGroup()==100)&&(jp.GetCoinGroup()==100)) ///20170307_TT 2体コインシデンスで同種異種パーティクルを区別 
 							)
 						{
 							fillMoleculeHistogramCH2I2(ip, jp, fIntensities, fHi, startIdx, molecule[i][j], fDelays, delayBins, delayFrom, delayTo);

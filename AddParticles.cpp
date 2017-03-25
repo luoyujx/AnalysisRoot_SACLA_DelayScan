@@ -7,6 +7,38 @@
 //setup the particle Infos, this will also load the other settings from the ini files//
 // kind of particle 0:atom 1:molecule 2:electron 3:Ion 4:Ion(simple) 
 
+//SACLA SCSS 2016B CH2I2 pump-probe expriment ー新しく"AddXXXX"を追加したら.hファイルと"AnalyzeFunktions.cpp"にも追加するー
+void AddCH2I2(MyParticleContainer &particles)
+{
+	particles.Add("H1p", 1, MyMass::Hydrogen1(), 0, 0); //1
+
+	particles.Add("C4p", 4, MyMass::Carbon12(), 0, 0);//2
+	particles.Add("C3p", 3, MyMass::Carbon12(), 0, 0);//3
+	particles.Add("C2p", 2, MyMass::Carbon12(), 0, 0);//2
+	particles.Add("C1p", 1, MyMass::Carbon12(), 0, 0);//3
+
+	//particles.Add("I15p",15,MyMass::Iodine127(),1,0);
+	//particles.Add("I14p",14,MyMass::Iodine127(),1,0);
+	//particles.Add("I13p",13,MyMass::Iodine127(),1,0);
+	particles.Add("I12p",12,MyMass::Iodine127(),0,0);
+	particles.Add("I11p",11,MyMass::Iodine127(),0,0);
+	particles.Add("I10p",10,MyMass::Iodine127(),0,0);//7
+	particles.Add("I9p", 9, MyMass::Iodine127(), 0, 0);//8
+	particles.Add("I8p", 8, MyMass::Iodine127(), 0, 0);//9
+	particles.Add("I7p", 7, MyMass::Iodine127(), 0, 0);//10
+	particles.Add("I6p", 6, MyMass::Iodine127(), 0, 0);//11
+	particles.Add("I5p", 5, MyMass::Iodine127(), 0, 0);//14
+	particles.Add("I4p", 4, MyMass::Iodine127(), 0, 0);//13
+	particles.Add("I3p", 3, MyMass::Iodine127(), 0, 0);//14
+	particles.Add("I2p", 2, MyMass::Iodine127(), 0, 0);//15
+	particles.Add("I1p", 1, MyMass::Iodine127(), 0, 0);//16
+
+	particles.Add("CHHII1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1() * 2 + MyMass::Iodine127() * 2, 0, 0);//16
+	particles.Add("CHHI1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1() * 2 + MyMass::Iodine127(), 0, 0);//16
+	particles.Add("CHH1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1() * 2, 0, 0);//16
+	//particles.Add("CH1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1(), 0, 0);//16
+}
+
 //_____SACLA 2012B iodomethane_____
 void AddCH3I(MyParticleContainer &particles)
 {

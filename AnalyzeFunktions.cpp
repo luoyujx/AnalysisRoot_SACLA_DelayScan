@@ -167,6 +167,11 @@ void DefineParticlesAndRootFile(MyParticleContainer &particles, MyHistos &hi, co
 		//---CH2ClI for SACLA2015B and Lab experiment
 		AddCH2ClI(particles);
 	}
+	else if (whichParticles == "CH2I2") //20170323 SCSS+âêÕÇÃÇΩÇﬂÇ…í«â¡
+	{
+		//---CH2I2 for SCSS2016B
+		AddCH2I2(particles);
+	}
 	else
 	{
 		std::cout << "can not find particles!!" << std::endl;
@@ -552,7 +557,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 							fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles(),
 							fParticles.GetNbrOfParticles(),0,fParticles.GetNbrOfParticles());
 						fHi.fill(startIdx+1,"CoincidentChargeState",fParticles.GetParticle(i).GetCharge_au(),fParticles.GetParticle(j).GetCharge_au(),
-							"Carbon Chage","Iodine Chage",
+							"Carbon Charge","Iodine Charge",
 							6,1,7,
 							16,1,17);
 						if (fParticles.GetParticle(i).GetCoinGroup()==0 && fParticles.GetParticle(j).GetCoinGroup()==1)
@@ -561,7 +566,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 								fParticles.GetParticle(j).GetCharge_au(),
 								"Iodine charge state", 20, 0, 20);
 						}
-						//sumed chage state
+						//sumed charge state
 						fHi.fill(startIdx+2, "SumOfChargeState", fParticles.GetParticle(i).GetCharge_au()+fParticles.GetParticle(j).GetCharge_au() , 
 							"Charge State",	fParticles.GetNbrOfParticles()*2, 0, fParticles.GetNbrOfParticles()*2);
 					}

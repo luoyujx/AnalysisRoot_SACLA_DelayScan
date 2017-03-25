@@ -207,6 +207,10 @@ private:
 
 	//optical shtter
 	bool optShutterOpen;
+
+	//File name 0D data file
+	std::string fileName0DText;
+	int numOfFields;
 	// 
 	//BM1 data
 	std::map<unsigned int, double>		tagDelay;

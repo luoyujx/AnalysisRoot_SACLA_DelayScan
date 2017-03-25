@@ -13,73 +13,38 @@ DataBase0d::~DataBase0d(void)
 	//mysql_close(dataBaseM);
 }
 // Connect MySQL data base
-void DataBase0d::Connect(const char* DBHOST, const char* DBUSER, const char* DBPASS, const char* DBNAME)
+void DataBase0d::Open(string fileName)
 {
-	dataBaseM = mysql_init(NULL);
-	if (!mysql_real_connect(dataBaseM, DBHOST, DBUSER, DBPASS, DBNAME, 3306, NULL, 0))
+	dataFs.open(fileName, std::ios::in);
+	if (dataFs.fail())
 	{
-		std::cout << "Error!!: " << mysql_error(dataBaseM) << std::endl;
-	}
-	else
-	{
-		//std::cout << "MySQL server: " << DBHOST << " Connection succeeded." << std::endl;
+		std::cout << "Can not open db text file." << fileName << std::endl;
 	}
 }
-void DataBase0d::LoadDataM(int firstTag, int lastTag, vector<string> &fields, const char* TABLE)
+void DataBase0d::LoadData(int numOfFields)
 {
-	//copy field names to member
-	fieldNames.resize(fields.size());
-	std::copy(fields.begin(), fields.end(), fieldNames.begin());
-	//making SQL statement
-	std::stringstream command;
-	command << "select Tag";
-	for (unsigned int i = 0; i < fields.size(); i++)
+	unsigned int tag = 0;
+	std::vector<double> fieldData(numOfFields);
+	char tmp[256];
+	while (!dataFs.eof())
 	{
-		command << ", `" << fields[i] << "` ";
-	}
-	command << "from " << TABLE << " where tag between ";
-	command << firstTag << " and " << lastTag << ";";
-	std::cout << "SQL command: " << command.str() << std::endl;
-	//Query SQL command
-	int result = mysql_query(dataBaseM, command.str().c_str());
-	//Get result
-	res = mysql_use_result(dataBaseM);
-	int tag = 0;
-	std::vector<double> fieldData(fields.size());
-	while ((row = mysql_fetch_row(res)) != NULL)
-	{
-		tag = atoi(row[0]);
+		dataFs >> tag;
 		//std::cout << tag << std::endl;
-		for (unsigned int i = 0; i < fields.size(); i++)
+		for (int i = 0; i < numOfFields; i++)
 		{
-			const char* dataTmp = row[i + 1];
-			if (dataTmp == NULL)
-			{
-				fieldData[i] = std::numeric_limits<double>::quiet_NaN();
-			}
-			else
-			{
-				char *pEnd = NULL;
-				fieldData[i] = strtod(dataTmp, &pEnd);
-				if (!pEnd)
-				{
-					fieldData[i] = std::numeric_limits<double>::quiet_NaN();
-				}
-			}
+			dataFs >> fieldData[i];
 		}
+		dataFs.getline(tmp, 256);
 		//Load data to internal table
 		table.insert(std::pair<unsigned int, std::vector<double> >(tag, fieldData));
-	}	
-	//Close MySQL connection
-	mysql_free_result(res);
-	//mysql_close(dataBaseM);
+	}
 }
 //
 void DataBase0d::ShowTable()
 {
 	std::cout << "***Show table***" << std::endl;
-	std::cout << "Tag\t";
-	std::for_each(fieldNames.begin(), fieldNames.end(), outputTabDelim(std::cout, fieldNames.size()));
+	//std::cout << "Tag\t";
+	//std::for_each(fieldNames.begin(), fieldNames.end(), outputTabDelim(std::cout, fieldNames.size()));
 	for (tableIntDouble::iterator it = table.begin(); it != table.end(); it++)
 	{
 		std::cout << it->first << "\t";
@@ -116,23 +81,23 @@ std::pair<int, double> DataBase0d::GetStatusAndData(unsigned int tag, unsigned i
 	return retval;
 }
 //
-int DataBase0d::GetLatestTag(const char* TABLE)
-{
-	std::stringstream command;
-	command << "select max(Tag) from " << TABLE;
-	int result = mysql_query(dataBaseM, command.str().c_str());
-	res = mysql_use_result(dataBaseM);
-	int ltag;
-	while ((row = mysql_fetch_row(res)) != NULL)
-	{
-		ltag = atoi(row[0]);
-	}
-	mysql_free_result(res);
-	//mysql_close(dataBaseM);
-	return ltag - 1000;
-}
+//int DataBase0d::GetLatestTag(const char* TABLE)
+//{
+//	std::stringstream command;
+//	command << "select max(Tag) from " << TABLE;
+//	int result = mysql_query(dataBaseM, command.str().c_str());
+//	res = mysql_use_result(dataBaseM);
+//	int ltag;
+//	while ((row = mysql_fetch_row(res)) != NULL)
+//	{
+//		ltag = atoi(row[0]);
+//	}
+//	mysql_free_result(res);
+//	//mysql_close(dataBaseM);
+//	return ltag - 1000;
+//}
 //
-void DataBase0d::CloseMySQL()
+void DataBase0d::Close()
 {
-	mysql_close(dataBaseM);
+	dataFs.close();
 }

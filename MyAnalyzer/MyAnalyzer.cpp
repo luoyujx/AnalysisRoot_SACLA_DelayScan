@@ -207,39 +207,21 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	momFactorUpperLimit = set.GetValue("MomFactorUpperLimit", 2);
 	// delay scan mode (0: no 0d data, 1: use MySQL, 2:with Timing monitor)
 	delayScan = static_cast<int>(set.GetValue("delayScan", false)+0.1);
+
+	//----------------------delay scan modes ------------------------//
 	if (delayScan == 0)
 	{
 		std::cout << "Fixed delay. 0D databese is not used." << std::endl;
 		std::cout << "First Tag: " << tagFrom << " Last Tag: " << tagTo << std::endl;
 	}
-	// for delay scan
-	else
+	// for delay scan (Text data)
+	if (delayScan == 1)
 	{
-		// MySQL information
-		hostMySQL = set.GetString("hostMySQL", "192.168.100.4");
-		userMySQL = set.GetString("userMySQL", "sacla");
-		passMySQL = set.GetString("passMySQL", "xuedalabx");
-		nameMySQL = set.GetString("nameMySQL", "sacla2015b");
+		fileName0DText =  set.GetString("0DTextFileName", "");
+		numOfFields = static_cast<int>(set.GetValue("NumOfFields", 4) + 0.1);
 	}
-	// Table & Field names for 0d Database 
-	tableBL = set.GetString("tableBL", "bldata");
-	BM1FN = set.GetString("BM1FieldName", "xfel_bl_3_tc_bm_1_pd/charge"); //0
-	delayFN = set.GetString("delayFieldName", "xfel_bl_3_st_4_motor_25/position"); //1
-	// Table & Field names for flag
-	optShutFN = set.GetString("optShutterFieldName", "xfel_bl_3_lh1_shutter_1_open_valid/status"); //0
-	// Table & Field names for Timing moniter
-	if (delayScan == 2)
-	{
-		std::cout << "Delay scan with jitter extracted from Timing moniter" << std::endl;
-		tableTM = set.GetString("tableTM", "timing2"); 
-		flagTMFN = set.GetString("timingValidName", "Timing_Flag"); //0
-		jitterFN = set.GetString("jitterFieldName", "Timing_Jitter1"); //1			
-		delayTMFN = set.GetString("timingMoniterDelayName", "xfel_bl_3_st_1_motor_73/position"); //2
-	}
-	else
-	{
-		std::cout << "Delay scan without jitter extracted from Timing moniter" << std::endl;
-	}
+
+
 	//Tag from, Tag to
 	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
 	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
@@ -338,36 +320,32 @@ void MyAnalyzer::OpenIntensityData()
 	else if (delayScan == 1) // without Jitter from Timing Moniter
 	{
 		std::cout << "Delay scan without jitter extracted from Timing moniter" << std::endl;
-		DB0d.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
-		vector<string> fields0d;
-		fields0d.push_back(BM1FN);		//0
-		fields0d.push_back(delayFN);	//1
-		fields0d.push_back(optShutFN);	//2
-		DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
-		DB0d.CloseMySQL();
-		//DB0d.ShowTable();
+		DB0d.Open(fileName0DText);
+		DB0d.LoadData(numOfFields);
+		DB0d.Close();
+		DB0d.ShowTable();
 
 	}
-	else if (delayScan == 2) // with Jitter form Timing Moniter
-	{
-		std::cout << "Delay scan with jitter extracted from Timing moniter" << std::endl;
-		DB0d.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
-		vector<string> fields0d;
-		fields0d.push_back(BM1FN);		//0
-		fields0d.push_back(delayFN);	//1
-		fields0d.push_back(optShutFN);	//2
-		fields0d.push_back(delayTMFN);	//3
-		DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
-		DB0d.CloseMySQL();
+	//else if (delayScan == 2) // with Jitter form Timing Moniter
+	//{
+	//	std::cout << "Delay scan with jitter extracted from Timing moniter" << std::endl;
+	//	DB0d.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
+	//	vector<string> fields0d;
+	//	fields0d.push_back(BM1FN);		//0
+	//	fields0d.push_back(delayFN);	//1
+	//	fields0d.push_back(optShutFN);	//2
+	//	fields0d.push_back(delayTMFN);	//3
+	//	DB0d.LoadDataM(tagFrom, tagTo, fields0d, tableBL);
+	//	DB0d.CloseMySQL();
 
-		DBTM.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
-		vector<string> fieldsTM;
-		fieldsTM.push_back(flagTMFN);	//0
-		fieldsTM.push_back(jitterFN);	//1
-		DBTM.LoadDataM(tagFrom, tagTo, fieldsTM, tableTM);
-		DBTM.CloseMySQL();
-		//DBTM.ShowTable();
-	}
+	//	DBTM.Connect(hostMySQL, userMySQL, passMySQL, nameMySQL);
+	//	vector<string> fieldsTM;
+	//	fieldsTM.push_back(flagTMFN);	//0
+	//	fieldsTM.push_back(jitterFN);	//1
+	//	DBTM.LoadDataM(tagFrom, tagTo, fieldsTM, tableTM);
+	//	DBTM.CloseMySQL();
+	//	//DBTM.ShowTable();
+	//}
 }
 //_____Read Intensity region DATA
 void MyAnalyzer::OpenIntPartition()

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "sqlite3.h"
 #include "mysql.h"
+#include <fstream>
 
 using std::vector;
 using std::map;
@@ -18,21 +19,22 @@ public:
 	DataBase0d(void);
 	~DataBase0d(void);
 public:
-	void Connect(const char* DBHOST, const char* DBUSER, const char* DBPASS, const char* DBNAME);
-	void LoadDataM(int firstTag, int lastTag, vector<string> &fields, const char* TABLE);
+	void Open(string);
+	void LoadData(int);
 	void ShowTable();
 	double GetData(unsigned int tag, unsigned int fieldNumber);
 	double GetDataSize()					{ return table.size(); }
 	std::pair<int, double> DataBase0d::GetStatusAndData(unsigned int tag, unsigned int fieldNumber);
-	int GetLatestTag(const char* TABLE);
-	void DataBase0d::CloseMySQL();
+	//int GetLatestTag(const char* TABLE);
+	void Close();
 private:
 	typedef map< unsigned int, vector<double> > tableIntDouble;
 	tableIntDouble table;
 	vector<string> fieldNames;
-	MYSQL* dataBaseM;
-	MYSQL_RES *res;
-	MYSQL_ROW row;
+	std::ifstream dataFs;
+	//MYSQL* dataBaseM;
+	//MYSQL_RES *res;
+	//MYSQL_ROW row;
 };
 //Functor
 class outputTabDelim

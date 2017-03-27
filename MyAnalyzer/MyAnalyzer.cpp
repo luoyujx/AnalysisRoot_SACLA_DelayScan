@@ -229,7 +229,7 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	factorBM1 = set.GetValue("ConversionFactorBM1", 10000);
 
 	//Delay informatyion
-	factorPMD = set.GetValue("ConversionPMtoDelay", 150);
+	factorPMD = set.GetValue("ConversionPMtoDelay", 6.671);
 	factorPMDOffset = set.GetValue("PMOffset", 0);
 	factorTM = set.GetValue("ConversionPIXtoJitter", 3.8);
 	factorTMOffset = set.GetValue("TimingMoniterOffset", 1200);
@@ -323,7 +323,7 @@ void MyAnalyzer::OpenIntensityData()
 		DB0d.Open(fileName0DText);
 		DB0d.LoadData(numOfFields);
 		DB0d.Close();
-		DB0d.ShowTable();
+		//DB0d.ShowTable();
 
 	}
 	//else if (delayScan == 2) // with Jitter form Timing Moniter

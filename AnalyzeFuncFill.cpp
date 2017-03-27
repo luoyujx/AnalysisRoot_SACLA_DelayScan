@@ -112,9 +112,9 @@ void fillParticleHistograms(const MyParticle &p, const MyParticleHit &ph, std::v
 	hi.fill(hiOff++,"Energy",ph.E(),"Energy [eV]",800,0,800,Form("%s/Energy",p.GetName()));
 	//hi.fill(hiOff++,"EnergyVsPz",ph.Pz(),ph.E(),"pz [a.u.]","Energy [eV]",300,-MomLim,MomLim,500,0,500,Form("%s/Energy",p.GetName()));
 	hi.fill(hiOff++,"DelayVsEnergy",ph.E(),fdelay,"Energy [eV]","delay [fs]",800,0,800,delayBins,delayFrom,delayTo,Form("%s/Delay",p.GetName()));
-	//hi.fill(hiOff++,"XFELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","XFEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
-	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
-	//hi.fill(hiOff++,"DelayVsXFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","XFEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
+	//hi.fill(hiOff++,"FELintensityVsEnergy",ph.E(),intensity[1],"Energy [eV]","FEL intensity [arb. unit]",150,0,150,60,0,600,Form("%s/Energy",p.GetName()));
+	//hi.fill(hiOff++,"DelayVsFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","FEL intensity [arb. unit]",150,0,150,delayBins,delayFrom,delayTo,60,0,600,Form("%s/Delay",p.GetName()));
+	//hi.fill(hiOff++,"DelayVsFELintensityVsEnergy",ph.E(),delay,intensity[1],"Energy [eV]","delay [ps]","FEL intensity [arb. unit]",500,0,500,32,-5,11,30,0,600,Form("%s/Delay",p.GetName()));
 
 	//Angle//
 	hi.fill(hiOff++,"ThetaX",ph.ThetaX(),"#theta [deg]",180,0,180,Form("%s/Angle",p.GetName()));

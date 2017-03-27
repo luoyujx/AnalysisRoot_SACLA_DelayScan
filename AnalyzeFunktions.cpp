@@ -207,7 +207,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//if (TagNumber % 2 != 1) return;   //for Dataset 2 NIR only
 	
 	//std::cout << TagNumber << std::endl;
-	// Get XFEL intensity, Delay
+	// Get FEL intensity, Delay
 	if (delayScan == 0) // MySQL databse is not used
 	{
 		fIntensities.push_back(0.); //[0] Upper PD
@@ -226,21 +226,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			missedTagCount++;
 			return;
 		}
-		// Intensity
-		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 0).second)))
-		{
-			std::cout << "Intensity of " << TagNumber << " is NaN " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1 * 1000000); //[0] BM1
-		// Delay
-		if (_isnan(DB0d.GetStatusAndData(TagNumber, 1).second))
-		{
-			std::cout << "Delay of " << TagNumber << " is NaN " << std::endl;
-			missedTagCount++;
-			return;
-		}
+		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1); //[0] BM1
 		// Optical shutter is open or close
 		fFlag.push_back(static_cast<bool>(DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
 		if (fFlag[0] != optShutterOpen)
@@ -249,77 +235,18 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			//missedTagCount++;
 			return;
 		}
-		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) / factorPMD);	//[0] EH Delay	
+		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) * factorPMD);	//[0] MotorPos Delay	
 		fDelays.push_back(0.);																			//[1] Jitter 
 		if (fFlag[0] == true) fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay
 		else fDelays.push_back(0.);
 	}
-	if (delayScan == 2) // with Jitter from Timing moniter, This mode should be chacked.
-	{
-		// Check 0D database
-		if (DBTM.GetStatusAndData(TagNumber, 0).first == 0)
-		{
-			//if (missedTagCount % 100 == 0) std::cout << "\r" << TagNumber << " is not found!!";
-			//std::cout << TagNumber << " is not found!!" << std::endl;
-			missedTagCount++;
-			return;
-		}
-		// Intensity
-		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 0).second)))
-		{
-			//std::cout << "Intensity of " << TagNumber << " is NaN " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		fIntensities.push_back((DB0d.GetStatusAndData(TagNumber, 0).second) * factorBM1 * 1000000); //[0] BM1
-		//
-		// Delay
-		if (_isnan(DB0d.GetStatusAndData(TagNumber, 1).second))
-		{
-			//std::cout << "Delay of " << TagNumber << " is NaN " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		//
-		if ((_isnan(DB0d.GetStatusAndData(TagNumber, 3).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 0).second)) || (_isnan(DBTM.GetStatusAndData(TagNumber, 1).second)))
-		{
-			//std::cout << "Jitter of " << TagNumber << " is NaN " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		if (!DBTM.GetStatusAndData(TagNumber, 0).second)
-		{
-			//std::cout << "Jitter of " << TagNumber << " is not analysed " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		fDelays.push_back((DB0d.GetStatusAndData(TagNumber, 1).second - factorPMDOffset) / factorPMD * 1000); //[0] EH Delay [fs]
-		//
-		fFlag.push_back(static_cast<bool>(DB0d.GetStatusAndData(TagNumber, 2).second)); //[0] Optical shutter
-		//std::cout << "Optical shutter valid status (" << TagNumber << "): "<< fFlag[0] << std::endl;
-		if (fFlag[0] != optShutterOpen)
-		{
-			std::cout << "Optical shutter of " << TagNumber << " is close " << std::endl;
-			missedTagCount++;
-			return;
-		}
-		fDelays.push_back(factorTM*(DBTM.GetStatusAndData(TagNumber, 1).second - factorTMOffset)); //[1] Jitter 
-		// Testing random jitter
-#ifdef DELAY_RANDOM
-		fDelays[1] = RandomGene.Gaus(-33.45, 304.8);
-#endif
-		//delay with motor position and jitter
-		fDelays.push_back(fDelays[0] + fDelays[1]); // Cor. Delay + (factorTMPMDOffset - DB.GetStatusAndData(TagNumber, 5).second) / factorTMPMD);
-		//overlaping deley
-		fDelays.push_back(std::fmod(fDelays[0] + fDelays[1] + 10000, 284));
 
-	}
 	//
 	////-----------------------------------
 	//// No selected histgrams //// index = 10
-	// XFEL intenisty
-	fHi.fill(startIdx + 1, "DelayVsJitter", fDelays[0], fDelays[1], "Delay [fs]", "Jitter [fs]", delayBins, delayFrom, delayTo, delayBins, delayFrom, delayTo); // Delay vs XFEL intenisty
-	fHi.fill(startIdx + 2, "IntensityXFEL", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // XFEL intensity BM1
+	// FEL intenisty
+	fHi.fill(startIdx + 1, "DelayVsJitter", fDelays[0], fDelays[1], "Delay [fs]", "Jitter [fs]", delayBins, delayFrom, delayTo, delayBins, delayFrom, delayTo); // Delay vs FEL intenisty
+	fHi.fill(startIdx + 2, "IntensityFEL", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // FEL intensity BM1
 	startIdx += 3; // index = 13
 	//
 	// Delay
@@ -328,8 +255,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	fHi.fill(startIdx + 2, "Delay", fDelays[2], "[fs]", delayBins, delayFrom, delayTo);  // Delay (no jitter)	
 	startIdx += 3; // index = 16
 	int maxTrend = 100000;
-	// Trend plot XFEL intensity, Delay, number of hit.
-	fHi.fill(startIdx + 2, "TrendIntensityXFEL", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fIntensities[0]); // XFEL intensity BM1
+	// Trend plot FEL intensity, Delay, number of hit.
+	fHi.fill(startIdx + 2, "TrendIntensityFEL", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fIntensities[0]); // FEL intensity BM1
 	fHi.fill(startIdx + 3, "TrendDelay(MotorPosition)", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fDelays[0]);  // Delay (inclued jitter)
 	fHi.fill(startIdx + 4, "TrendJitter", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fDelays[1]); // Jitter
 	fHi.fill(startIdx + 5, "TrendDelay", skipCounter, Form("[shots/%d]", trendStep), maxTrend, 0, maxTrend, "Trend", fDelays[2]);  // Delay (no jitter)	
@@ -345,7 +272,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	if (fIntensities.size())
 	{
-		fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // selected XFEL intensity
+		fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // selected FEL intensity
 	}
 	startIdx++;
 	//---------		
@@ -390,9 +317,9 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//
 	//if (fSAE.GetChannel(7 - 1).GetNbrPeaks() == 0) return;
 	//
-	//// Delay vs Shots, XFELintensity, NumberOfHits
+	//// Delay vs Shots, FELintensity, NumberOfHits
 	fHi.fill(startIdx + 0, "DelayVsShots", fDelays[2], "Delay [fs]", delayBins, delayFrom, delayTo); // Delay vs Shots
-	fHi.fill(startIdx + 1, "DelayVsXFELintensity", fIntensities[0], fDelays[2], "Delay [fs]", "XFEL intensity [arb .unit]", 1000, 0, 1000, delayBins, delayFrom, delayTo); // Delay vs XFEL intenisty
+	fHi.fill(startIdx + 1, "DelayVsFELintensity", fIntensities[0], fDelays[2], "Delay [fs]", "FEL intensity [arb .unit]", 1000, 0, 1000, delayBins, delayFrom, delayTo); // Delay vs FEL intenisty
 	fHi.fill(startIdx + 2, "DelayVsNumberOfHits", rd.GetNbrOfHits(), fDelays[2], "Delay [fs]", "Number of Hits", 100, 0, 100, delayBins, delayFrom, delayTo); // Delay vs Number of Hits
 	startIdx += 3; // index = 27
 	//
@@ -413,7 +340,7 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 		fHi.fill(startIdx + 2, "XPosVsTof", dh.Tof(), dh.X(), "tof [ns]", "x [mm]", 30000, 0, maxTof, 300, -maxPos, maxPos);
 		fHi.fill(startIdx + 3, "YPosVsTof", dh.Tof(), dh.Y(), "tof [ns]", "y [mm]", 30000, 0, maxTof, 300, -maxPos, maxPos);
 		fHi.fill(startIdx + 4, "DelayVsTof", dh.Tof(), fDelays[2], "tof [ns]", "Delay [fs]", 5000, 0, maxTof, delayBins, delayFrom, delayTo);
-		fHi.fill(startIdx + 5, "XFELIntensityVsTOF", dh.Tof(), fIntensities[2], "tof [ns]", "XFEL intensity [arb. unit]", 5000, 0, maxTof, 1000, 0, 1000, "Ion");
+		fHi.fill(startIdx + 5, "FELIntensityVsTOF", dh.Tof(), fIntensities[2], "tof [ns]", "FEL intensity [arb. unit]", 5000, 0, maxTof, 1000, 0, 1000, "Ion");
 		//
 		//-----Particle(0)---Ion---
 		//get the particle from the vector//

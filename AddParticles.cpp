@@ -33,6 +33,7 @@ void AddCH2I2(MyParticleContainer &particles)
 	particles.Add("I2p", 2, MyMass::Iodine127(), 0, 0);//15
 	particles.Add("I1p", 1, MyMass::Iodine127(), 0, 0);//16
 
+	particles.Add("II1p", 1, MyMass::Iodine127() * 2, 0, 0);//16
 	particles.Add("CHHII1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1() * 2 + MyMass::Iodine127() * 2, 0, 0);//16
 	particles.Add("CHHI1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1() * 2 + MyMass::Iodine127(), 0, 0);//16
 	particles.Add("CHH1p", 1, MyMass::Carbon12() + MyMass::Hydrogen1() * 2, 0, 0);//16

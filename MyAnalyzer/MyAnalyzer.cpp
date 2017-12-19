@@ -225,10 +225,10 @@ void MyAnalyzer::SetParameter(MySettings &set)
 	//Tag from, Tag to
 	tagFrom = static_cast<int>(set.GetValue("TagFrom", 0)+0.1);
 	tagTo = static_cast<int>(set.GetValue("TagTo", 0)+0.1);
-	//Intensity informaion
+	//Intensity information
 	factorBM1 = set.GetValue("ConversionFactorBM1", 10000);
 
-	//Delay informatyion
+	//Delay information
 	factorPMD = set.GetValue("ConversionPMtoDelay", 6.671);
 	factorPMDOffset = set.GetValue("PMOffset", 0);
 	factorTM = set.GetValue("ConversionPIXtoJitter", 3.8);

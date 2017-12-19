@@ -235,7 +235,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 			//missedTagCount++;
 			return;
 		}
-		fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) * factorPMD);	//[0] MotorPos Delay	
+		// fDelays.push_back((factorPMDOffset - DB0d.GetStatusAndData(TagNumber, 1).second) * factorPMD);	//[0] MotorPos Delay (Original definition)
+		fDelays.push_back((DB0d.GetStatusAndData(TagNumber, 1).second - factorPMDOffset) * factorPMD);	//[0] MotorPos Delay (new definition by TT 20171208)
 		fDelays.push_back(0.);																			//[1] Jitter 
 		if (fFlag[0] == true) fDelays.push_back(fDelays[0]);																	//[2] Cor. Delay
 		else fDelays.push_back(0.);
@@ -246,7 +247,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	//// No selected histgrams //// index = 10
 	// FEL intenisty
 	fHi.fill(startIdx + 1, "DelayVsJitter", fDelays[0], fDelays[1], "Delay [fs]", "Jitter [fs]", delayBins, delayFrom, delayTo, delayBins, delayFrom, delayTo); // Delay vs FEL intenisty
-	fHi.fill(startIdx + 2, "IntensityFEL", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // FEL intensity BM1
+	// fHi.fill(startIdx + 2, "IntensityFEL", fIntensities[0], "[arb. unit]", 10000, 0, 10000); // FEL intensity BM1 (original version)
+	fHi.fill(startIdx + 2, "IntensityFEL", fIntensities[0], "[microJ/pulse]", 3000, 0, 3000); // FEL intensity BM1 modified by TT 2017/12/19
 	startIdx += 3; // index = 13
 	//
 	// Delay
@@ -272,7 +274,8 @@ void MyAnalyzer::Analyze(MyWaveform &wf)
 	}
 	if (fIntensities.size())
 	{
-		fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // selected FEL intensity
+		// fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[arb. unit]", 1000, 0, 1000); // selected FEL intensity (original version)
+		fHi.fill(startIdx, "IntensitySelected", fIntensities[0], "[microJ/pulse]", 3000, 0, 3000); // selected FEL intensity modified by TT 2017/12/19
 	}
 	startIdx++;
 	//---------		
